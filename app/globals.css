@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode - Concrete & Slate Palette */
+  --background: #F2F2F2;
+  --foreground: #111111;
+  --card: #E6E6E6;
+  --action: #333333; /* Dark Charcoal Action */
+  --accent: #666666;
+  --border: #CCCCCC;
+}
+
+.dark {
+  /* Dark Mode - Pitch Black & Obsidian Palette */
+  --background: #000000; /* Pure Black */
+  --foreground: #DEDEDE; /* Ash White Text */
+  --card: #2D2D2D; /* Lighter Stone Grey Card */
+  --action: #A1A1A1; /* Light Slate/Stone Action */
+  --accent: #555555; /* Muted Charcoal */
+  --border: #404040; /* More Defined Stone Border */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-action: var(--action);
+  --color-accent: var(--accent);
+  --color-border-custom: var(--border);
+  --font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
