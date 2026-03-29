@@ -1,43 +1,47 @@
-# THOMAS PAYNE // PERSONAL WEBSITE & DASHBOARD
+# THOMAS PAYNE // PERSONAL DASHBOARD & AUTHENTICATED TIMELINE
 
-A minimalist, high-contrast developer portfolio and project dashboard built with **Next.js 16**, **Tailwind CSS 4**, and **Lucide React**. Inspired by modern architectural minimalism and "Onyx/Charcoal" aesthetics.
+An ultra-minimalist, high-contrast developer hub built with **Next.js 16**, **Supabase**, and **Framer Motion**. Optimized for performance, technical discipline, and a deep monochromatic "Yeezy-inspired" aesthetic.
 
-## // CORE FEATURES
+## // CORE SYSTEMS
 
-- **[DASHBOARD]** Real-time project tracker with progress monitoring and status indicators (ACTIVE / COMPLETED / RESEARCHING).
-- **[TIMELINE]** An interactive "Journey Feed" documenting technical growth, military service, and career milestones.
-- **[INTERACTIVE]** Public-facing guestbook and threaded comments on all timeline events with a live heart-based like system.
-- **[AESTHETIC]** "Yeezy-inspired" monochromatic UI featuring Pitch Black (#000000), Deep Obsidian, and Stone Grey palettes.
-- **[NAVIGATION]** Right-aligned, retro-tech navigation with terminal-style iconography and ALL-CAPS typography.
+- **[AUTH]** Secure user authentication system via Supabase Auth (Sign Up / Login / Persistent Sessions).
+- **[DASHBOARD]** Live project tracker monitoring build progress with animated status indicators.
+- **[TIMELINE]** Interactive "Journey Feed" with persistent likes and threaded comments for authenticated users.
+- **[ANIMATION]** Premium staggered reveals and section transitions powered by Framer Motion.
+- **[UX]** Custom minimalist ring cursor and horizontal scroll progress bar.
 
 ## // TECH STACK
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Typography:** [JetBrains Mono](https://www.jetbrains.com/lp/mono/)
-- **Themes:** [next-themes](https://github.com/pacocoursey/next-themes)
+- **Framework:** Next.js 16 (App Router)
+- **Database/Auth:** Supabase (PostgreSQL + Auth)
+- **Styling:** Tailwind CSS 4 (Grayscale Obsidian Palette)
+- **Animations:** Framer Motion
+- **Icons:** Lucide React
+- **Typography:** JetBrains Mono
 
 ## // LOCAL SETUP
 
-```bash
-# Clone the repository
-git clone https://github.com/[YourUsername]/personal-website.git
+1. **Clone & Install:**
+   ```bash
+   git clone https://github.com/[USERNAME]/personal-website.git
+   npm install
+   ```
 
-# Install dependencies
-npm install
+2. **Environment Configuration:**
+   Create a `.env.local` file with your Supabase credentials:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=your_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   ```
 
-# Run the development server
-npm run dev
-```
+3. **Database Initialization:**
+   Run the SQL schema provided in the documentation to initialize `projects`, `timeline_events`, and `timeline_comments` tables.
 
-## // PROJECT STRUCTURE
+## // ARCHITECTURAL NOTES
 
-- `app/page.tsx` - Integrated Dashboard & Timeline
-- `app/about/page.tsx` - Detailed Biography & Socials
-- `app/portfolio/page.tsx` - Project Showcase (Archive)
-- `app/contact/page.tsx` - Interaction Point
-- `app/globals.css` - Custom Yeezy-inspired Variables & Theme Configuration
+- **Middleware:** Uses standard `middleware.ts` for session handling.
+- **Components:** Hybrid architecture with Server Components for data fetching and Client Components for interactivity.
+- **Design:** Strict monochromatic ethos focusing on #000000 (Black), #1A1A1A (Charcoal), and #DEDEDE (Stone).
 
 ---
-*Built with discipline and code by Thomas Payne.*
+*Built with code and discipline by Thomas Payne.*

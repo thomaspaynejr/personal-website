@@ -3,6 +3,8 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "./components/Navbar";
+import CustomCursor from "./components/CustomCursor";
+import ScrollProgressBar from "./components/ScrollProgressBar";
 
 const mono = JetBrains_Mono({ subsets: ["latin"] });
 
@@ -18,10 +20,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${mono.className} transition-colors duration-300`}>
+      <body className={`${mono.className} transition-colors duration-300 cursor-none`}>
         <Providers>
+          <ScrollProgressBar />
+          <CustomCursor />
           <Navbar />
-          {children}
+          <main>
+            {children}
+          </main>
         </Providers>
       </body>
     </html>
