@@ -93,7 +93,6 @@ export default async function Home() {
     <TimelineDashboard 
       user={user} 
       initialTimeline={initialTimeline}
-      initialProjects={initialProjects}
       initialComments={{}}
     />
   );

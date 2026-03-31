@@ -143,6 +143,11 @@ export default function TimelineDashboard({
   initialComments: Record<string, {text: string, date: string}[]>;
 }) {
   const [timeline, setTimeline] = useState<TimelineEvent[]>(initialTimeline);
+  
+  useEffect(() => {
+    setTimeline(initialTimeline);
+  }, [initialTimeline]);
+
   const [showForm, setShowForm] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
