@@ -15,6 +15,10 @@ export default async function Navbar() {
           <Home size={14} className="group-hover:text-action transition-colors" />
           <span>HOME</span>
         </Link>
+        <Link href="/dashboard" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group">
+          <Activity size={14} className="group-hover:text-action transition-colors" />
+          <span>DASHBOARD</span>
+        </Link>
         <Link href="/about" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group">
           <User size={14} className="group-hover:text-action transition-colors" />
           <span>ABOUT</span>

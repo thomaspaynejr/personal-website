@@ -18,10 +18,10 @@ export default function ScrollProgressBar() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-transparent pointer-events-none">
+    <div className="fixed top-0 right-0 w-[3px] h-full z-[100] bg-transparent pointer-events-none">
       <div 
-        className="h-full bg-action transition-all duration-150 ease-out shadow-[0_0_8px_rgba(140,126,109,0.5)]" 
-        style={{ width: `${progress}%` }} 
+        className="w-full bg-white transition-all duration-150 ease-out shadow-[0_0_10px_rgba(255,255,255,0.5)] origin-top" 
+        style={{ height: `${progress}%` }} 
       />
     </div>
   );
