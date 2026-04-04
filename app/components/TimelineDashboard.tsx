@@ -5,6 +5,7 @@ import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity } from 'luc
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import MatrixRain from './MatrixRain';
+import LightStrike from './LightStrike';
 
 interface TimelineEvent {
   id: string;
@@ -39,7 +40,7 @@ const TimelineItem = ({
   return (
     <StaggerItem>
       <div className="relative pl-8 group py-8 transition-all duration-500">
-        <div className="absolute -left-[5px] top-9 w-2.5 h-2.5 bg-background border border-action rounded-full transition-all duration-300 group-hover:scale-125 group-hover:bg-action group-hover:shadow-[0_0_8px_rgba(0,0,0,0.5)] dark:group-hover:shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+        <div className="absolute -left-[5px] top-9 w-2.5 h-2.5 bg-background border border-action rounded-full transition-all duration-300 group-hover:scale-125 group-hover:bg-action group-hover:shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
         <div className="space-y-4 bg-card/40 backdrop-blur-sm p-6 rounded-2xl border border-transparent hover:border-action transition-all duration-500">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -171,6 +172,7 @@ export default function TimelineDashboard({
   return (
     <main className="max-w-6xl mx-auto px-6 py-10 relative min-h-screen">
       <MatrixRain />
+      <LightStrike />
       
       <div className="relative z-10 space-y-20">
         {/* Header */}
