@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn } from 'lucide-react';
+import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
+import MatrixRain from './MatrixRain';
 
 interface TimelineEvent {
   id: string;
@@ -41,9 +42,11 @@ const TimelineItem = ({
         <div className="absolute -left-[5px] top-9 w-2.5 h-2.5 bg-background border border-white rounded-full transition-all duration-300 group-hover:scale-125 group-hover:bg-white group-hover:shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
         <div className="space-y-4 bg-card/20 backdrop-blur-sm p-6 rounded-2xl border border-transparent hover:border-border-custom hover:bg-card/40 transition-all duration-500">
           <div className="space-y-2">
-            <div className="flex items-center gap-3 text-accent group-hover:text-white transition-colors duration-300">
-              {event.icon}
-              <span className="text-[10px] font-bold tabular-nums tracking-widest">{event.date}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 text-accent group-hover:text-white transition-colors duration-300">
+                {event.icon}
+                <span className="text-[10px] font-bold tabular-nums tracking-widest">{event.date}</span>
+              </div>
             </div>
             <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-white transition-colors duration-300 uppercase">{event.title}</h3>
             <p className="text-sm text-accent leading-relaxed max-w-2xl">{event.description}</p>
@@ -166,13 +169,15 @@ export default function TimelineDashboard({
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-10 relative">
+    <main className="max-w-4xl mx-auto px-6 py-10 relative min-h-screen">
+      <MatrixRain />
+      
       <div className="relative z-10 space-y-20">
         {/* Header */}
         <FadeIn>
-          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-4 rounded-xl border border-border-custom/50">
+          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-4 rounded-xl border border-border-custom/50 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
             <div className="text-xs font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
-              <Clock size={14} className="text-white" />
+              <Activity size={14} className="text-white animate-pulse" />
               THE JOURNEY // ACTIVITY FEED
             </div>
             {user ? (
@@ -194,7 +199,7 @@ export default function TimelineDashboard({
         {showForm && user && (
           <FadeIn>
             <section className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <form onSubmit={handleAddEntry} className="space-y-4 border border-border-custom p-6 rounded-2xl bg-card">
+              <form onSubmit={handleAddEntry} className="space-y-4 border border-border-custom p-6 rounded-2xl bg-card/80 backdrop-blur-md">
                 <div className="text-[9px] font-bold tracking-widest px-3 py-1 rounded border border-white bg-white text-black inline-block uppercase">
                   TIMELINE UPDATE
                 </div>
@@ -203,13 +208,13 @@ export default function TimelineDashboard({
                   value={newPostTitle}
                   onChange={(e) => setNewPostTitle(e.target.value)}
                   placeholder="Entry Title..."
-                  className="w-full bg-card border border-border-custom rounded-lg px-4 py-2 text-sm outline-none focus:border-white transition-all text-white"
+                  className="w-full bg-background border border-border-custom rounded-lg px-4 py-2 text-sm outline-none focus:border-white transition-all text-white"
                 />
                 <textarea
                   value={newPostContent}
                   onChange={(e) => setNewPostContent(e.target.value)}
                   placeholder="Describe the journey..."
-                  className="w-full bg-card border border-border-custom rounded-xl p-4 text-sm text-foreground outline-none focus:border-white transition-all min-h-[100px] resize-none"
+                  className="w-full bg-background border border-border-custom rounded-xl p-4 text-sm text-foreground outline-none focus:border-white transition-all min-h-[100px] resize-none"
                 />
                 <div className="flex justify-end gap-3">
                   <button type="button" onClick={() => setShowForm(false)} className="text-[10px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>

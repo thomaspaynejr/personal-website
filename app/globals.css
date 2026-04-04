@@ -11,13 +11,13 @@
 }
 
 .dark {
-  /* Dark Mode - Pitch Black & Obsidian Palette */
-  --background: #000000; /* Pure Black */
-  --foreground: #FFFFFF; /* Pure White Text */
-  --card: #1A1A1A;       /* Deep Charcoal Card */
+  /* Dark Mode - Lightened Obsidian Palette */
+  --background: #1A1A1A; /* Lightened from Pure Black */
+  --foreground: #F2F2F2; /* Stone White Text */
+  --card: #262626;       /* Lighter Charcoal Card */
   --action: #FFFFFF;     /* Pure White Action */
-  --accent: #A1A1A1;     /* Brighter Accent */
-  --border: #333333;     /* Dark Border */
+  --accent: #888888;     /* Muted Grey */
+  --border: #333333;     /* Defined Border */
 }
 
 
