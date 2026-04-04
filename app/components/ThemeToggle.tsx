@@ -32,16 +32,16 @@ export default function ThemeToggle() {
 
       {/* Sliding Knob */}
       <motion.div 
-        className="relative z-10 w-5 h-5 bg-action rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+        className="relative z-10 w-5 h-5 bg-foreground rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.2)] dark:shadow-[0_0_10px_rgba(255,255,255,0.4)]"
         animate={{ 
           x: isDark ? 28 : 0,
         }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
       >
         {isDark ? (
-          <Moon size={10} className="text-white fill-white" />
+          <Moon size={10} className="text-background fill-background" />
         ) : (
-          <Sun size={10} className="text-[#FFA500] fill-[#FFA500]" />
+          <Sun size={10} className="text-orange-500 fill-orange-500" />
         )}
       </motion.div>
     </div>

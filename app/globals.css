@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Mode - High Contrast White */
+  /* Light Mode - Pure White */
   --background: #FFFFFF;
   --foreground: #000000;
-  --card: #F5F5F5;
-  --action: #3B82F6;     /* Electric Blue */
-  --accent: #666666;
-  --border: #EEEEEE;
+  --card: #F9F9F9;
+  --action: #000000;     /* Pure Black Action */
+  --accent: #777777;
+  --border: #DDDDDD;
 }
 
 .dark {
-  /* Dark Mode - High Contrast Black */
+  /* Dark Mode - Pure Black */
   --background: #000000;
   --foreground: #FFFFFF;
   --card: #111111;
-  --action: #3B82F6;     /* Electric Blue */
-  --accent: #A1A1A1;
+  --action: #FFFFFF;     /* Pure White Action */
+  --accent: #888888;
   --border: #222222;
 }
 

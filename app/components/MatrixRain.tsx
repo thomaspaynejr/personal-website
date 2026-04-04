@@ -47,9 +47,9 @@ export default function MatrixRain() {
         const y = drops[i] * fontSize;
 
         if (isDark) {
-          ctx.fillStyle = Math.random() > 0.98 ? '#FFFFFF' : '#444444';
+          ctx.fillStyle = Math.random() > 0.95 ? '#FFFFFF' : 'rgba(255, 255, 255, 0.3)';
         } else {
-          ctx.fillStyle = Math.random() > 0.98 ? '#000000' : '#CCCCCC';
+          ctx.fillStyle = Math.random() > 0.95 ? '#000000' : 'rgba(0, 0, 0, 0.3)';
         }
         
         ctx.fillText(text, x, y);
