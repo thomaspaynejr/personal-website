@@ -56,10 +56,10 @@ const TimelineItem = ({
             <button 
               onClick={() => handleLikeTimeline(event.id)} 
               disabled={!user}
-              className={`flex items-center gap-2 text-[10px] font-bold transition-all duration-300 group/heart uppercase tracking-widest border px-4 py-2 rounded-full ${
+              className={`flex items-center gap-2 text-[10px] font-bold transition-all duration-300 group/heart uppercase tracking-widest border-2 px-4 py-2 rounded-full ${
                 user 
-                ? 'border-action text-action hover:bg-action hover:text-white' 
-                : 'border-border-custom/30 text-accent/30 cursor-not-allowed'
+                ? 'border-action text-action hover:bg-action hover:text-white shadow-[0_0_10px_rgba(59,130,246,0.2)]' 
+                : 'border-border-custom text-accent/30 cursor-not-allowed'
               }`}
             >
               <Heart size={12} className={event.likes > 0 ? 'fill-action text-action' : ''} />
@@ -68,10 +68,10 @@ const TimelineItem = ({
             <button 
               onClick={() => setActiveCommentId(activeCommentId === event.id ? null : event.id)} 
               disabled={!user}
-              className={`flex items-center gap-2 text-[10px] font-bold transition-all duration-300 uppercase tracking-widest border px-4 py-2 rounded-full ${
+              className={`flex items-center gap-2 text-[10px] font-bold transition-all duration-300 uppercase tracking-widest border-2 px-4 py-2 rounded-full ${
                 user 
-                ? 'border-action text-action hover:bg-action hover:text-white' 
-                : 'border-border-custom/30 text-accent/30 cursor-not-allowed'
+                ? 'border-action text-action hover:bg-action hover:text-white shadow-[0_0_10px_rgba(59,130,246,0.2)]' 
+                : 'border-border-custom text-accent/30 cursor-not-allowed'
               }`}
             >
               <MessageSquare size={12} />
@@ -83,7 +83,7 @@ const TimelineItem = ({
             <div className="space-y-4 mt-4 animate-in fade-in slide-in-from-top-2">
               <div className="flex gap-2">
                 <input type="text" value={tempComment} onChange={(e) => setTempComment(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all shadow-sm" onKeyDown={(e) => e.key === 'Enter' && handlePostTimelineComment(event.id)} />
-                <button onClick={(e) => { e.preventDefault(); handlePostTimelineComment(event.id); }} className="p-2 bg-action text-white rounded-lg hover:opacity-90"><Send size={12} /></button>
+                <button onClick={(e) => { e.preventDefault(); handlePostTimelineComment(event.id); }} className="p-2 bg-action text-white rounded-lg hover:opacity-90 shadow-[0_0_10px_rgba(59,130,246,0.4)]"><Send size={12} /></button>
               </div>
             </div>
           )}
@@ -183,9 +183,9 @@ export default function TimelineDashboard({
             {user ? (
               <button 
                 onClick={() => setShowForm(!showForm)}
-                className="p-1.5 border border-action rounded-md hover:bg-action hover:text-white transition-all text-action"
+                className="p-1.5 border-2 border-action rounded-md hover:bg-action hover:text-white transition-all text-action shadow-[0_0_10px_rgba(59,130,246,0.3)]"
               >
-                <Plus size={16} />
+                {showForm ? <X size={16} /> : <Plus size={16} />}
               </button>
             ) : (
               <div className="text-[10px] text-accent font-bold uppercase tracking-widest flex items-center gap-2 italic opacity-60">
@@ -199,9 +199,22 @@ export default function TimelineDashboard({
         {showForm && user && (
           <FadeIn>
             <section className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <form onSubmit={handleAddEntry} className="space-y-4 border border-border-custom p-6 rounded-2xl bg-card/80 backdrop-blur-md">
-                <div className="text-[9px] font-bold tracking-widest px-3 py-1 rounded border border-action bg-action text-white inline-block uppercase">
-                  TIMELINE UPDATE
+              <form onSubmit={handleAddEntry} className="space-y-4 border-2 border-action p-6 rounded-2xl bg-card/80 backdrop-blur-md shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+                <div className="flex gap-4 mb-2">
+                  <button 
+                    type="button"
+                    onClick={() => setFormType('TIMELINE')}
+                    className={`text-[9px] font-bold tracking-widest px-3 py-1 rounded border-2 transition-all ${formType === 'TIMELINE' ? 'bg-action text-white border-action shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-border-custom text-accent hover:border-action'}`}
+                  >
+                    TIMELINE UPDATE
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setFormType('PROJECT')}
+                    className={`text-[9px] font-bold tracking-widest px-3 py-1 rounded border-2 transition-all ${formType === 'PROJECT' ? 'bg-action text-white border-action shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-border-custom text-accent hover:border-action'}`}
+                  >
+                    NEW PROJECT
+                  </button>
                 </div>
                 <input 
                   type="text"
@@ -218,7 +231,7 @@ export default function TimelineDashboard({
                 />
                 <div className="flex justify-end gap-3">
                   <button type="button" onClick={() => setShowForm(false)} className="text-[10px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-6 py-2 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[10px] font-bold uppercase tracking-widest border border-action">Save Entry</button>
+                  <button type="submit" className="px-6 py-2 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[10px] font-bold uppercase tracking-widest border-2 border-action shadow-[0_0_15px_rgba(59,130,246,0.4)]">Save Entry</button>
                 </div>
               </form>
             </section>

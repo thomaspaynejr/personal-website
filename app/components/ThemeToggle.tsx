@@ -1,9 +1,9 @@
 'use client';
 
 import { useTheme } from '@/app/providers';
-
 import { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -14,16 +14,36 @@ export default function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="p-2 w-10 h-10" />; 
+    return <div className="w-14 h-7" />; 
   }
 
+  const isDark = theme === 'dark';
+
   return (
-    <button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="p-2 rounded-lg bg-border-custom/20 hover:bg-border-custom/40 transition-all text-action"
-      aria-label="Toggle Dark Mode"
+    <div 
+      className="relative w-14 h-7 bg-card border border-border-custom rounded-full p-1 cursor-pointer flex items-center transition-colors duration-300"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
     >
-      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-    </button>
+      {/* Background Icons for Reference */}
+      <div className="absolute inset-0 flex justify-between px-1.5 items-center pointer-events-none opacity-40">
+        <Sun size={12} className="text-orange-500" />
+        <Moon size={12} className="text-white" />
+      </div>
+
+      {/* Sliding Knob */}
+      <motion.div 
+        className="relative z-10 w-5 h-5 bg-action rounded-full flex items-center justify-center shadow-lg"
+        animate={{ 
+          x: isDark ? 28 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      >
+        {isDark ? (
+          <Moon size={10} className="text-white fill-white" />
+        ) : (
+          <Sun size={10} className="text-orange-500 fill-orange-500" />
+        )}
+      </motion.div>
+    </div>
   );
 }

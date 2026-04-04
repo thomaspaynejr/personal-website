@@ -39,13 +39,18 @@ export default function MatrixRain() {
       // Set text style
       ctx.font = `${fontSize}px monospace`;
 
+      const isDark = document.documentElement.classList.contains('dark');
+
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
-        // Head of the stream is brighter white
-        ctx.fillStyle = Math.random() > 0.98 ? '#FFFFFF' : '#888888';
+        if (isDark) {
+          ctx.fillStyle = Math.random() > 0.98 ? '#FFFFFF' : '#444444';
+        } else {
+          ctx.fillStyle = Math.random() > 0.98 ? '#000000' : '#CCCCCC';
+        }
         
         ctx.fillText(text, x, y);
 
