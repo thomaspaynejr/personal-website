@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ThemeToggle from './ThemeToggle'; 
-import { Home, User, Laptop, Mail, LogOut, LogIn } from 'lucide-react';
+import { Home, User, Laptop, Mail, LogOut, LogIn, Activity } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { signout } from '@/app/actions/auth';
 

@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
-import Globe from './Globe';
 
 interface TimelineEvent {
   id: string;
@@ -13,14 +12,11 @@ interface TimelineEvent {
   description: string;
   icon: React.ReactNode;
   likes: number;
-  lat?: number;
-  lng?: number;
 }
 
 const TimelineItem = ({ 
   event, 
   user, 
-  onVisible, 
   timelineComments, 
   activeCommentId, 
   setActiveCommentId, 
@@ -31,7 +27,6 @@ const TimelineItem = ({
 }: { 
   event: TimelineEvent; 
   user: any; 
-  onVisible: (loc: {lat: number, lng: number} | null) => void;
   timelineComments: any;
   activeCommentId: string | null;
   setActiveCommentId: (id: string | null) => void;
@@ -40,43 +35,15 @@ const TimelineItem = ({
   setTempComment: (val: string) => void;
   handlePostTimelineComment: (id: string) => void;
 }) => {
-  const itemRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && event.lat && event.lng) {
-          onVisible({ lat: event.lat, lng: event.lng });
-        }
-      },
-      { threshold: 0.1, rootMargin: "-25% 0px -25% 0px" }
-    );
-
-    if (itemRef.current) observer.observe(itemRef.current);
-    return () => observer.disconnect();
-  }, [event, onVisible]);
-
   return (
     <StaggerItem>
-      <div 
-        ref={itemRef}
-        className="relative pl-8 group cursor-crosshair py-12 transition-all duration-500"
-        onMouseEnter={() => event.lat && event.lng && onVisible({ lat: event.lat, lng: event.lng })}
-      >
-        <div className="absolute -left-[5px] top-13 w-2 h-2 bg-background border border-white rounded-full transition-all duration-300 group-hover:scale-150 group-hover:bg-white group-hover:shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-        <div className="space-y-4 bg-background/40 backdrop-blur-sm p-6 rounded-2xl border border-transparent hover:border-border-custom hover:bg-background/60 transition-all duration-500">
+      <div className="relative pl-8 group py-8 transition-all duration-500">
+        <div className="absolute -left-[5px] top-9 w-2.5 h-2.5 bg-background border border-white rounded-full transition-all duration-300 group-hover:scale-125 group-hover:bg-white group-hover:shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+        <div className="space-y-4 bg-card/20 backdrop-blur-sm p-6 rounded-2xl border border-transparent hover:border-border-custom hover:bg-card/40 transition-all duration-500">
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-accent group-hover:text-white transition-colors duration-300">
-                {event.icon}
-                <span className="text-[10px] font-bold tabular-nums tracking-widest">{event.date}</span>
-              </div>
-              {event.lat && (
-                <div className="text-[8px] font-bold text-accent/30 tracking-widest tabular-nums flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span>LAT: {event.lat}</span>
-                  <span>LNG: {event.lng}</span>
-                </div>
-              )}
+            <div className="flex items-center gap-3 text-accent group-hover:text-white transition-colors duration-300">
+              {event.icon}
+              <span className="text-[10px] font-bold tabular-nums tracking-widest">{event.date}</span>
             </div>
             <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-white transition-colors duration-300 uppercase">{event.title}</h3>
             <p className="text-sm text-accent leading-relaxed max-w-2xl">{event.description}</p>
@@ -151,7 +118,6 @@ export default function TimelineDashboard({
   const [showForm, setShowForm] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
-  const [activeLocation, setActiveLocation] = useState<{lat: number, lng: number} | null>(null);
   
   const [timelineComments, setTimelineComments] = useState<Record<string, {text: string, date: string}[]>>(initialComments);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
@@ -201,21 +167,13 @@ export default function TimelineDashboard({
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-10 relative">
-      
-      {/* Globe as Background/Interactive Element */}
-      <div className="fixed inset-0 pointer-events-none flex items-start justify-center pt-32 opacity-30 z-0">
-        <div className="w-[600px] h-[600px]">
-          <Globe activeLocation={activeLocation} />
-        </div>
-      </div>
-
       <div className="relative z-10 space-y-20">
         {/* Header */}
         <FadeIn>
-          <section className="flex justify-between items-center bg-background/80 backdrop-blur-md p-4 rounded-xl border border-border-custom/50">
+          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-4 rounded-xl border border-border-custom/50">
             <div className="text-xs font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
               <Clock size={14} className="text-white" />
-              THE JOURNEY // {activeLocation ? `${activeLocation.lat.toFixed(2)}°N` : 'GLOBAL'}
+              THE JOURNEY // ACTIVITY FEED
             </div>
             {user ? (
               <button 
@@ -263,7 +221,7 @@ export default function TimelineDashboard({
         )}
 
         {/* Timeline Section */}
-        <section className="max-w-2xl mx-auto">
+        <section className="max-w-3xl mx-auto">
           <StaggerContainer delay={0.2}>
             <div className="relative border-l border-border-custom/50 ml-2 space-y-4">
               {timeline.map((event) => (
@@ -271,7 +229,6 @@ export default function TimelineDashboard({
                   key={event.id}
                   event={event}
                   user={user}
-                  onVisible={setActiveLocation}
                   timelineComments={timelineComments}
                   activeCommentId={activeCommentId}
                   setActiveCommentId={setActiveCommentId}

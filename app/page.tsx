@@ -11,8 +11,6 @@ const initialTimeline = [
     description: "Solving technical challenges daily while mastering Next.js, React, and modern web architecture in Gulfport.",
     icon: <Laptop size={14} />,
     likes: 0,
-    lat: 30.3674, // Gulfport, MS
-    lng: -89.0928
   },
   {
     id: '2',
@@ -21,18 +19,14 @@ const initialTimeline = [
     description: "Earned my degree from the University of Southern Mississippi, transitioning from military service to a career in technology.",
     icon: <Award size={14} />,
     likes: 0,
-    lat: 31.3271, // Hattiesburg, MS
-    lng: -89.2903
   },
   {
     id: '3',
     date: "2012 - 2016",
     title: "US ARMY // ENLISTED SERVICE",
-    description: "Served 4 years prior to college. Developed discipline and problem-solving skills in high-pressure environments.",
+    description: "Served 4 years prior to college. Developed discipline, leadership, and complex problem-solving skills in high-pressure environments.",
     icon: <Award size={14} />,
     likes: 0,
-    lat: 35.1322, // Fort Bragg / Liberty, NC
-    lng: -79.0062
   },
   {
     id: '4',
@@ -41,8 +35,6 @@ const initialTimeline = [
     description: "Completed high school and immediately entered military service, beginning the journey of personal and professional growth.",
     icon: <MapPin size={14} />,
     likes: 0,
-    lat: 30.3674, // Gulfport, MS
-    lng: -89.0928
   },
   {
     id: '5',
@@ -51,8 +43,6 @@ const initialTimeline = [
     description: "The starting point of the timeline. Born and raised with a curiosity for how things work.",
     icon: <Clock size={14} />,
     likes: 0,
-    lat: 32.4610, // Columbus, GA
-    lng: -84.9877
   }
 ];
 
