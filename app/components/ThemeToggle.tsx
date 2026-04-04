@@ -21,7 +21,7 @@ export default function ThemeToggle() {
 
   return (
     <div 
-      className="relative w-14 h-7 bg-stone-200 dark:bg-[#080808] border border-border-custom rounded-full p-1 cursor-pointer flex items-center transition-colors duration-300"
+      className="relative w-14 h-7 bg-stone-200 dark:bg-[#111111] border border-border-custom rounded-full p-1 cursor-pointer flex items-center transition-colors duration-300"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
     >
       {/* Background Icons for Reference */}
@@ -32,7 +32,10 @@ export default function ThemeToggle() {
 
       {/* Sliding Knob */}
       <motion.div 
-        className="relative z-10 w-5 h-5 rounded-full flex items-center justify-center shadow-sm bg-white dark:bg-black"
+        className="relative z-10 w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+        style={{ 
+          backgroundColor: isDark ? '#000000' : '#FFFFFF' 
+        }}
         animate={{ 
           x: isDark ? 28 : 0,
         }}

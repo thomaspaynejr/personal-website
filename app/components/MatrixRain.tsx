@@ -62,7 +62,7 @@ export default function MatrixRain() {
       }
     };
 
-    const interval = setInterval(draw, 33); // ~30fps for that technical "stutter" feel
+    const interval = setInterval(draw, 50); // Slowed down from 33ms to 50ms for a calmer feel
 
     return () => {
       clearInterval(interval);

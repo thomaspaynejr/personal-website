@@ -169,13 +169,13 @@ export default function TimelineDashboard({
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-10 relative min-h-screen">
+    <main className="max-w-6xl mx-auto px-6 py-10 relative min-h-screen">
       <MatrixRain />
       
       <div className="relative z-10 space-y-20">
         {/* Header */}
         <FadeIn>
-          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-4 rounded-xl border border-border-custom/50 shadow-sm">
+          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-6 rounded-2xl border border-border-custom/50 shadow-sm max-w-4xl mx-auto">
             <div className="text-xs font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
               <Activity size={14} className="text-action animate-pulse" />
               THE JOURNEY // ACTIVITY FEED
