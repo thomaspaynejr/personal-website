@@ -33,13 +33,13 @@ export default function MatrixRain() {
     window.addEventListener('resize', handleResize);
 
     const draw = () => {
-      // Clear the canvas with transparency to allow the theme background to show through
-      ctx.clearRect(0, 0, width, height);
-
-      // Set text style
-      ctx.font = `${fontSize}px monospace`;
-
       const isDark = document.documentElement.classList.contains('dark');
+      
+      // Clear with simple transparency
+      ctx.fillStyle = isDark ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.15)';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
@@ -47,9 +47,9 @@ export default function MatrixRain() {
         const y = drops[i] * fontSize;
 
         if (isDark) {
-          ctx.fillStyle = Math.random() > 0.95 ? '#FFFFFF' : 'rgba(255, 255, 255, 0.3)';
+          ctx.fillStyle = Math.random() > 0.95 ? '#FFFFFF' : '#333333';
         } else {
-          ctx.fillStyle = Math.random() > 0.95 ? '#000000' : 'rgba(0, 0, 0, 0.3)';
+          ctx.fillStyle = Math.random() > 0.95 ? '#000000' : '#CCCCCC';
         }
         
         ctx.fillText(text, x, y);
@@ -74,7 +74,6 @@ export default function MatrixRain() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none opacity-30 z-0"
-      style={{ filter: 'blur(0.4px)' }}
     />
   );
 }
