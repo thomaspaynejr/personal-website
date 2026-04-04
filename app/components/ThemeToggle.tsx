@@ -21,18 +21,18 @@ export default function ThemeToggle() {
 
   return (
     <div 
-      className="relative w-14 h-7 bg-card border border-border-custom rounded-full p-1 cursor-pointer flex items-center transition-colors duration-300"
+      className="relative w-14 h-7 bg-black/10 dark:bg-white/10 border border-border-custom rounded-full p-1 cursor-pointer flex items-center transition-colors duration-300"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
     >
       {/* Background Icons for Reference */}
-      <div className="absolute inset-0 flex justify-between px-1.5 items-center pointer-events-none opacity-40">
-        <Sun size={12} className="text-orange-500" />
+      <div className="absolute inset-0 flex justify-between px-1.5 items-center pointer-events-none opacity-20">
+        <Sun size={12} className="text-[#FF8C00]" />
         <Moon size={12} className="text-white" />
       </div>
 
       {/* Sliding Knob */}
       <motion.div 
-        className="relative z-10 w-5 h-5 bg-action rounded-full flex items-center justify-center shadow-lg"
+        className="relative z-10 w-5 h-5 bg-action rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,0.3)]"
         animate={{ 
           x: isDark ? 28 : 0,
         }}
@@ -41,7 +41,7 @@ export default function ThemeToggle() {
         {isDark ? (
           <Moon size={10} className="text-white fill-white" />
         ) : (
-          <Sun size={10} className="text-orange-500 fill-orange-500" />
+          <Sun size={10} className="text-[#FFA500] fill-[#FFA500]" />
         )}
       </motion.div>
     </div>
