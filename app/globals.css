@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Mode - Concrete & Slate Palette */
-  --background: #F2F2F2;
-  --foreground: #111111;
-  --card: #E6E6E6;
-  --action: #333333; /* Dark Charcoal Action */
-  --accent: #666666;
-  --border: #CCCCCC;
+  /* Light Mode - Cyber Minimalist White */
+  --background: #FFFFFF;
+  --foreground: #0F172A; /* Deep Slate */
+  --card: #F8FAFC;
+  --action: #3B82F6;     /* Electric Blue */
+  --accent: #64748B;     /* Slate Grey */
+  --border: #E2E8F0;
 }
 
 .dark {
-  /* Dark Mode - Lightened Obsidian Palette */
-  --background: #1A1A1A; /* Lightened from Pure Black */
-  --foreground: #F2F2F2; /* Stone White Text */
-  --card: #262626;       /* Lighter Charcoal Card */
-  --action: #FFFFFF;     /* Pure White Action */
-  --accent: #888888;     /* Muted Grey */
-  --border: #333333;     /* Defined Border */
+  /* Dark Mode - Cyber Minimalist Dark */
+  --background: #020617; /* Very Dark Slate */
+  --foreground: #F8FAFC; /* Off White */
+  --card: #0F172A;       /* Deep Slate Card */
+  --action: #3B82F6;     /* Electric Blue */
+  --accent: #94A3B8;     /* Bright Slate Grey */
+  --border: #1E293B;
 }
 
 

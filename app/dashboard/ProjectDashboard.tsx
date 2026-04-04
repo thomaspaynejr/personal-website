@@ -49,13 +49,13 @@ export default function ProjectDashboard({
         <FadeIn>
           <div className="flex justify-between items-center">
             <div className="text-xs font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
-              <Activity size={14} className="text-white" />
+              <Activity size={14} className="text-action animate-pulse" />
               DASHBOARD // PROJECT TRACKER
             </div>
             {user && (
               <button 
                 onClick={() => setShowForm(!showForm)}
-                className="p-1.5 border border-white rounded-md hover:bg-white hover:text-black transition-all text-white"
+                className="p-1.5 border border-action rounded-md hover:bg-action hover:text-white transition-all text-action"
               >
                 <Plus size={16} />
               </button>
@@ -66,8 +66,8 @@ export default function ProjectDashboard({
         {showForm && user && (
           <FadeIn>
             <section className="animate-in fade-in slide-in-from-top-4 duration-500 mb-8">
-              <form onSubmit={handleAddProject} className="space-y-4 border border-border-custom p-6 rounded-2xl bg-card">
-                <div className="text-[9px] font-bold tracking-widest px-3 py-1 rounded border border-white bg-white text-black inline-block uppercase">
+              <form onSubmit={handleAddProject} className="space-y-4 border border-border-custom p-6 rounded-2xl bg-card/80 backdrop-blur-md">
+                <div className="text-[9px] font-bold tracking-widest px-3 py-1 rounded border border-action bg-action text-white inline-block uppercase">
                   NEW PROJECT
                 </div>
                 <input 
@@ -75,17 +75,17 @@ export default function ProjectDashboard({
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
                   placeholder="Project Name..."
-                  className="w-full bg-card border border-border-custom rounded-lg px-4 py-2 text-sm outline-none focus:border-white transition-all text-white"
+                  className="w-full bg-background border border-border-custom rounded-lg px-4 py-2 text-sm outline-none focus:border-action transition-all text-foreground"
                 />
                 <textarea
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
                   placeholder="What are you building?"
-                  className="w-full bg-card border border-border-custom rounded-xl p-4 text-sm text-foreground outline-none focus:border-white transition-all min-h-[100px] resize-none"
+                  className="w-full bg-background border border-border-custom rounded-xl p-4 text-sm text-foreground outline-none focus:border-action transition-all min-h-[100px] resize-none"
                 />
                 <div className="flex justify-end gap-3">
                   <button type="button" onClick={() => setShowForm(false)} className="text-[10px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-6 py-2 bg-white text-black rounded-lg hover:bg-white/90 transition-all text-[10px] font-bold uppercase tracking-widest border border-white">Save Project</button>
+                  <button type="submit" className="px-6 py-2 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[10px] font-bold uppercase tracking-widest border border-action">Save Project</button>
                 </div>
               </form>
             </section>
@@ -96,21 +96,21 @@ export default function ProjectDashboard({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {projects.map((project) => (
               <StaggerItem key={project.id}>
-                <div className="p-5 border border-border-custom rounded-2xl bg-card/20 space-y-4 hover:border-white transition-colors h-full flex flex-col justify-between group">
+                <div className="p-5 border border-border-custom rounded-2xl bg-card/20 space-y-4 hover:border-action/50 transition-colors h-full flex flex-col justify-between group">
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <h4 className="text-[10px] font-bold tracking-wider leading-tight text-foreground group-hover:text-white transition-colors">{project.name}</h4>
-                      {project.status === 'COMPLETED' ? <CheckCircle2 size={12} className="text-green-500" /> : <Construction size={12} className="text-white" />}
+                      <h4 className="text-[10px] font-bold tracking-wider leading-tight text-foreground group-hover:text-action transition-colors">{project.name}</h4>
+                      {project.status === 'COMPLETED' ? <CheckCircle2 size={12} className="text-green-500" /> : <Construction size={12} className="text-action" />}
                     </div>
                     <p className="text-[10px] text-accent leading-relaxed line-clamp-3 group-hover:text-foreground transition-colors">{project.description}</p>
                   </div>
                   <div className="space-y-2 pt-4">
                     <div className="flex justify-between text-[9px] font-bold text-accent">
-                      <span className="group-hover:text-white transition-colors">PROGRESS</span>
-                      <span className="text-white">{project.progress}%</span>
+                      <span className="group-hover:text-action transition-colors">PROGRESS</span>
+                      <span className="text-foreground">{project.progress}%</span>
                     </div>
                     <div className="w-full bg-border-custom/30 h-1 rounded-full overflow-hidden">
-                      <div className="bg-white h-full transition-all duration-1000" style={{ width: `${project.progress}%` }} />
+                      <div className="bg-action h-full transition-all duration-1000" style={{ width: `${project.progress}%` }} />
                     </div>
                   </div>
                 </div>
