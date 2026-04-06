@@ -14,8 +14,8 @@ export default function MatrixRain() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Characters: Mix of numbers, symbols, and letters
-    const chars = '01ABCDEFHIJKLMNOPQRSTUVWXYZ$#@&*%'.split('');
+    // Ancient Knowledge Characters: Greek Alphabet and Technical Symbols
+    const chars = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ∞ΣΠ∫∇∆∏∑⊕⊗⊙⊚⊛⊜⊝♰♱☥☦☧☨☩☫☬☯☰☱☲☳☴☵☶☷☸'.split('');
     const fontSize = 14;
     const columns = Math.floor(width / fontSize);
     
