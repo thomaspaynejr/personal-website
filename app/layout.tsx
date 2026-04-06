@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
 import ScrollProgressBar from "./components/ScrollProgressBar";
+import MatrixRain from "./components/MatrixRain";
 
 const mono = JetBrains_Mono({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${mono.className} transition-colors duration-300 cursor-none`}>
         <Providers>
+          <MatrixRain />
           <ScrollProgressBar />
           <CustomCursor />
           <Navbar />
