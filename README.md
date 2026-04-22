@@ -8,15 +8,15 @@ An ultra-minimalist, high-contrast developer hub built with **Next.js 16**, **Su
 - **[DASHBOARD]** Live project tracker monitoring build progress with animated status indicators.
 - **[TIMELINE]** Interactive "Journey Feed" with persistent likes and threaded comments for authenticated users.
 - **[ANIMATION]** Premium staggered reveals and section transitions powered by Framer Motion.
-- **[UX]** Custom minimalist ring cursor and horizontal scroll progress bar.
+- **[UX]** Global atmospheric effects (Matrix Rain & Dynamic Lightning), custom minimalist ring cursor, and horizontal scroll progress bar.
 
 ## // TECH STACK
 
 - **Framework:** Next.js 16 (App Router)
 - **Database/Auth:** Supabase (PostgreSQL + Auth)
 - **Styling:** Tailwind CSS 4 (Grayscale Obsidian Palette)
-- **Animations:** Framer Motion
-- **Icons:** Lucide React
+- **Animations:** Framer Motion (including Mac-style Dock Magnification)
+- **Icons:** React Icons (Simple Icons) & Lucide React
 - **Typography:** JetBrains Mono
 
 ## // LOCAL SETUP
@@ -39,8 +39,9 @@ An ultra-minimalist, high-contrast developer hub built with **Next.js 16**, **Su
 
 ## // ARCHITECTURAL NOTES
 
-- **Middleware:** Uses standard `middleware.ts` for session handling.
+- **Proxy:** Uses `proxy.ts` (formerly `middleware.ts`) for session handling and request intercepting.
 - **Components:** Hybrid architecture with Server Components for data fetching and Client Components for interactivity.
+- **Tech Stack Icons:** `TechIcon` component provides an interactive Mac-inspired dock effect using `framer-motion`.
 - **Design:** Strict monochromatic ethos focusing on #000000 (Black), #1A1A1A (Charcoal), and #DEDEDE (Stone).
 
 ---

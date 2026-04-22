@@ -1,3 +1,5 @@
+import TechIcon from '../components/TechIcon';
+
 interface Project {
   title: string;
   description: string;
@@ -24,7 +26,7 @@ const projects: Project[] = [
   {
     title: "Support Ticket Dashboard",
     description: "A concept for a streamlined desktop support ticketing system to manage user requests and technical issues.",
-    tech: ["React", "Firebase", "CSS Modules"],
+    tech: ["React", "Firebase"],
     link: "#",
     github: "#"
   }
@@ -32,30 +34,28 @@ const projects: Project[] = [
 
 export default function Portfolio() {
   return (
-    <main className="max-w-6xl mx-auto px-6 py-16">
-      <h1 className="text-4xl font-bold mb-4">Portfolio</h1>
-      <p className="text-accent mb-12 text-lg max-w-2xl">
-        A selection of projects where I apply my technical skills to solve problems and explore new technologies.
-      </p>
+    <main className="max-w-5xl mx-auto px-6 py-10 space-y-10">
+      <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm max-w-3xl">
+        <h1 className="text-2xl font-bold mb-2">Portfolio</h1>
+        <p className="text-accent text-sm max-w-2xl leading-relaxed">
+          A selection of projects where I apply my technical skills to solve problems and explore new technologies.
+        </p>
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project, index) => (
-          <div key={index} className="group flex flex-col border border-border-custom rounded-2xl p-6 hover:-translate-y-2 hover:border-action transition-all duration-300">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-action transition">{project.title}</h3>
-            <p className="text-accent mb-6 text-sm flex-grow leading-relaxed">
+          <div key={index} className="group flex flex-col border border-border-custom/30 rounded-2xl p-6 bg-card/40 backdrop-blur-md hover:-translate-y-1 hover:border-action transition-all duration-300 shadow-sm">
+            <h3 className="text-lg font-bold mb-3 group-hover:text-action transition uppercase tracking-tight">{project.title}</h3>
+            <p className="text-accent mb-6 text-xs flex-grow leading-relaxed">
               {project.description}
             </p>
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {project.tech.map((t) => (
-                  <span key={t} className="px-2.5 py-0.5 bg-border-custom/30 text-[10px] font-bold uppercase tracking-wider rounded text-accent">
-                    {t}
-                  </span>
-                ))}
+            <div className="space-y-5">
+              <div className="flex flex-wrap items-center -ml-2">
+                <TechIcon items={project.tech} />
               </div>
-              <div className="flex gap-6 pt-2 border-t border-border-custom">
-                <a href={project.link} className="text-sm font-bold text-action hover:underline transition-colors">Demo</a>
-                <a href={project.github} className="text-sm font-bold text-accent hover:text-foreground transition-colors">Source</a>
+              <div className="flex gap-6 pt-4 border-t border-border-custom/30">
+                <a href={project.link} className="text-[10px] font-bold text-action hover:underline transition-all tracking-widest uppercase">Demo _</a>
+                <a href={project.github} className="text-[10px] font-bold text-accent hover:text-foreground transition-all tracking-widest uppercase">Source _</a>
               </div>
             </div>
           </div>

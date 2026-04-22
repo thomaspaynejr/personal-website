@@ -27,10 +27,6 @@ export default async function Navbar() {
           <Laptop size={14} className="group-hover:text-action transition-colors" />
           <span>PORTFOLIO</span>
         </Link>
-        <Link href="/contact" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group">
-          <Mail size={14} className="group-hover:text-action transition-colors" />
-          <span>CONTACT</span>
-        </Link>
 
         {user ? (
           <form action={signout}>
