@@ -11,6 +11,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[BUILD]** The `npm run dev` script runs in the background (`&`). If the process persists after closing the terminal, find and kill the PID (usually port 3000/3001) using `lsof -i :3000`.
 - **[TURBOPACK]** Avoid experimental CSS features like `animation-timeline: scroll()`. They can cause Turbopack to panic (crash). Use `framer-motion` (`useScroll`) for scroll-linked animations instead.
 - **[GIT]** After every successful change and verification, automatically stage, commit, and push the updates to the GitHub repository. Use concise, descriptive commit messages following the Conventional Commits standard.
+- **[SUPABASE]** Use `.env.local` for local development. Ensure `NEXT_PUBLIC_SUPABASE_URL` follows the `https://[ref].supabase.co` format.
 
 ## // ARCHITECTURAL KNOWLEDGE
 

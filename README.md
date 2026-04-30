@@ -28,10 +28,10 @@ An ultra-minimalist, high-contrast developer hub built with **Next.js 16**, **Su
    ```
 
 2. **Environment Configuration:**
-   Create a `.env.local` file with your Supabase credentials:
+   Create a `.env.local` file with your Supabase credentials (found in Settings > API):
    ```bash
-   NEXT_PUBLIC_SUPABASE_URL=your_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    ```
 
 3. **Database Initialization:**
