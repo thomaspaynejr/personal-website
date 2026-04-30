@@ -9,6 +9,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
   - Reference: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`.
 - **[TYPESCRIPT]** Native HTML elements (like `<label>`) are strictly typed. Do not pass custom non-standard attributes (e.g., `underline`) directly to them; use `className` with Tailwind instead.
 - **[BUILD]** The `npm run dev` script runs in the background (`&`). If the process persists after closing the terminal, find and kill the PID (usually port 3000/3001) using `lsof -i :3000`.
+- **[TURBOPACK]** Avoid experimental CSS features like `animation-timeline: scroll()`. They can cause Turbopack to panic (crash). Use `framer-motion` (`useScroll`) for scroll-linked animations instead.
 
 ## // ARCHITECTURAL KNOWLEDGE
 

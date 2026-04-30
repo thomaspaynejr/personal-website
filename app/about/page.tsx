@@ -39,7 +39,7 @@ export default function About() {
         <h1 className="text-2xl font-bold">About Me</h1>
         <div className="mt-4 md:mt-0 flex gap-4">
           {socials.map((social) => (
-            <a key={social.name} href={social.href} className="p-1.5 border border-border-custom rounded-lg hover:text-action hover:border-action transition-all duration-300 bg-background/50" aria-label={social.name}>
+            <a key={social.name} href={social.href} className="p-1.5 border border-border-custom rounded-lg text-foreground hover:text-action hover:border-action transition-all duration-300 bg-card/50" aria-label={social.name}>
               {social.icon}
             </a>
           ))}

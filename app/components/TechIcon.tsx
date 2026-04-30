@@ -24,7 +24,7 @@ interface IconProps {
 }
 
 const iconMap: Record<string, { icon: React.ElementType; color: string }> = {
-  'Next.js': { icon: SiNextdotjs, color: '#ffffff' },
+  'Next.js': { icon: SiNextdotjs, color: 'var(--foreground)' },
   'React': { icon: SiReact, color: '#61DAFB' },
   'TypeScript': { icon: SiTypescript, color: '#3178C6' },
   'Tailwind CSS': { icon: SiTailwindcss, color: '#06B6D4' },
@@ -65,10 +65,10 @@ function TechIconItem({ name, mouseX }: IconProps) {
     <motion.div
       ref={ref}
       style={{ width }}
-      className="group relative aspect-square rounded-md bg-card border border-border-custom/50 flex items-center justify-center transition-colors duration-300 hover:border-action/50 shadow-sm"
+      className="group relative aspect-square rounded-md bg-card dark:bg-card border border-border-custom hover:border-action transition-colors duration-300 flex items-center justify-center shadow-sm"
     >
       <Icon 
-        className="w-1/2 h-1/2 opacity-90 transition-opacity group-hover:opacity-100"
+        className="w-1/2 h-1/2 opacity-100 transition-opacity"
         style={{ color: iconData.color }}
       />
       
