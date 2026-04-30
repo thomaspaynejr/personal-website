@@ -42,6 +42,36 @@ export async function signup(formData: FormData) {
   redirect('/')
 }
 
+export async function updateProfile(formData: FormData) {
+  const supabase = await createClient()
+  if (!supabase) return redirect('/profile?error=' + encodeURIComponent('Supabase not configured'))
+
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const username = formData.get('username') as string
+
+  const updateData: any = {
+    data: { username }
+  }
+
+  if (email && email.trim() !== '') {
+    updateData.email = email
+  }
+
+  if (password && password.trim() !== '') {
+    updateData.password = password
+  }
+
+  const { error } = await supabase.auth.updateUser(updateData)
+
+  if (error) {
+    return redirect('/profile?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/profile')
+  return redirect('/profile?success=' + encodeURIComponent('Profile updated successfully. Please check your email for confirmation if you changed it.'))
+}
+
 export async function signout() {
   const supabase = await createClient()
   if (supabase) {

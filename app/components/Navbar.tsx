@@ -28,6 +28,13 @@ export default async function Navbar() {
           <span>PORTFOLIO</span>
         </Link>
 
+        {user && (
+          <Link href="/profile" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group uppercase tracking-widest">
+            <User size={14} className="group-hover:text-action transition-colors" />
+            <span>PROFILE</span>
+          </Link>
+        )}
+
         {user ? (
           <form action={signout}>
             <button className="flex items-center gap-2 text-xs font-medium hover:text-red-500 transition-all duration-300 hover:-translate-y-0.5 group uppercase tracking-widest">
