@@ -62,7 +62,20 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_blocked')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.is_blocked) {
+      await supabase.auth.signOut()
+      return NextResponse.redirect(new URL('/login?error=Your account has been blocked.', request.url))
+    }
+  }
 
   return response
 }

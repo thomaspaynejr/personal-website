@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ThemeToggle from './ThemeToggle'; 
-import { Home, User, Laptop, Mail, LogOut, LogIn, Activity } from 'lucide-react';
+import { Home, User, Laptop, Mail, LogOut, LogIn, Activity, Shield } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { signout } from '@/app/actions/auth';
 
@@ -32,6 +32,13 @@ export default async function Navbar() {
           <Link href="/profile" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group uppercase tracking-widest">
             <User size={14} className="group-hover:text-action transition-colors" />
             <span>PROFILE</span>
+          </Link>
+        )}
+
+        {user?.user_metadata?.role === 'admin' && (
+          <Link href="/admin" className="flex items-center gap-2 text-xs font-medium hover:text-foreground transition-all duration-300 hover:-translate-y-0.5 group uppercase tracking-widest">
+            <Shield size={14} className="group-hover:text-action transition-colors" />
+            <span>ADMIN</span>
           </Link>
         )}
 
