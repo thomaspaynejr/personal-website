@@ -137,3 +137,25 @@ CREATE POLICY "User Update/Delete: timeline_comments" ON timeline_comments FOR A
 -- 20. Policies: contact_messages
 CREATE POLICY "Public Insert: contact_messages" ON contact_messages FOR INSERT WITH CHECK (true);
 CREATE POLICY "Admin Read: contact_messages" ON contact_messages FOR SELECT USING (is_admin());
+
+-- 21. About Me Content Table
+CREATE TABLE about_content (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  bio_text TEXT,
+  profile_image_url TEXT,
+  social_links JSONB DEFAULT '[]', -- [{name, href, icon_type}]
+  journey_text TEXT,
+  experience_json JSONB DEFAULT '[]', -- [{title, period, description}]
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- Initialize with a default row
+-- Note: Use a fixed UUID or check existence to prevent duplicates
+INSERT INTO about_content (id, bio_text, journey_text) 
+VALUES ('00000000-0000-0000-0000-000000000001', 'My path into technology...', 'My journey started...')
+ON CONFLICT (id) DO NOTHING;
+
+-- RLS
+ALTER TABLE about_content ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read: about_content" ON about_content FOR SELECT USING (true);
+CREATE POLICY "Admin All: about_content" ON about_content FOR ALL USING (is_admin());

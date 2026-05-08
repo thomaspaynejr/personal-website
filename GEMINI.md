@@ -35,6 +35,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **`timeline_events`**: The Journey feed. Fields: `date`, `title`, `description`, `icon_type`.
 - **`timeline_likes/comments`**: Engagement metrics linked to timeline events.
 - **`contact_messages`**: Secure storage for contact form submissions.
+- **`about_content`**: Dynamic text and image data for the About Me page.
 
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.

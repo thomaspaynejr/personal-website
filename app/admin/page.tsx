@@ -17,6 +17,7 @@ export default async function AdminDashboard() {
   const { data: profiles } = await supabase!.from('profiles').select('*').order('username', { ascending: true });
   const { data: portfolio } = await supabase!.from('portfolio_projects').select('*').order('display_order', { ascending: true });
   const { data: tracker } = await supabase!.from('tracker_projects').select('*').order('created_at', { ascending: false });
+  const { data: about } = await supabase!.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single();
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
@@ -35,6 +36,7 @@ export default async function AdminDashboard() {
         initialProfiles={profiles || []}
         initialPortfolio={portfolio || []}
         initialTracker={tracker || []}
+        initialAbout={about}
       />
     </main>
   );

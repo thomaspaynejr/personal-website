@@ -1,21 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github } from 'lucide-react';
-import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus } from '@/app/actions/admin';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera } from 'lucide-react';
+import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent } from '@/app/actions/admin';
 
 export default function AdminClient({ 
   initialEvents, 
   initialProfiles,
   initialPortfolio,
-  initialTracker 
+  initialTracker,
+  initialAbout
 }: { 
   initialEvents: any[], 
   initialProfiles: any[],
   initialPortfolio: any[],
-  initialTracker: any[]
+  initialTracker: any[],
+  initialAbout: any
 }) {
-  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS'>('PORTFOLIO');
+  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT'>('PORTFOLIO');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -23,6 +25,7 @@ export default function AdminClient({
     { id: 'PORTFOLIO', label: 'Portfolio', icon: <Briefcase size={14} /> },
     { id: 'TRACKER', label: 'Project Tracker', icon: <Activity size={14} /> },
     { id: 'TIMELINE', label: 'Timeline', icon: <Clock size={14} /> },
+    { id: 'ABOUT', label: 'About Me', icon: <Info size={14} /> },
     { id: 'USERS', label: 'User Access', icon: <Shield size={14} /> },
   ];
 
@@ -61,11 +64,81 @@ export default function AdminClient({
         {activeTab === 'TIMELINE' && (
           <TimelineManager events={initialEvents} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
         )}
+        {activeTab === 'ABOUT' && (
+          <AboutManager about={initialAbout} />
+        )}
         {activeTab === 'USERS' && (
           <UserManager profiles={initialProfiles} />
         )}
       </div>
     </div>
+  );
+}
+
+function AboutManager({ about }: { about: any }) {
+  const [formData, setFormData] = useState(about || {
+    bio_text: '',
+    journey_text: '',
+    profile_image_url: '',
+    social_links: [],
+    experience_json: []
+  });
+
+  return (
+    <section className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center gap-2 px-2">
+        <Info size={14} className="text-action" />
+        <h2 className="text-xs font-bold uppercase tracking-widest">Manage About Me Content</h2>
+      </div>
+
+      <form action={async (fd) => {
+        fd.append('social_links', JSON.stringify(formData.social_links || []));
+        fd.append('experience_json', JSON.stringify(formData.experience_json || []));
+        const res = await updateAboutContent(fd);
+        if (res.success) alert('About content updated!');
+      }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Profile Image URL</label>
+            <div className="relative">
+              <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
+              <input 
+                name="profile_image_url" 
+                defaultValue={formData.profile_image_url} 
+                className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
+                placeholder="https://..." 
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Biography (Short Bio)</label>
+            <textarea 
+              name="bio_text" 
+              defaultValue={formData.bio_text} 
+              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[100px] resize-none" 
+              placeholder="Who are you?" 
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">The Journey (Story)</label>
+            <textarea 
+              name="journey_text" 
+              defaultValue={formData.journey_text} 
+              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[150px] resize-none" 
+              placeholder="Tell your story..." 
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-border-custom/30">
+          <button type="submit" className="px-8 py-3 bg-action text-background rounded-lg text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all border-2 border-action">
+            Save About Changes _
+          </button>
+        </div>
+      </form>
+    </section>
   );
 }
 
