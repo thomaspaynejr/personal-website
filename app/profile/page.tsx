@@ -7,8 +7,11 @@ import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 export default async function ProfilePage({
   searchParams,
 }: {
-  searchParams: { error?: string; success?: string };
+  searchParams: Promise<{ error?: string; success?: string }>;
 }) {
+  const params = await searchParams;
+  const error = params.error;
+  const success = params.success;
   const supabase = await createClient();
   const userResponse = supabase ? await supabase.auth.getUser() : { data: { user: null } };
   const user = userResponse.data.user;
@@ -76,17 +79,17 @@ export default async function ProfilePage({
             </div>
           </div>
 
-          {searchParams.error && (
+          {error && (
             <div className="flex items-center gap-2 text-[9px] text-red-500 font-bold uppercase tracking-widest bg-red-500/10 p-2 rounded border border-red-500/20">
               <AlertCircle size={10} />
-              <span>Error: {searchParams.error}</span>
+              <span>Error: {error}</span>
             </div>
           )}
 
-          {searchParams.success && (
+          {success && (
             <div className="flex items-center gap-2 text-[9px] text-green-500 font-bold uppercase tracking-widest bg-green-500/10 p-2 rounded border border-green-500/20">
               <CheckCircle size={10} />
-              <span>{searchParams.success}</span>
+              <span>{success}</span>
             </div>
           )}
 

@@ -1,11 +1,12 @@
 import { login } from '@/app/actions/auth'
 import Link from 'next/link'
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string }
+  searchParams: Promise<{ error?: string }>
 }) {
+  const { error } = await searchParams
   return (
     <main className="max-w-md mx-auto px-6 py-20 flex flex-col justify-center min-h-[80vh]">
       <div className="space-y-6 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-xl">
