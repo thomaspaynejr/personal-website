@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
