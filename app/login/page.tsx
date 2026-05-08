@@ -10,7 +10,7 @@ export default function LoginPage({
     <main className="max-w-md mx-auto px-6 py-20 flex flex-col justify-center min-h-[80vh]">
       <div className="space-y-6 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-xl">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-widest uppercase">Login</h1>
+          <h1 className="text-2xl font-bold tracking-widest uppercase">Login (Join)</h1>
           <p className="text-[10px] text-accent font-bold tracking-[0.2em] uppercase opacity-70">Enter credentials to continue</p>
         </div>
 
