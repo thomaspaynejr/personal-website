@@ -1,13 +1,13 @@
 import { ArrowUpRight } from 'lucide-react';
-import { SiGithub, SiInstagram, SiLinkedin, SiX } from 'react-icons/si';
+import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
 
 const socialIconMap: Record<string, React.ReactNode> = {
-  linkedin: <SiLinkedin size={16} />,
-  instagram: <SiInstagram size={16} />,
-  github: <SiGithub size={16} />,
-  x: <SiX size={16} />
+  linkedin: <FaLinkedin size={16} />,
+  instagram: <FaInstagram size={16} />,
+  github: <FaGithub size={16} />,
+  x: <FaXTwitter size={16} />
 };
 
 export default async function About() {
