@@ -37,3 +37,103 @@ CREATE TRIGGER on_auth_user_created
 -- 6. HOW TO SET AN ADMIN:
 -- Run this in your Supabase SQL Editor for your specific user ID:
 -- UPDATE auth.users SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}' WHERE id = 'YOUR-USER-ID';
+
+-- 7. Portfolio Projects Table
+CREATE TABLE portfolio_projects (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  tech TEXT[] DEFAULT '{}',
+  demo_url TEXT,
+  source_url TEXT,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- 8. Tracker Projects Table
+CREATE TABLE tracker_projects (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  status TEXT CHECK (status IN ('ACTIVE', 'COMPLETED', 'RESEARCHING')) DEFAULT 'ACTIVE',
+  progress INTEGER DEFAULT 0,
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- 9. Timeline Events Table
+CREATE TABLE timeline_events (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  date TEXT NOT NULL, -- Format: 'MMM YYYY'
+  title TEXT NOT NULL,
+  description TEXT,
+  icon_type TEXT DEFAULT 'clock',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- 10. Timeline Likes Table
+CREATE TABLE timeline_likes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id UUID REFERENCES timeline_events(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  UNIQUE(event_id, user_id)
+);
+
+-- 11. Timeline Comments Table
+CREATE TABLE timeline_comments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id UUID REFERENCES timeline_events(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- 12. Contact Messages Table
+CREATE TABLE contact_messages (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+-- 13. Security: Row Level Security (RLS)
+ALTER TABLE portfolio_projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tracker_projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE timeline_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE timeline_likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE timeline_comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- 14. Helper Function: Is Admin
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 15. Policies: portfolio_projects
+CREATE POLICY "Public Read: portfolio_projects" ON portfolio_projects FOR SELECT USING (true);
+CREATE POLICY "Admin All: portfolio_projects" ON portfolio_projects FOR ALL USING (is_admin());
+
+-- 16. Policies: tracker_projects
+CREATE POLICY "Public Read: tracker_projects" ON tracker_projects FOR SELECT USING (true);
+CREATE POLICY "Admin All: tracker_projects" ON tracker_projects FOR ALL USING (is_admin());
+
+-- 17. Policies: timeline_events
+CREATE POLICY "Public Read: timeline_events" ON timeline_events FOR SELECT USING (true);
+CREATE POLICY "Admin All: timeline_events" ON timeline_events FOR ALL USING (is_admin());
+
+-- 18. Policies: timeline_likes
+CREATE POLICY "Public Read: timeline_likes" ON timeline_likes FOR SELECT USING (true);
+CREATE POLICY "Authenticated Insert: timeline_likes" ON timeline_likes FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "User Delete: timeline_likes" ON timeline_likes FOR DELETE USING (auth.uid() = user_id);
+
+-- 19. Policies: timeline_comments
+CREATE POLICY "Public Read: timeline_comments" ON timeline_comments FOR SELECT USING (true);
+CREATE POLICY "Authenticated Insert: timeline_comments" ON timeline_comments FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "User Update/Delete: timeline_comments" ON timeline_comments FOR ALL USING (auth.uid() = user_id);
+
+-- 20. Policies: contact_messages
+CREATE POLICY "Public Insert: contact_messages" ON contact_messages FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin Read: contact_messages" ON contact_messages FOR SELECT USING (is_admin());

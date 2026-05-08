@@ -27,5 +27,18 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **Auth:** Supabase Auth via `@supabase/ssr`.
 - **Docs:** Internal Next.js docs in `node_modules/next/dist/docs/`.
 
+## // DATABASE SCHEMA
+
+- **`profiles`**: User metadata (username, block status). Extended from `auth.users`.
+- **`portfolio_projects`**: Public projects. Fields: `title`, `description`, `tech` (array), `demo_url`, `source_url`.
+- **`tracker_projects`**: Internal/Active tracking. Fields: `name`, `status` (Enum), `progress`, `description`.
+- **`timeline_events`**: The Journey feed. Fields: `date`, `title`, `description`, `icon_type`.
+- **`timeline_likes/comments`**: Engagement metrics linked to timeline events.
+- **`contact_messages`**: Secure storage for contact form submissions.
+
+### Security Model
+- **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.
+- **RLS:** Public read-only for content; Admin full access; Authenticated engagement (likes/comments).
+
 ---
 *Maintained by Gemini for Thomas Payne.*
