@@ -27,7 +27,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **Auth:** Supabase Auth via `@supabase/ssr`.
 - **Docs:** Internal Next.js docs in `node_modules/next/dist/docs/`.
 
-## // DATABASE SCHEMA (DEPLOYED)
+## // DATABASE SCHEMA (DEPLOYED & VERIFIED)
 
 - **`profiles`**: User metadata (username, block status). Extended from `auth.users`.
 - **`portfolio_projects`**: Public projects. Fields: `title`, `description`, `tech` (array), `demo_url`, `source_url`.
@@ -35,18 +35,19 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **`timeline_events`**: The Journey feed. Fields: `date`, `title`, `description`, `icon_type`.
 - **`timeline_likes/comments`**: Engagement metrics linked to timeline events.
 - **`contact_messages`**: Secure storage for contact form submissions.
-- **`about_content`**: Dynamic text and image data for the About Me page.
+- **`about_content`**: Dynamic text and Hero image data for the About Me page.
 
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.
 - **RLS:** Public read-only for content; Admin full access; Authenticated engagement (likes/comments).
-- **Status:** Schema applied and Auth verified on May 8, 2026.
+- **Enforcement:** All administrative server actions in `app/actions/admin.ts` call `checkAdmin()`.
 
 ## // LESSONS LEARNED & HICCUPS
 
-- **[NEXTJS 16]**: `searchParams` and `params` are now Promises. Must be `await`-ed in Server Components.
-- **[SUPABASE URL]**: `NEXT_PUBLIC_SUPABASE_URL` must be the base URL only (e.g., `https://[id].supabase.co`). Appending `/rest/v1/` will break Auth (404).
-- **[PORT CONFLICTS]**: Ghost processes on port 3000 are common with background dev scripts. Use `lsof -i :3000` to find and kill.
+- **[NEXTJS 16]**: `searchParams` and `params` are now Promises. Must be `await`-ed in Server Components (e.g., Login/Signup/Profile pages).
+- **[SUPABASE URL]**: `NEXT_PUBLIC_SUPABASE_URL` must be the base URL only. Appending `/rest/v1/` causes Auth 404 errors.
+- **[ICONS]**: `react-icons/si` can have inconsistent naming or missing exports (e.g., `SiLinkedin`). Preferred fallback is `react-icons/fa6` for social brands.
+- **[PORT CONFLICTS]**: Resolved by automating port 3000 cleanup in `package.json` dev script: `(lsof -t -i:3000 | xargs kill -9 || true) && next dev`.
 
 ---
 *Maintained by Gemini for Thomas Payne.*
