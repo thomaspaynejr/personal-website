@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity } from 'lucide-react';
+import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
+import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';
 
 interface TimelineEvent {
   id: string;
@@ -12,6 +12,7 @@ interface TimelineEvent {
   description: string;
   icon: React.ReactNode;
   likes: number;
+  commentsCount?: number;
 }
 
 const TimelineItem = ({ 
@@ -23,7 +24,9 @@ const TimelineItem = ({
   handleLikeTimeline, 
   tempComment, 
   setTempComment, 
-  handlePostTimelineComment 
+  handlePostTimelineComment,
+  isAdmin,
+  setEditingEvent
 }: { 
   event: TimelineEvent; 
   user: any; 
@@ -34,6 +37,8 @@ const TimelineItem = ({
   tempComment: string;
   setTempComment: (val: string) => void;
   handlePostTimelineComment: (id: string) => void;
+  isAdmin: boolean;
+  setEditingEvent: (e: any) => void;
 }) => {
   return (
     <StaggerItem>
@@ -46,6 +51,12 @@ const TimelineItem = ({
                 {event.icon}
                 <span className="text-[9px] font-bold tabular-nums tracking-widest">{event.date}</span>
               </div>
+              {isAdmin && (
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => setEditingEvent(event)} className="p-1 text-accent hover:text-action transition-colors"><Edit size={12} /></button>
+                  <button onClick={() => { if(confirm('Delete event?')) deleteTimelineEvent(event.id); }} className="p-1 text-accent hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
+                </div>
+              )}
             </div>
             <h3 className="text-lg font-bold tracking-tight text-foreground group-hover:text-action transition-colors duration-300 uppercase">{event.title}</h3>
             <p className="text-xs text-accent leading-relaxed max-w-2xl">{event.description}</p>
@@ -74,7 +85,7 @@ const TimelineItem = ({
               }`}
             >
               <MessageSquare size={10} />
-              <span>{timelineComments[event.id]?.length || 0} COMMENTS</span>
+              <span>{event.commentsCount || timelineComments[event.id]?.length || 0} COMMENTS</span>
             </button>
           </div>
 
@@ -116,10 +127,13 @@ export default function TimelineDashboard({
   const [formType, setFormType] = useState<'TIMELINE' | 'PROJECT'>('TIMELINE');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
+  const [editingEvent, setEditingEvent] = useState<any>(null);
   
   const [timelineComments, setTimelineComments] = useState<Record<string, {text: string, date: string}[]>>(initialComments);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
+
+  const isAdmin = user?.user_metadata?.role === 'admin';
 
   useEffect(() => {
     setTimeline(initialTimeline);
@@ -127,22 +141,21 @@ export default function TimelineDashboard({
 
   const handleAddEntry = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-    if (!newPostContent.trim() || !newPostTitle.trim()) return;
+    if (!isAdmin) return;
     
-    const newEvent: TimelineEvent = {
-      id: Date.now().toString(),
-      date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase(),
-      title: newPostTitle.toUpperCase(),
-      description: newPostContent,
-      icon: <Clock size={14} />,
-      likes: 0
-    };
-    setTimeline([newEvent, ...timeline]);
-    
-    setNewPostContent('');
-    setNewPostTitle('');
-    setShowForm(false);
+    const formData = new FormData();
+    if (editingEvent) formData.append('id', editingEvent.id);
+    formData.append('title', newPostTitle);
+    formData.append('description', newPostContent);
+    formData.append('date', editingEvent?.date || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase());
+
+    const res = await upsertTimelineEvent(formData);
+    if (res.success) {
+      setNewPostContent('');
+      setNewPostTitle('');
+      setShowForm(false);
+      setEditingEvent(null);
+    }
   };
 
   const handleLikeTimeline = (id: string) => {
@@ -167,6 +180,14 @@ export default function TimelineDashboard({
     setActiveCommentId(null);
   };
 
+  useEffect(() => {
+    if (editingEvent) {
+      setNewPostTitle(editingEvent.title);
+      setNewPostContent(editingEvent.description);
+      setShowForm(true);
+    }
+  }, [editingEvent]);
+
   return (
     <main className="max-w-5xl mx-auto px-6 py-8 relative">
       <div className="relative space-y-12">
@@ -177,9 +198,9 @@ export default function TimelineDashboard({
               <Activity size={12} className="text-action animate-pulse" />
               THE JOURNEY // ACTIVITY FEED
             </div>
-            {user ? (
+            {isAdmin ? (
               <button 
-                onClick={() => setShowForm(!showForm)}
+                onClick={() => { setShowForm(!showForm); if(showForm) setEditingEvent(null); }}
                 className="p-1 border-2 border-action rounded-md hover:bg-action hover:text-background transition-all text-action shadow-sm"
               >
                 {showForm ? <X size={14} /> : <Plus size={14} />}
@@ -193,25 +214,14 @@ export default function TimelineDashboard({
         </FadeIn>
 
         {/* Form */}
-        {showForm && user && (
+        {showForm && isAdmin && (
           <FadeIn>
             <section className="animate-in fade-in slide-in-from-top-4 duration-500 max-w-3xl mx-auto">
               <form onSubmit={handleAddEntry} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
                 <div className="flex gap-3 mb-1">
-                  <button 
-                    type="button"
-                    onClick={() => setFormType('TIMELINE')}
-                    className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border transition-all ${formType === 'TIMELINE' ? 'bg-action text-background border-action' : 'border-border-custom text-accent hover:border-action'}`}
-                  >
-                    TIMELINE UPDATE
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setFormType('PROJECT')}
-                    className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border transition-all ${formType === 'PROJECT' ? 'bg-action text-background border-action' : 'border-border-custom text-accent hover:border-action'}`}
-                  >
-                    NEW PROJECT
-                  </button>
+                  <div className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border transition-all bg-action text-background border-action uppercase`}>
+                    {editingEvent ? 'EDITING EVENT' : 'NEW JOURNEY EVENT'}
+                  </div>
                 </div>
                 <input 
                   type="text"
@@ -227,8 +237,10 @@ export default function TimelineDashboard({
                   className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
                 />
                 <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => setShowForm(false)} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-4 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">Save Entry</button>
+                  <button type="button" onClick={() => { setShowForm(false); setEditingEvent(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
+                  <button type="submit" className="px-4 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
+                    {editingEvent ? 'Update Event' : 'Save Entry'}
+                  </button>
                 </div>
               </form>
             </section>
@@ -251,8 +263,15 @@ export default function TimelineDashboard({
                   tempComment={tempComment}
                   setTempComment={setTempComment}
                   handlePostTimelineComment={handlePostTimelineComment}
+                  isAdmin={isAdmin}
+                  setEditingEvent={setEditingEvent}
                 />
               ))}
+              {!timeline.length && (
+                <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">
+                  The journey hasn't started yet.
+                </p>
+              )}
             </div>
           </StaggerContainer>
         </section>

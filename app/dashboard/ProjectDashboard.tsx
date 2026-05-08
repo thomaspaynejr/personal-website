@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, Activity, CheckCircle2, Construction, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Activity, CheckCircle2, Construction, X, Edit, Trash2 } from 'lucide-react';
 import { StaggerContainer, StaggerItem, FadeIn } from '../components/Animations';
+import { upsertTrackerProject, deleteTrackerProject } from '@/app/actions/admin';
 
 interface Project {
   id: string;
@@ -23,24 +24,46 @@ export default function ProjectDashboard({
   const [showForm, setShowForm] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDescription, setNewProjectDescription] = useState('');
+  const [newProjectStatus, setNewProjectStatus] = useState<'ACTIVE' | 'COMPLETED' | 'RESEARCHING'>('ACTIVE');
+  const [newProjectProgress, setNewProjectProgress] = useState(0);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const isAdmin = user?.user_metadata?.role === 'admin';
+
+  useEffect(() => {
+    setProjects(initialProjects);
+  }, [initialProjects]);
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!isAdmin) return;
     if (!newProjectName.trim() || !newProjectDescription.trim()) return;
     
-    const newProject: Project = {
-      id: Date.now().toString(),
-      name: newProjectName.toUpperCase(),
-      status: 'ACTIVE',
-      progress: 10,
-      description: newProjectDescription
-    };
-    setProjects([newProject, ...projects]);
-    
-    setNewProjectName('');
-    setNewProjectDescription('');
-    setShowForm(false);
+    const formData = new FormData();
+    if (editingId) formData.append('id', editingId);
+    formData.append('name', newProjectName);
+    formData.append('description', newProjectDescription);
+    formData.append('status', newProjectStatus);
+    formData.append('progress', newProjectProgress.toString());
+
+    const res = await upsertTrackerProject(formData);
+    if (res.success) {
+      setNewProjectName('');
+      setNewProjectDescription('');
+      setNewProjectStatus('ACTIVE');
+      setNewProjectProgress(0);
+      setShowForm(false);
+      setEditingId(null);
+    }
+  };
+
+  const handleEdit = (project: Project) => {
+    setEditingId(project.id);
+    setNewProjectName(project.name);
+    setNewProjectDescription(project.description);
+    setNewProjectStatus(project.status);
+    setNewProjectProgress(project.progress);
+    setShowForm(true);
   };
 
   return (
@@ -52,9 +75,9 @@ export default function ProjectDashboard({
               <Activity size={12} className="text-action animate-pulse" />
               DASHBOARD // PROJECT TRACKER
             </div>
-            {user && (
+            {isAdmin && (
               <button 
-                onClick={() => setShowForm(!showForm)}
+                onClick={() => { setShowForm(!showForm); if(showForm) setEditingId(null); }}
                 className="p-1 border-2 border-action rounded-md hover:bg-action hover:text-white transition-all text-action shadow-sm"
               >
                 {showForm ? <X size={14} /> : <Plus size={14} />}
@@ -63,20 +86,43 @@ export default function ProjectDashboard({
           </div>
         </FadeIn>
 
-        {showForm && user && (
+        {showForm && isAdmin && (
           <FadeIn>
             <section className="animate-in fade-in slide-in-from-top-4 duration-500 mb-6 max-w-3xl mx-auto">
               <form onSubmit={handleAddProject} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
                 <div className="text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border border-action bg-action text-white inline-block uppercase">
-                  NEW PROJECT
+                  {editingId ? 'EDIT PROJECT' : 'NEW PROJECT'}
                 </div>
-                <input 
-                  type="text"
-                  value={newProjectName}
-                  onChange={(e) => setNewProjectName(e.target.value)}
-                  placeholder="Project Name..."
-                  className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all text-foreground"
-                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input 
+                    type="text"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    placeholder="Project Name..."
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all text-foreground"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <select 
+                      value={newProjectStatus}
+                      onChange={(e) => setNewProjectStatus(e.target.value as any)}
+                      className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
+                    >
+                      <option value="ACTIVE">ACTIVE</option>
+                      <option value="COMPLETED">COMPLETED</option>
+                      <option value="RESEARCHING">RESEARCHING</option>
+                    </select>
+                    <input 
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={newProjectProgress}
+                      onChange={(e) => setNewProjectProgress(parseInt(e.target.value) || 0)}
+                      className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
+                    />
+                  </div>
+                </div>
+
                 <textarea
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
@@ -84,8 +130,10 @@ export default function ProjectDashboard({
                   className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
                 />
                 <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => setShowForm(false)} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-4 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">Save Project</button>
+                  <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
+                  <button type="submit" className="px-4 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
+                    {editingId ? 'Update Project' : 'Save Project'}
+                  </button>
                 </div>
               </form>
             </section>
@@ -96,11 +144,19 @@ export default function ProjectDashboard({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {projects.map((project) => (
               <StaggerItem key={project.id}>
-                <div className="p-5 border border-border-custom/30 rounded-2xl bg-card/40 backdrop-blur-md space-y-3 hover:border-action transition-all duration-300 h-full flex flex-col justify-between group">
+                <div className="p-5 border border-border-custom/30 rounded-2xl bg-card/40 backdrop-blur-md space-y-3 hover:border-action transition-all duration-300 h-full flex flex-col justify-between group relative">
                   <div className="space-y-3">
                     <div className="flex justify-between items-start">
                       <h4 className="text-[9px] font-bold tracking-wider leading-tight text-foreground group-hover:text-action transition-colors uppercase">{project.name}</h4>
-                      {project.status === 'COMPLETED' ? <CheckCircle2 size={10} className="text-green-500" /> : <Construction size={10} className="text-action" />}
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => handleEdit(project)} className="p-1 text-accent hover:text-action transition-colors"><Edit size={10} /></button>
+                            <button onClick={() => { if(confirm('Delete project?')) deleteTrackerProject(project.id); }} className="p-1 text-accent hover:text-red-500 transition-colors"><Trash2 size={10} /></button>
+                          </div>
+                        )}
+                        {project.status === 'COMPLETED' ? <CheckCircle2 size={10} className="text-green-500" /> : <Construction size={10} className="text-action" />}
+                      </div>
                     </div>
                     <p className="text-[10px] text-accent leading-relaxed line-clamp-3 group-hover:text-foreground transition-colors">{project.description}</p>
                   </div>
@@ -116,6 +172,11 @@ export default function ProjectDashboard({
                 </div>
               </StaggerItem>
             ))}
+            {!projects.length && (
+              <p className="col-span-full text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">
+                No active projects tracked.
+              </p>
+            )}
           </div>
         </StaggerContainer>
       </section>
