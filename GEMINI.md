@@ -39,7 +39,13 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.
 - **RLS:** Public read-only for content; Admin full access; Authenticated engagement (likes/comments).
-- **Status:** Schema applied to Supabase on May 8, 2026.
+- **Status:** Schema applied and Auth verified on May 8, 2026.
+
+## // LESSONS LEARNED & HICCUPS
+
+- **[NEXTJS 16]**: `searchParams` and `params` are now Promises. Must be `await`-ed in Server Components.
+- **[SUPABASE URL]**: `NEXT_PUBLIC_SUPABASE_URL` must be the base URL only (e.g., `https://[id].supabase.co`). Appending `/rest/v1/` will break Auth (404).
+- **[PORT CONFLICTS]**: Ghost processes on port 3000 are common with background dev scripts. Use `lsof -i :3000` to find and kill.
 
 ---
 *Maintained by Gemini for Thomas Payne.*
