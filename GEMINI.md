@@ -27,7 +27,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **Auth:** Supabase Auth via `@supabase/ssr`.
 - **Docs:** Internal Next.js docs in `node_modules/next/dist/docs/`.
 
-## // DATABASE SCHEMA
+## // DATABASE SCHEMA (DEPLOYED)
 
 - **`profiles`**: User metadata (username, block status). Extended from `auth.users`.
 - **`portfolio_projects`**: Public projects. Fields: `title`, `description`, `tech` (array), `demo_url`, `source_url`.
@@ -39,6 +39,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.
 - **RLS:** Public read-only for content; Admin full access; Authenticated engagement (likes/comments).
+- **Status:** Schema applied to Supabase on May 8, 2026.
 
 ---
 *Maintained by Gemini for Thomas Payne.*
