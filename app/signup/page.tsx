@@ -41,9 +41,9 @@ export default async function SignupPage({
             </div>
           </div>
 
-          {searchParams.error && (
+          {error && (
             <p className="text-[9px] text-red-500 font-bold uppercase tracking-widest bg-red-500/10 p-2 rounded border border-red-500/20">
-              Error: {searchParams.error}
+              Error: {error}
             </p>
           )}
 
