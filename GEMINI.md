@@ -29,13 +29,13 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 
 ## // DATABASE SCHEMA (DEPLOYED & VERIFIED)
 
+- **`about_content`**: Dynamic text and Hero image data for the About Me page.
 - **`profiles`**: User metadata (username, block status). Extended from `auth.users`.
 - **`portfolio_projects`**: Public projects. Fields: `title`, `description`, `tech` (array), `demo_url`, `source_url`.
 - **`tracker_projects`**: Internal/Active tracking. Fields: `name`, `status` (Enum), `progress`, `description`.
 - **`timeline_events`**: The Journey feed. Fields: `date`, `title`, `description`, `icon_type`.
 - **`timeline_likes/comments`**: Engagement metrics linked to timeline events.
 - **`contact_messages`**: Secure storage for contact form submissions.
-- **`about_content`**: Dynamic text and Hero image data for the About Me page.
 
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.

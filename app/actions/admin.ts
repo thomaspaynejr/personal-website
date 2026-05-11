@@ -148,23 +148,62 @@ export async function updateAboutContent(formData: FormData) {
 
   const bio_text = formData.get('bio_text') as string
   const journey_text = formData.get('journey_text') as string
-  const profile_image_url = formData.get('profile_image_url') as string
+  let hero_image_url = formData.get('hero_image_url') as string
+  const hero_image_file = formData.get('hero_image_file') as File
   const social_links = JSON.parse(formData.get('social_links') as string || '[]')
   const experience_json = JSON.parse(formData.get('experience_json') as string || '[]')
+
+  // Handle Image Upload if file is provided
+  if (hero_image_file && hero_image_file.size > 0) {
+    const fileExt = hero_image_file.name.split('.').pop()
+    const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('hero-images')
+      .upload(fileName, hero_image_file)
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError)
+      // If bucket doesn't exist, we might get an error here.
+    } else {
+      const { data: { publicUrl } } = supabase.storage
+        .from('hero-images')
+        .getPublicUrl(fileName)
+      
+      hero_image_url = publicUrl
+    }
+  }
 
   const { error } = await supabase
     .from('about_content')
     .update({ 
       bio_text, 
       journey_text, 
-      profile_image_url, 
+      hero_image_url, 
       social_links, 
       experience_json,
       updated_at: new Date().toISOString()
     })
     .eq('id', '00000000-0000-0000-0000-000000000001')
 
-  if (error) return { error: error.message }
+  if (error) {
+    // Fallback attempt if hero_image_url column doesn't exist yet
+    if (error.code === '42703') { // undefined_column
+       await supabase
+        .from('about_content')
+        .update({ 
+          bio_text, 
+          journey_text, 
+          profile_image_url: hero_image_url, 
+          social_links, 
+          experience_json,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', '00000000-0000-0000-0000-000000000001')
+    } else {
+      return { error: error.message }
+    }
+  }
 
   revalidatePath('/about')
   revalidatePath('/admin')

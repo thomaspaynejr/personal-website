@@ -20,7 +20,7 @@ export default async function About() {
 
   const bio_text = about?.bio_text || 'My path into technology is a blend of discipline, service, and continuous learning.';
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
-  const profile_image = about?.profile_image_url;
+  const hero_image = about?.hero_image_url || about?.profile_image_url;
   const socials = about?.social_links || [
     { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
     { name: 'GitHub', href: '#', icon_type: 'github' }
@@ -46,10 +46,10 @@ export default async function About() {
       <div className="space-y-8">
         {/* Bio Section with Hero Image */}
         <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 overflow-hidden">
-          {profile_image && (
+          {hero_image && (
             <div className="mb-8 rounded-xl overflow-hidden border border-border-custom/50 aspect-[21/9] bg-background/50">
               <img 
-                src={profile_image} 
+                src={hero_image} 
                 alt="Thomas Payne" 
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
               />

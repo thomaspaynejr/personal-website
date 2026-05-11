@@ -142,7 +142,7 @@ CREATE POLICY "Admin Read: contact_messages" ON contact_messages FOR SELECT USIN
 CREATE TABLE about_content (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   bio_text TEXT,
-  profile_image_url TEXT,
+  hero_image_url TEXT,
   social_links JSONB DEFAULT '[]', -- [{name, href, icon_type}]
   journey_text TEXT,
   experience_json JSONB DEFAULT '[]', -- [{title, period, description}]
@@ -154,6 +154,11 @@ CREATE TABLE about_content (
 INSERT INTO about_content (id, bio_text, journey_text) 
 VALUES ('00000000-0000-0000-0000-000000000001', 'My path into technology...', 'My journey started...')
 ON CONFLICT (id) DO NOTHING;
+
+-- 22. Storage Setup (Run these manually if needed)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('hero-images', 'hero-images', true) ON CONFLICT (id) DO NOTHING;
+-- CREATE POLICY "Public Read: hero-images" ON storage.objects FOR SELECT USING (bucket_id = 'hero-images');
+-- CREATE POLICY "Admin All: hero-images" ON storage.objects FOR ALL USING (bucket_id = 'hero-images' AND (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin');
 
 -- RLS
 ALTER TABLE about_content ENABLE ROW LEVEL SECURITY;

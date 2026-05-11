@@ -79,10 +79,13 @@ function AboutManager({ about }: { about: any }) {
   const [formData, setFormData] = useState(about || {
     bio_text: '',
     journey_text: '',
+    hero_image_url: '',
     profile_image_url: '',
     social_links: [],
     experience_json: []
   });
+
+  const current_image = formData.hero_image_url || formData.profile_image_url;
 
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
@@ -96,18 +99,40 @@ function AboutManager({ about }: { about: any }) {
         fd.append('experience_json', JSON.stringify(formData.experience_json || []));
         const res = await updateAboutContent(fd);
         if (res.success) alert('About content updated!');
+        else alert('Error: ' + res.error);
       }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
         <div className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Profile Image URL</label>
-            <div className="relative">
-              <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
-              <input 
-                name="profile_image_url" 
-                defaultValue={formData.profile_image_url} 
-                className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
-                placeholder="https://..." 
-              />
+          <div className="space-y-2">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
+            <div className="flex flex-col md:flex-row gap-4 items-start">
+              {current_image && (
+                <div className="w-full md:w-48 aspect-video rounded-xl border border-border-custom overflow-hidden bg-background/50">
+                  <img src={current_image} alt="Preview" className="w-full h-full object-cover grayscale" />
+                </div>
+              )}
+              <div className="flex-1 space-y-3 w-full">
+                <div className="space-y-1">
+                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">Upload New Image</p>
+                  <input 
+                    type="file" 
+                    name="hero_image_file" 
+                    accept="image/*"
+                    className="w-full text-[10px] text-accent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-border-custom file:text-[9px] file:font-bold file:bg-action/10 file:text-action hover:file:bg-action/20 cursor-pointer"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">Or Paste Image URL</p>
+                  <div className="relative">
+                    <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
+                    <input 
+                      name="hero_image_url" 
+                      defaultValue={current_image} 
+                      className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
+                      placeholder="https://..." 
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
