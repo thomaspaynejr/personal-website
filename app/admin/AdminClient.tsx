@@ -75,6 +75,10 @@ export default function AdminClient({
   );
 }
 
+import { createClient } from '@/lib/supabase/client';
+
+export default function AdminClient({ 
+...
 function AboutManager({ about }: { about: any }) {
   const [formData, setFormData] = useState(about || {
     bio_text: '',
@@ -84,8 +88,38 @@ function AboutManager({ about }: { about: any }) {
     social_links: [],
     experience_json: []
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const supabase = createClient();
 
   const current_image = formData.hero_image_url || formData.profile_image_url;
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+      const { data, error } = await supabase.storage
+        .from('hero-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('hero-images')
+        .getPublicUrl(fileName);
+
+      setFormData({ ...formData, hero_image_url: publicUrl });
+      alert('Photo uploaded to storage! Please click "Save About Changes" to finalize.');
+    } catch (err: any) {
+      alert('Upload failed: ' + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
@@ -94,9 +128,14 @@ function AboutManager({ about }: { about: any }) {
         <h2 className="text-xs font-bold uppercase tracking-widest">Manage About Me Content</h2>
       </div>
 
-      <form action={updateAboutContent} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
+      <form action={async (fd) => {
+        const res = await updateAboutContent(fd);
+        if (res.success) alert('About content updated!');
+        else alert('Error: ' + res.error);
+      }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
         <input type="hidden" name="social_links" value={JSON.stringify(formData.social_links || [])} />
         <input type="hidden" name="experience_json" value={JSON.stringify(formData.experience_json || [])} />
+        <input type="hidden" name="hero_image_url" value={formData.hero_image_url} />
         
         <div className="space-y-4">
           <div className="space-y-2">
@@ -109,12 +148,15 @@ function AboutManager({ about }: { about: any }) {
               )}
               <div className="flex-1 space-y-3 w-full">
                 <div className="space-y-1">
-                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">Upload New Image</p>
+                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">
+                    {isUploading ? 'Uploading...' : 'Upload New Image'}
+                  </p>
                   <input 
                     type="file" 
-                    name="hero_image_file" 
+                    onChange={handleUpload}
                     accept="image/*"
-                    className="w-full text-[10px] text-accent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-border-custom file:text-[9px] file:font-bold file:bg-action/10 file:text-action hover:file:bg-action/20 cursor-pointer"
+                    disabled={isUploading}
+                    className="w-full text-[10px] text-accent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-border-custom file:text-[9px] file:font-bold file:bg-action/10 file:text-action hover:file:bg-action/20 cursor-pointer disabled:opacity-50"
                   />
                 </div>
                 <div className="space-y-1">
@@ -122,8 +164,9 @@ function AboutManager({ about }: { about: any }) {
                   <div className="relative">
                     <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
                     <input 
-                      name="hero_image_url" 
-                      defaultValue={current_image} 
+                      name="hero_image_url_input" 
+                      value={formData.hero_image_url} 
+                      onChange={(e) => setFormData({...formData, hero_image_url: e.target.value})}
                       className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
                       placeholder="https://..." 
                     />
