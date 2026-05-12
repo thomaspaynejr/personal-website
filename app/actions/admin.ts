@@ -151,7 +151,6 @@ export async function updateAboutContent(formData: FormData) {
   let hero_image_url = formData.get('hero_image_url') as string
   const hero_image_file = formData.get('hero_image_file') as File
   const social_links = JSON.parse(formData.get('social_links') as string || '[]')
-  const experience_json = JSON.parse(formData.get('experience_json') as string || '[]')
 
   // Handle Image Upload if file is provided
   if (hero_image_file && hero_image_file.size > 0) {
@@ -181,7 +180,6 @@ export async function updateAboutContent(formData: FormData) {
       journey_text, 
       hero_image_url, 
       social_links, 
-      experience_json,
       updated_at: new Date().toISOString()
     })
     .eq('id', '00000000-0000-0000-0000-000000000001')
@@ -196,7 +194,6 @@ export async function updateAboutContent(formData: FormData) {
           journey_text, 
           profile_image_url: hero_image_url, 
           social_links, 
-          experience_json,
           updated_at: new Date().toISOString()
         })
         .eq('id', '00000000-0000-0000-0000-000000000001')
@@ -243,6 +240,53 @@ export async function deleteTimelineEvent(id: string) {
   if (error) return { error: error.message }
 
   revalidatePath('/')
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+// --- Experience Actions ---
+
+export async function upsertExperience(formData: FormData) {
+  const isAdmin = await checkAdmin()
+  if (!isAdmin) return { error: 'Unauthorized' }
+
+  const supabase = await createClient()
+  if (!supabase) return { error: 'Database connection failed' }
+
+  const id = formData.get('id') as string
+  const title = formData.get('title') as string
+  const period = formData.get('period') as string
+  const description = formData.get('description') as string
+  const display_order = parseInt(formData.get('display_order') as string || '0')
+
+  const data = { title, period, description, display_order }
+
+  let error;
+  if (id) {
+    ({ error } = await supabase.from('experiences').update(data).eq('id', id))
+  } else {
+    ({ error } = await supabase.from('experiences').insert([data]))
+  }
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/about')
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deleteExperience(id: string) {
+  const isAdmin = await checkAdmin()
+  if (!isAdmin) return { error: 'Unauthorized' }
+
+  const supabase = await createClient()
+  if (!supabase) return { error: 'Database connection failed' }
+
+  const { error } = await supabase.from('experiences').delete().eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/about')
   revalidatePath('/admin')
   return { success: true }
 }

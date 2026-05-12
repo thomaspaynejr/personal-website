@@ -160,7 +160,16 @@ ON CONFLICT (id) DO NOTHING;
 -- CREATE POLICY "Public Read: hero-images" ON storage.objects FOR SELECT USING (bucket_id = 'hero-images');
 -- CREATE POLICY "Admin All: hero-images" ON storage.objects FOR ALL USING (bucket_id = 'hero-images' AND (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin');
 
--- RLS
-ALTER TABLE about_content ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public Read: about_content" ON about_content FOR SELECT USING (true);
-CREATE POLICY "Admin All: about_content" ON about_content FOR ALL USING (is_admin());
+-- 23. Experiences Table
+CREATE TABLE experiences (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  period TEXT,
+  description TEXT,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+ALTER TABLE experiences ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read: experiences" ON experiences FOR SELECT USING (true);
+CREATE POLICY "Admin All: experiences" ON experiences FOR ALL USING (is_admin());

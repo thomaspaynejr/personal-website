@@ -17,6 +17,7 @@ export default async function AdminDashboard() {
   const { data: profiles } = await supabase!.from('profiles').select('*').order('username', { ascending: true });
   const { data: portfolio } = await supabase!.from('portfolio_projects').select('*').order('display_order', { ascending: true });
   const { data: tracker } = await supabase!.from('tracker_projects').select('*').order('created_at', { ascending: false });
+  const { data: experiences } = await supabase!.from('experiences').select('*').order('display_order', { ascending: true });
   const { data: about } = await supabase!.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single();
 
   return (
@@ -37,6 +38,7 @@ export default async function AdminDashboard() {
         initialPortfolio={portfolio || []}
         initialTracker={tracker || []}
         initialAbout={about}
+        initialExperiences={experiences || []}
       />
     </main>
   );

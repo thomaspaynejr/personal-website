@@ -40,10 +40,11 @@ export default async function About() {
       { name: 'GitHub', href: '#', icon_type: 'github' }
     );
   }
-  const experiences = about?.experience_json || [
-    { title: 'Military Service', period: 'USA // 4Y', description: 'Logistics Specialist - Managed complex supply chains.' },
-    { title: 'Desktop Support', period: 'CURRENT', description: 'Troubleshooting hardware/software issues.' }
-  ];
+  // Fetch Experience from new table
+  const { data: experiences } = await supabase!
+    .from('experiences')
+    .select('*')
+    .order('display_order', { ascending: true });
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">

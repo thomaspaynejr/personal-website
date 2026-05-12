@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera } from 'lucide-react';
-import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent } from '@/app/actions/admin';
+import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 
 export default function AdminClient({ 
@@ -10,15 +10,17 @@ export default function AdminClient({
   initialProfiles,
   initialPortfolio,
   initialTracker,
-  initialAbout
+  initialAbout,
+  initialExperiences
 }: { 
   initialEvents: any[], 
   initialProfiles: any[],
   initialPortfolio: any[],
   initialTracker: any[],
-  initialAbout: any
+  initialAbout: any,
+  initialExperiences: any[]
 }) {
-  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT'>('PORTFOLIO');
+  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE'>('PORTFOLIO');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -26,6 +28,7 @@ export default function AdminClient({
     { id: 'PORTFOLIO', label: 'Portfolio', icon: <Briefcase size={14} /> },
     { id: 'TRACKER', label: 'Project Tracker', icon: <Activity size={14} /> },
     { id: 'TIMELINE', label: 'Timeline', icon: <Clock size={14} /> },
+    { id: 'EXPERIENCE', label: 'Experience', icon: <Briefcase size={14} /> },
     { id: 'ABOUT', label: 'About Me', icon: <Info size={14} /> },
     { id: 'USERS', label: 'User Access', icon: <Shield size={14} /> },
   ];
@@ -64,6 +67,9 @@ export default function AdminClient({
         )}
         {activeTab === 'TIMELINE' && (
           <TimelineManager events={initialEvents} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+        )}
+        {activeTab === 'EXPERIENCE' && (
+          <ExperienceManager experiences={initialExperiences} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
         )}
         {activeTab === 'ABOUT' && (
           <AboutManager about={initialAbout} />
@@ -126,9 +132,8 @@ function AboutManager({ about }: { about: any }) {
       </div>
 
       <form action={async (fd) => {
-        // Ensure social_links and experience_json are included from state
+        // Ensure social_links are included from state
         fd.set('social_links', JSON.stringify(formData.social_links || []));
-        fd.set('experience_json', JSON.stringify(formData.experience_json || []));
         fd.set('hero_image_url', formData.hero_image_url || '');
         
         const res = await updateAboutContent(fd);
@@ -192,78 +197,6 @@ function AboutManager({ about }: { about: any }) {
               className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[120px] resize-none" 
               placeholder="Your detailed journey..." 
             />
-          </div>
-
-          <div className="space-y-4 pt-4 border-t border-border-custom/30">
-            <div className="flex justify-between items-center">
-              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Professional Experience</label>
-              <button 
-                type="button"
-                onClick={() => setFormData({...formData, experience_json: [...(formData.experience_json || []), { title: '', period: '', description: '' }]})}
-                className="text-[8px] font-bold text-action uppercase border border-action/30 px-2 py-1 rounded hover:bg-action/10 transition-all"
-              >
-                + Add Experience
-              </button>
-            </div>
-            <div className="space-y-3">
-              {(formData.experience_json || []).map((exp: any, idx: number) => (
-                <div key={idx} className="space-y-2 bg-background/30 p-4 rounded-xl border border-border-custom/20">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <p className="text-[7px] text-accent font-bold uppercase ml-1">Title</p>
-                      <input 
-                        value={exp.title} 
-                        onChange={(e) => {
-                          const newExps = [...formData.experience_json];
-                          newExps[idx].title = e.target.value;
-                          setFormData({...formData, experience_json: newExps});
-                        }}
-                        className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
-                        placeholder="Software Engineer" 
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[7px] text-accent font-bold uppercase ml-1">Period</p>
-                      <input 
-                        value={exp.period} 
-                        onChange={(e) => {
-                          const newExps = [...formData.experience_json];
-                          newExps[idx].period = e.target.value;
-                          setFormData({...formData, experience_json: newExps});
-                        }}
-                        className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
-                        placeholder="2022 - PRESENT" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[7px] text-accent font-bold uppercase ml-1">Description</p>
-                    <textarea 
-                      value={exp.description} 
-                      onChange={(e) => {
-                        const newExps = [...formData.experience_json];
-                        newExps[idx].description = e.target.value;
-                        setFormData({...formData, experience_json: newExps});
-                      }}
-                      className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none min-h-[60px] resize-none" 
-                      placeholder="What did you do?" 
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    <button 
-                      type="button"
-                      onClick={() => {
-                        const newExps = formData.experience_json.filter((_: any, i: number) => i !== idx);
-                        setFormData({...formData, experience_json: newExps});
-                      }}
-                      className="text-[8px] font-bold text-red-500 uppercase hover:underline"
-                    >
-                      Remove Entry
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="space-y-4 pt-4 border-t border-border-custom/30">
@@ -345,6 +278,83 @@ function AboutManager({ about }: { about: any }) {
           </button>
         </div>
       </form>
+    </section>
+  );
+}
+
+function ExperienceManager({ experiences, editingId, setEditingId, isAdding, setIsAdding }: any) {
+  return (
+    <section className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+          <Briefcase size={14} className="text-action" />
+          Manage Professional Experience
+        </h2>
+        <button 
+          onClick={() => { setIsAdding(!isAdding); setEditingId(null); }}
+          className="flex items-center gap-2 px-3 py-1.5 bg-action text-background rounded-lg text-[9px] font-bold uppercase tracking-widest hover:opacity-90 transition-all border-2 border-action"
+        >
+          {isAdding ? <><X size={10} /> Cancel</> : <><Plus size={10} /> Add Experience</>}
+        </button>
+      </div>
+
+      {(isAdding || editingId) && (
+        <form action={async (formData) => {
+          const res = await upsertExperience(formData);
+          if (res.success) { setIsAdding(false); setEditingId(null); }
+        }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border-2 border-action space-y-4 shadow-xl animate-in slide-in-from-top-4 duration-500">
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-action">
+            {isAdding ? 'ADD NEW EXPERIENCE' : 'EDIT EXPERIENCE'}
+          </h3>
+          {editingId && <input type="hidden" name="id" value={editingId} />}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Job Title</label>
+              <input name="title" required defaultValue={experiences.find((e: any) => e.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Title" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Period</label>
+              <input name="period" required defaultValue={experiences.find((e: any) => e.id === editingId)?.period} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="MAY 2026 - PRESENT" />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
+            <textarea name="description" required defaultValue={experiences.find((e: any) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Details..." />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Display Order</label>
+            <input name="display_order" type="number" defaultValue={experiences.find((e: any) => e.id === editingId)?.display_order || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} className="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-accent hover:text-foreground">Cancel</button>
+            <button type="submit" className="px-6 py-2 bg-action text-background rounded-lg text-[9px] font-bold uppercase tracking-widest hover:opacity-90 transition-all border-2 border-action">
+              Save Experience _
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {experiences.map((exp: any) => (
+          <div key={exp.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 flex flex-col justify-between group hover:border-action/30 transition-all">
+            <div className="space-y-2">
+              <div className="flex justify-between items-start">
+                <h4 className="text-xs font-bold uppercase tracking-tight text-foreground">{exp.title}</h4>
+                <div className="flex gap-2">
+                  <button onClick={() => { setEditingId(exp.id); setIsAdding(false); }} className="p-1.5 text-accent hover:text-action transition-colors"><Edit size={12} /></button>
+                  <button onClick={() => { if(confirm('Delete this entry?')) deleteExperience(exp.id); }} className="p-1.5 text-accent hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
+                </div>
+              </div>
+              <p className="text-[9px] text-action font-bold uppercase tracking-widest">{exp.period}</p>
+              <p className="text-[10px] text-accent line-clamp-3">{exp.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
