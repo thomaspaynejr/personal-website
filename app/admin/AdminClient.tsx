@@ -193,6 +193,78 @@ function AboutManager({ about }: { about: any }) {
               placeholder="Tell your story..." 
             />
           </div>
+
+          <div className="space-y-4 pt-4 border-t border-border-custom/30">
+            <div className="flex justify-between items-center">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Social Links</label>
+              <button 
+                type="button"
+                onClick={() => setFormData({...formData, social_links: [...(formData.social_links || []), { name: '', href: '', icon_type: 'github' }]})}
+                className="text-[8px] font-bold text-action uppercase border border-action/30 px-2 py-1 rounded hover:bg-action/10 transition-all"
+              >
+                + Add Link
+              </button>
+            </div>
+            <div className="space-y-3">
+              {(formData.social_links || []).map((link: any, idx: number) => (
+                <div key={idx} className="flex gap-2 items-end bg-background/30 p-3 rounded-xl border border-border-custom/20">
+                  <div className="flex-1 space-y-1">
+                    <p className="text-[7px] text-accent font-bold uppercase ml-1">Name</p>
+                    <input 
+                      value={link.name} 
+                      onChange={(e) => {
+                        const newSocials = [...formData.social_links];
+                        newSocials[idx].name = e.target.value;
+                        setFormData({...formData, social_links: newSocials});
+                      }}
+                      className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
+                      placeholder="LinkedIn" 
+                    />
+                  </div>
+                  <div className="flex-[2] space-y-1">
+                    <p className="text-[7px] text-accent font-bold uppercase ml-1">URL</p>
+                    <input 
+                      value={link.href} 
+                      onChange={(e) => {
+                        const newSocials = [...formData.social_links];
+                        newSocials[idx].href = e.target.value;
+                        setFormData({...formData, social_links: newSocials});
+                      }}
+                      className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
+                      placeholder="https://..." 
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-[7px] text-accent font-bold uppercase ml-1">Icon</p>
+                    <select 
+                      value={link.icon_type} 
+                      onChange={(e) => {
+                        const newSocials = [...formData.social_links];
+                        newSocials[idx].icon_type = e.target.value;
+                        setFormData({...formData, social_links: newSocials});
+                      }}
+                      className="w-full bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none h-[29px]"
+                    >
+                      <option value="github">GITHUB</option>
+                      <option value="linkedin">LINKEDIN</option>
+                      <option value="instagram">INSTAGRAM</option>
+                      <option value="x">X / TWITTER</option>
+                    </select>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const newSocials = formData.social_links.filter((_: any, i: number) => i !== idx);
+                      setFormData({...formData, social_links: newSocials});
+                    }}
+                    className="p-2 text-accent hover:text-red-500"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end pt-4 border-t border-border-custom/30">

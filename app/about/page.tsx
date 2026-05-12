@@ -1,4 +1,4 @@
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Github, Linkedin, Instagram, Twitter } from 'lucide-react';
 import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
@@ -7,7 +7,8 @@ const socialIconMap: Record<string, React.ReactNode> = {
   linkedin: <FaLinkedin size={16} />,
   instagram: <FaInstagram size={16} />,
   github: <FaGithub size={16} />,
-  x: <FaXTwitter size={16} />
+  x: <FaXTwitter size={16} />,
+  twitter: <FaXTwitter size={16} />
 };
 
 export default async function About() {
@@ -21,7 +22,9 @@ export default async function About() {
   const bio_text = about?.bio_text || 'My path into technology is a blend of discipline, service, and continuous learning.';
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
-  const socials = about?.social_links || [
+  
+  // Dynamic Socials from Database
+  const socials = (about?.social_links as any[]) || [
     { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
     { name: 'GitHub', href: '#', icon_type: 'github' }
   ];
