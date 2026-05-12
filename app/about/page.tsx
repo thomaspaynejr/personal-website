@@ -23,11 +23,23 @@ export default async function About() {
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
   
-  // Dynamic Socials from Database
-  const socials = (about?.social_links as any[]) || [
+  // Filter for LinkedIn and GitHub only
+  const allSocials = (about?.social_links as any[]) || [
     { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
     { name: 'GitHub', href: '#', icon_type: 'github' }
   ];
+  const socials = allSocials.filter(s => 
+    s.icon_type?.toLowerCase() === 'linkedin' || 
+    s.icon_type?.toLowerCase() === 'github'
+  );
+  
+  // If no LinkedIn/GitHub found in DB, use default ones
+  if (socials.length === 0) {
+    socials.push(
+      { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
+      { name: 'GitHub', href: '#', icon_type: 'github' }
+    );
+  }
   const experiences = about?.experience_json || [
     { title: 'Military Service', period: 'USA // 4Y', description: 'Logistics Specialist - Managed complex supply chains.' },
     { title: 'Desktop Support', period: 'CURRENT', description: 'Troubleshooting hardware/software issues.' }
