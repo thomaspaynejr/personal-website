@@ -24,4 +24,9 @@ This document tracks the technical challenges encountered during the Supabase an
 
 ## 6. Navigation Freeze
 - **Issue:** Site freezes when navigating back from an external link (e.g., GitHub).
-- **Status:** Investigating. Potential causes: Background animation resource usage or Custom Cursor state.
+- **Cause:** Background animations (Matrix/Light) resumed simultaneously with high CPU usage.
+- **Fix:** Switched external links to `target="_blank"`, added `visibilitychange` listeners to pause animations when tab is inactive, and optimized cleanup logic.
+
+## 7. Server Action Body Limit
+- **Issue:** 1MB limit for image uploads via Server Actions.
+- **Fix:** Increased limit to 20MB in `next.config.ts` and refactored to client-side uploads directly to Supabase Storage for better stability.

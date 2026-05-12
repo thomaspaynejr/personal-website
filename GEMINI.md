@@ -29,7 +29,8 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 
 ## // DATABASE SCHEMA (DEPLOYED & VERIFIED)
 
-- **`about_content`**: Dynamic text and Hero image data for the About Me page.
+- **`about_content`**: Dynamic text and Hero image URL.
+- **`experiences`**: Modular work history. Fields: `title`, `period`, `description`, `display_order`.
 - **`profiles`**: User metadata (username, block status). Extended from `auth.users`.
 - **`portfolio_projects`**: Public projects. Fields: `title`, `description`, `tech` (array), `demo_url`, `source_url`.
 - **`tracker_projects`**: Internal/Active tracking. Fields: `name`, `status` (Enum), `progress`, `description`.
@@ -45,6 +46,9 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 ## // LESSONS LEARNED & HICCUPS
 
 - **[NEXTJS 16]**: `searchParams` and `params` are now Promises. Must be `await`-ed in Server Components (e.g., Login/Signup/Profile pages).
+- **[SERVER ACTIONS]**: Default body limit is 1MB. Increased to 20MB in `next.config.ts` via `experimental.serverActions.bodySizeLimit`. 
+- **[FILE UPLOADS]**: Client-side uploads to Supabase Storage bypass Next.js body limits and are more reliable for large images.
+- **[ANIMATIONS]**: Background effects (Matrix/Lightning) must pause when the tab is hidden (`visibilitychange`) to prevent CPU spikes and browser freezes on navigation.
 - **[SUPABASE URL]**: `NEXT_PUBLIC_SUPABASE_URL` must be the base URL only. Appending `/rest/v1/` causes Auth 404 errors.
 - **[ICONS]**: `react-icons/si` can have inconsistent naming or missing exports (e.g., `SiLinkedin`). Preferred fallback is `react-icons/fa6` for social brands.
 - **[PORT CONFLICTS]**: Resolved by automating port 3000 cleanup in `package.json` dev script: `(lsof -t -i:3000 | xargs kill -9 || true) && next dev`.
