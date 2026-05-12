@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent } from '@/app/actions/admin';
+import { createClient } from '@/lib/supabase/client';
 
 export default function AdminClient({ 
   initialEvents, 
@@ -75,10 +76,6 @@ export default function AdminClient({
   );
 }
 
-import { createClient } from '@/lib/supabase/client';
-
-export default function AdminClient({ 
-...
 function AboutManager({ about }: { about: any }) {
   const [formData, setFormData] = useState(about || {
     bio_text: '',
@@ -129,14 +126,15 @@ function AboutManager({ about }: { about: any }) {
       </div>
 
       <form action={async (fd) => {
+        // Ensure social_links and experience_json are included from state
+        fd.set('social_links', JSON.stringify(formData.social_links || []));
+        fd.set('experience_json', JSON.stringify(formData.experience_json || []));
+        fd.set('hero_image_url', formData.hero_image_url || '');
+        
         const res = await updateAboutContent(fd);
         if (res.success) alert('About content updated!');
         else alert('Error: ' + res.error);
       }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
-        <input type="hidden" name="social_links" value={JSON.stringify(formData.social_links || [])} />
-        <input type="hidden" name="experience_json" value={JSON.stringify(formData.experience_json || [])} />
-        <input type="hidden" name="hero_image_url" value={formData.hero_image_url} />
-        
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
@@ -164,7 +162,7 @@ function AboutManager({ about }: { about: any }) {
                   <div className="relative">
                     <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
                     <input 
-                      name="hero_image_url_input" 
+                      name="hero_image_url_dummy" 
                       value={formData.hero_image_url} 
                       onChange={(e) => setFormData({...formData, hero_image_url: e.target.value})}
                       className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
