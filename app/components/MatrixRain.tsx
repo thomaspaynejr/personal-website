@@ -73,14 +73,24 @@ export default function MatrixRain() {
 
     let animationId: number;
     const animate = () => {
-      draw();
+      if (document.visibilityState === 'visible') {
+        draw();
+      }
       animationId = requestAnimationFrame(animate);
     };
     animate();
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Optional: Reset drops or something if needed
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 

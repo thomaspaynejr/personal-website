@@ -99,7 +99,11 @@ export default function LightStrike() {
 
     // Trigger immediately and then every 5 seconds
     triggerStrike();
-    const intervalId = setInterval(triggerStrike, 5000);
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        triggerStrike();
+      }
+    }, 5000);
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
@@ -133,16 +137,26 @@ export default function LightStrike() {
 
     let animationId: number;
     const animate = () => {
-      draw();
+      if (document.visibilityState === 'visible') {
+        draw();
+      }
       animationId = requestAnimationFrame(animate);
     };
 
     animate();
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        triggerStrike();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       cancelAnimationFrame(animationId);
       clearInterval(intervalId);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 

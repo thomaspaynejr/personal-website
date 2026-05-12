@@ -22,5 +22,6 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Cause:** Incorrect or extra spaces in `.env.local` for `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - **Fix:** Refreshed the key from the Supabase dashboard and ensured clean formatting in `.env.local`.
 
-## 5. UI Updates
-- **Update:** Updated the Navbar link from "LOGIN" to "LOGIN (JOIN)" to better reflect account creation availability.
+## 6. Navigation Freeze
+- **Issue:** Site freezes when navigating back from an external link (e.g., GitHub).
+- **Status:** Investigating. Potential causes: Background animation resource usage or Custom Cursor state.
