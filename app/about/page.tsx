@@ -47,16 +47,7 @@ export default async function About() {
         {/* Bio Section with Hero Image */}
         <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 overflow-hidden">
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            {hero_image && (
-              <div className="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50">
-                <img 
-                  src={hero_image} 
-                  alt="Thomas Payne" 
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                />
-              </div>
-            )}
-            <div className="flex-1">
+            <div className="flex-1 order-2 md:order-1">
               <div className="text-[10px] font-bold text-action mb-3 tracking-tighter uppercase">01 // THE JOURNEY</div>
               <div className="text-accent max-w-none space-y-4">
                 <p className="leading-relaxed text-sm whitespace-pre-wrap">
@@ -67,6 +58,15 @@ export default async function About() {
                 </p>
               </div>
             </div>
+            {hero_image && (
+              <div className="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50 order-1 md:order-2">
+                <img 
+                  src={hero_image} 
+                  alt="Thomas Payne" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
           </div>
         </section>
 

@@ -139,12 +139,7 @@ function AboutManager({ about }: { about: any }) {
           <div className="space-y-2">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
             <div className="flex flex-col md:flex-row gap-4 items-start">
-              {current_image && (
-                <div className="w-full md:w-32 aspect-[4/5] rounded-xl border border-border-custom overflow-hidden bg-background/50">
-                  <img src={current_image} alt="Preview" className="w-full h-full object-cover grayscale" />
-                </div>
-              )}
-              <div className="flex-1 space-y-3 w-full">
+              <div className="flex-1 space-y-3 w-full order-2 md:order-1">
                 <div className="space-y-1">
                   <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">
                     {isUploading ? 'Uploading...' : 'Upload New Image'}
@@ -171,6 +166,11 @@ function AboutManager({ about }: { about: any }) {
                   </div>
                 </div>
               </div>
+              {current_image && (
+                <div className="w-full md:w-32 aspect-[4/5] rounded-xl border border-border-custom overflow-hidden bg-background/50 order-1 md:order-2">
+                  <img src={current_image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
             </div>
           </div>
 
