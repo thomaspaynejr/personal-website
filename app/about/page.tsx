@@ -18,8 +18,6 @@ export default async function About() {
     .eq('id', '00000000-0000-0000-0000-000000000001')
     .single();
 
-  console.log('ABOUT_CONTENT_DATA:', about);
-
   const bio_text = about?.bio_text || 'My path into technology is a blend of discipline, service, and continuous learning.';
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;

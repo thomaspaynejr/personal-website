@@ -158,8 +158,6 @@ export async function updateAboutContent(formData: FormData) {
     const fileExt = hero_image_file.name.split('.').pop()
     const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`
     
-    console.log('Attempting upload to hero-images:', fileName)
-
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('hero-images')
       .upload(fileName, hero_image_file)
@@ -168,13 +166,11 @@ export async function updateAboutContent(formData: FormData) {
       console.error('SUPABASE_UPLOAD_ERROR:', uploadError)
       return { error: `Upload failed: ${uploadError.message}` }
     } else {
-      console.log('Upload successful:', uploadData)
       const { data: { publicUrl } } = supabase.storage
         .from('hero-images')
         .getPublicUrl(fileName)
       
       hero_image_url = publicUrl
-      console.log('Generated Public URL:', hero_image_url)
     }
   }
 

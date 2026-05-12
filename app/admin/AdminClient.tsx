@@ -94,13 +94,10 @@ function AboutManager({ about }: { about: any }) {
         <h2 className="text-xs font-bold uppercase tracking-widest">Manage About Me Content</h2>
       </div>
 
-      <form action={async (fd) => {
-        fd.append('social_links', JSON.stringify(formData.social_links || []));
-        fd.append('experience_json', JSON.stringify(formData.experience_json || []));
-        const res = await updateAboutContent(fd);
-        if (res.success) alert('About content updated!');
-        else alert('Error: ' + res.error);
-      }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
+      <form action={updateAboutContent} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
+        <input type="hidden" name="social_links" value={JSON.stringify(formData.social_links || [])} />
+        <input type="hidden" name="experience_json" value={JSON.stringify(formData.experience_json || [])} />
+        
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
