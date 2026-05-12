@@ -175,23 +175,95 @@ function AboutManager({ about }: { about: any }) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Biography (Short Bio)</label>
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Short Bio (Intro Paragraph)</label>
             <textarea 
               name="bio_text" 
               defaultValue={formData.bio_text} 
-              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[100px] resize-none" 
-              placeholder="Who are you?" 
+              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" 
+              placeholder="A brief introduction..." 
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">The Journey (Story)</label>
+            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Full Story (The Journey section)</label>
             <textarea 
               name="journey_text" 
               defaultValue={formData.journey_text} 
-              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[150px] resize-none" 
-              placeholder="Tell your story..." 
+              className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[120px] resize-none" 
+              placeholder="Your detailed journey..." 
             />
+          </div>
+
+          <div className="space-y-4 pt-4 border-t border-border-custom/30">
+            <div className="flex justify-between items-center">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Professional Experience</label>
+              <button 
+                type="button"
+                onClick={() => setFormData({...formData, experience_json: [...(formData.experience_json || []), { title: '', period: '', description: '' }]})}
+                className="text-[8px] font-bold text-action uppercase border border-action/30 px-2 py-1 rounded hover:bg-action/10 transition-all"
+              >
+                + Add Experience
+              </button>
+            </div>
+            <div className="space-y-3">
+              {(formData.experience_json || []).map((exp: any, idx: number) => (
+                <div key={idx} className="space-y-2 bg-background/30 p-4 rounded-xl border border-border-custom/20">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <p className="text-[7px] text-accent font-bold uppercase ml-1">Title</p>
+                      <input 
+                        value={exp.title} 
+                        onChange={(e) => {
+                          const newExps = [...formData.experience_json];
+                          newExps[idx].title = e.target.value;
+                          setFormData({...formData, experience_json: newExps});
+                        }}
+                        className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
+                        placeholder="Software Engineer" 
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[7px] text-accent font-bold uppercase ml-1">Period</p>
+                      <input 
+                        value={exp.period} 
+                        onChange={(e) => {
+                          const newExps = [...formData.experience_json];
+                          newExps[idx].period = e.target.value;
+                          setFormData({...formData, experience_json: newExps});
+                        }}
+                        className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none" 
+                        placeholder="2022 - PRESENT" 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[7px] text-accent font-bold uppercase ml-1">Description</p>
+                    <textarea 
+                      value={exp.description} 
+                      onChange={(e) => {
+                        const newExps = [...formData.experience_json];
+                        newExps[idx].description = e.target.value;
+                        setFormData({...formData, experience_json: newExps});
+                      }}
+                      className="w-full bg-background border border-border-custom rounded-lg px-2 py-1.5 text-[10px] outline-none min-h-[60px] resize-none" 
+                      placeholder="What did you do?" 
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const newExps = formData.experience_json.filter((_: any, i: number) => i !== idx);
+                        setFormData({...formData, experience_json: newExps});
+                      }}
+                      className="text-[8px] font-bold text-red-500 uppercase hover:underline"
+                    >
+                      Remove Entry
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-4 pt-4 border-t border-border-custom/30">
