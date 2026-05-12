@@ -109,8 +109,8 @@ function AboutManager({ about }: { about: any }) {
         .from('hero-images')
         .getPublicUrl(fileName);
 
-      setFormData({ ...formData, hero_image_url: publicUrl });
-      alert('Photo uploaded to storage! Please click "Save About Changes" to finalize.');
+      setFormData(prev => ({ ...prev, hero_image_url: publicUrl }));
+      alert('Photo uploaded! Link: ' + publicUrl);
     } catch (err: any) {
       alert('Upload failed: ' + err.message);
     } finally {
