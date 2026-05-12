@@ -140,7 +140,7 @@ function AboutManager({ about }: { about: any }) {
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
             <div className="flex flex-col md:flex-row gap-4 items-start">
               {current_image && (
-                <div className="w-full md:w-48 aspect-video rounded-xl border border-border-custom overflow-hidden bg-background/50">
+                <div className="w-full md:w-32 aspect-[4/5] rounded-xl border border-border-custom overflow-hidden bg-background/50">
                   <img src={current_image} alt="Preview" className="w-full h-full object-cover grayscale" />
                 </div>
               )}
