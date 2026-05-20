@@ -4,6 +4,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 
 ## // CRITICAL CONVENTIONS
 
+- **[WORKFLOW]** **NEVER** trust a simple browser refresh for UI changes. If a change (like removing icons) isn't showing, **RESTART** the `npm run dev` process. Next.js 16 caching is aggressive.
 - **[PROXY]** `middleware.ts` is deprecated. Use `proxy.ts` in the root directory.
   - Export a named or default function called `proxy(request: NextRequest)`.
   - Reference: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`.
