@@ -1,4 +1,4 @@
-import { ArrowUpRight, Github, Linkedin, Instagram, Twitter } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
@@ -10,6 +10,12 @@ const socialIconMap: Record<string, React.ReactNode> = {
   x: <FaXTwitter size={16} />,
   twitter: <FaXTwitter size={16} />
 };
+
+interface SocialLink {
+  name: string;
+  href: string;
+  icon_type: string;
+}
 
 export default async function About() {
   const supabase = await createClient();
@@ -23,23 +29,9 @@ export default async function About() {
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
   
-  // Filter for LinkedIn and GitHub only
-  const allSocials = (about?.social_links as any[]) || [
-    { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
-    { name: 'GitHub', href: '#', icon_type: 'github' }
-  ];
-  const socials = allSocials.filter(s => 
-    s.icon_type?.toLowerCase() === 'linkedin' || 
-    s.icon_type?.toLowerCase() === 'github'
-  );
+  // Use all social links from database
+  const socials = (about?.social_links as unknown as SocialLink[]) || [];
   
-  // If no LinkedIn/GitHub found in DB, use default ones
-  if (socials.length === 0) {
-    socials.push(
-      { name: 'LinkedIn', href: '#', icon_type: 'linkedin' },
-      { name: 'GitHub', href: '#', icon_type: 'github' }
-    );
-  }
   // Fetch Experience from new table
   const { data: experiences } = await supabase!
     .from('experiences')
@@ -51,7 +43,7 @@ export default async function About() {
       <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
         <h1 className="text-2xl font-bold">About Me</h1>
         <div className="mt-4 md:mt-0 flex gap-4">
-          {socials.map((social: any) => (
+          {(socials as SocialLink[]).map((social) => (
             <a 
               key={social.name} 
               href={social.href} 
@@ -96,7 +88,7 @@ export default async function About() {
         <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
           <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">02 // EXPERIENCE</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {experiences.map((exp: any, idx: number) => (
+            {(experiences || []).map((exp, idx) => (
               <div key={idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
                 <h3 className="font-bold text-sm mb-2 flex items-center justify-between">
                   <span>{exp.title}</span>

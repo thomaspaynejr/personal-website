@@ -46,7 +46,8 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 ## // ENGAGEMENT & INTERACTION
 
 - **Timeline:** Users can "Like" and "Comment" on journey events. Data is persisted in `timeline_likes` and `timeline_comments`.
-- **Contact:** Form submissions are saved to `contact_messages` and are viewable by admins.
+- **Contact:** Form submissions are saved to `contact_messages` and are viewable by admins via the **Messages** tab in the dashboard.
+- **Socials:** Social links are fully dynamic, managed via the Admin panel, and rendered across the site (About page and Footer).
 - **Profiles:** User usernames are synced between `auth.users` metadata and the public `profiles` table for relational consistency in comments.
 
 ## // LESSONS LEARNED & HICCUPS

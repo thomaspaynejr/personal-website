@@ -19,6 +19,7 @@ export default async function AdminDashboard() {
   const { data: tracker } = await supabase!.from('tracker_projects').select('*').order('created_at', { ascending: false });
   const { data: experiences } = await supabase!.from('experiences').select('*').order('display_order', { ascending: true });
   const { data: about } = await supabase!.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single();
+  const { data: messages } = await supabase!.from('contact_messages').select('*').order('created_at', { ascending: false });
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
@@ -39,6 +40,7 @@ export default async function AdminDashboard() {
         initialTracker={tracker || []}
         initialAbout={about}
         initialExperiences={experiences || []}
+        initialMessages={messages || []}
       />
     </main>
   );

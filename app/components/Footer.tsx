@@ -1,19 +1,33 @@
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
-import { FaInstagram, FaXTwitter } from 'react-icons/fa6';
+import { FaInstagram, FaXTwitter, FaGithub, FaLinkedin } from 'react-icons/fa6';
+import { createClient } from '@/lib/supabase/server';
 
-export default function Footer() {
-  const socials = [
-    {
-      name: 'Instagram',
-      href: '#',
-      icon: <FaInstagram size={18} />
-    },
-    {
-      name: 'X',
-      href: '#',
-      icon: <FaXTwitter size={18} />
-    }
+const socialIconMap: Record<string, React.ReactNode> = {
+  instagram: <FaInstagram size={18} />,
+  x: <FaXTwitter size={18} />,
+  twitter: <FaXTwitter size={18} />,
+  github: <FaGithub size={18} />,
+  linkedin: <FaLinkedin size={18} />
+};
+
+interface SocialLink {
+  name: string;
+  href: string;
+  icon_type: string;
+}
+
+export default async function Footer() {
+  const supabase = await createClient();
+  const { data: about } = await supabase!
+    .from('about_content')
+    .select('social_links')
+    .eq('id', '00000000-0000-0000-0000-000000000001')
+    .single();
+
+  const socials = (about?.social_links as unknown as SocialLink[]) || [
+    { name: 'Instagram', href: '#', icon_type: 'instagram' },
+    { name: 'X', href: '#', icon_type: 'x' }
   ];
 
   return (
@@ -43,7 +57,7 @@ export default function Footer() {
                   className="text-accent hover:text-action transition-all duration-300 hover:-translate-y-0.5"
                   aria-label={social.name}
                 >
-                  {social.icon}
+                  {socialIconMap[social.icon_type?.toLowerCase()] || socialIconMap.x}
                 </a>
               ))}
             </div>

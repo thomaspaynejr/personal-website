@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera } from 'lucide-react';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera, Mail } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 
@@ -11,16 +11,18 @@ export default function AdminClient({
   initialPortfolio,
   initialTracker,
   initialAbout,
-  initialExperiences
+  initialExperiences,
+  initialMessages
 }: { 
   initialEvents: any[], 
   initialProfiles: any[],
   initialPortfolio: any[],
   initialTracker: any[],
   initialAbout: any,
-  initialExperiences: any[]
+  initialExperiences: any[],
+  initialMessages: any[]
 }) {
-  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE'>('PORTFOLIO');
+  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE' | 'MESSAGES'>('PORTFOLIO');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -30,6 +32,7 @@ export default function AdminClient({
     { id: 'TIMELINE', label: 'Timeline', icon: <Clock size={14} /> },
     { id: 'EXPERIENCE', label: 'Experience', icon: <Briefcase size={14} /> },
     { id: 'ABOUT', label: 'About Me', icon: <Info size={14} /> },
+    { id: 'MESSAGES', label: 'Messages', icon: <Mail size={14} /> },
     { id: 'USERS', label: 'User Access', icon: <Shield size={14} /> },
   ];
 
@@ -73,6 +76,9 @@ export default function AdminClient({
         )}
         {activeTab === 'ABOUT' && (
           <AboutManager about={initialAbout} />
+        )}
+        {activeTab === 'MESSAGES' && (
+          <MessageManager messages={initialMessages} />
         )}
         {activeTab === 'USERS' && (
           <UserManager profiles={initialProfiles} />
@@ -683,6 +689,35 @@ function UserManager({ profiles }: any) {
             )}
           </tbody>
         </table>
+      </div>
+    </section>
+  );
+}
+
+function MessageManager({ messages }: { messages: any[] }) {
+  return (
+    <section className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center gap-2 px-2">
+        <Mail size={14} className="text-action" />
+        <h2 className="text-xs font-bold uppercase tracking-widest">Contact Form Submissions</h2>
+      </div>
+
+      <div className="space-y-4">
+        {messages.map((msg: any) => (
+          <div key={msg.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="text-xs font-bold uppercase text-foreground">{msg.name}</h4>
+                <p className="text-[9px] text-action font-bold uppercase tracking-widest">{msg.email}</p>
+              </div>
+              <span className="text-[8px] text-accent uppercase font-bold">{new Date(msg.created_at).toLocaleString()}</span>
+            </div>
+            <p className="text-[10px] text-accent leading-relaxed bg-background/30 p-3 rounded-lg border border-border-custom/20">{msg.message}</p>
+          </div>
+        ))}
+        {!messages.length && (
+          <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">No messages received yet.</p>
+        )}
       </div>
     </section>
   );
