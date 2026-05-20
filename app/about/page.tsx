@@ -29,8 +29,12 @@ export default async function About() {
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
   
-  // Use all social links from database
-  const socials = (about?.social_links as unknown as SocialLink[]) || [];
+  // Use professional social links only for the About page
+  const allSocials = (about?.social_links as unknown as SocialLink[]) || [];
+  const socials = allSocials.filter(s => 
+    s.icon_type?.toLowerCase() === 'linkedin' || 
+    s.icon_type?.toLowerCase() === 'github'
+  );
   
   // Fetch Experience from new table
   const { data: experiences } = await supabase!
