@@ -5,6 +5,7 @@ import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Tras
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';
+import { toggleTimelineLike, postTimelineComment } from '@/app/actions/engagement';
 
 interface TimelineEvent {
   id: string;
@@ -14,6 +15,14 @@ interface TimelineEvent {
   icon: React.ReactNode;
   likes: number;
   commentsCount?: number;
+  userHasLiked?: boolean;
+}
+
+interface Comment {
+  id: string;
+  text: string;
+  date: string;
+  username: string;
 }
 
 const TimelineItem = ({ 
@@ -30,8 +39,8 @@ const TimelineItem = ({
   setEditingEvent
 }: { 
   event: TimelineEvent; 
-  user: any; 
-  timelineComments: any;
+  user: { user_metadata?: { role?: string } } | null; 
+  timelineComments: Record<string, Comment[]>;
   activeCommentId: string | null;
   setActiveCommentId: (id: string | null) => void;
   handleLikeTimeline: (id: string) => void;
@@ -39,7 +48,7 @@ const TimelineItem = ({
   setTempComment: (val: string) => void;
   handlePostTimelineComment: (id: string) => void;
   isAdmin: boolean;
-  setEditingEvent: (e: any) => void;
+  setEditingEvent: (e: TimelineEvent) => void;
 }) => {
   return (
     <StaggerItem>
@@ -71,9 +80,9 @@ const TimelineItem = ({
                 user 
                 ? 'border-action text-action hover:bg-action hover:text-background' 
                 : 'border-border-custom text-accent/30 cursor-not-allowed'
-              }`}
+              } ${event.userHasLiked ? 'bg-action text-background' : ''}`}
             >
-              <Heart size={10} className={event.likes > 0 ? 'fill-action text-action' : ''} />
+              <Heart size={10} className={event.userHasLiked ? 'fill-background text-background' : ''} />
               <span>{event.likes} LIKES</span>
             </button>
             <button 
@@ -100,10 +109,13 @@ const TimelineItem = ({
           )}
           {timelineComments[event.id] && timelineComments[event.id].length > 0 && (
             <div className="space-y-2 mt-4 ml-2">
-              {timelineComments[event.id].map((comm: any, idx: number) => (
+              {timelineComments[event.id].map((comm, idx) => (
                 <div key={idx} className="flex flex-col gap-1 border-l-2 border-border-custom pl-4 py-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-bold text-action uppercase tracking-tighter">{comm.username}</span>
+                    <span className="text-[8px] text-accent uppercase font-bold">{comm.date}</span>
+                  </div>
                   <p className="text-xs text-foreground">{comm.text}</p>
-                  <p className="text-[10px] text-accent uppercase font-bold">{comm.date}</p>
                 </div>
               ))}
             </div>
@@ -119,18 +131,17 @@ export default function TimelineDashboard({
   initialTimeline,
   initialComments
 }: { 
-  user: any; 
+  user: { user_metadata?: { role?: string } } | null; 
   initialTimeline: TimelineEvent[];
-  initialComments: Record<string, {text: string, date: string}[]>;
+  initialComments: Record<string, Comment[]>;
 }) {
   const [timeline, setTimeline] = useState<TimelineEvent[]>(initialTimeline);
   const [showForm, setShowForm] = useState(false);
-  const [formType, setFormType] = useState<'TIMELINE' | 'PROJECT'>('TIMELINE');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
-  const [editingEvent, setEditingEvent] = useState<any>(null);
+  const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
   
-  const [timelineComments, setTimelineComments] = useState<Record<string, {text: string, date: string}[]>>(initialComments);
+  const [timelineComments] = useState<Record<string, Comment[]>>(initialComments);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
 
@@ -159,26 +170,44 @@ export default function TimelineDashboard({
     }
   };
 
-  const handleLikeTimeline = (id: string) => {
+  const handleLikeTimeline = async (id: string) => {
     if (!user) return;
-    setTimeline(timeline.map(event => 
-      event.id === id ? { ...event, likes: event.likes + 1 } : event
-    ));
+    
+    // Optimistic UI
+    const updatedTimeline = timeline.map(event => {
+      if (event.id === id) {
+        const hasLiked = event.userHasLiked;
+        return { 
+          ...event, 
+          likes: hasLiked ? event.likes - 1 : event.likes + 1,
+          userHasLiked: !hasLiked
+        };
+      }
+      return event;
+    });
+    setTimeline(updatedTimeline);
+
+    const res = await toggleTimelineLike(id);
+    if (res.error) {
+      // Revert if error
+      setTimeline(timeline);
+      alert(res.error);
+    }
   };
 
-  const handlePostTimelineComment = (id: string) => {
+  const handlePostTimelineComment = async (id: string) => {
     if (!user) return;
     if (!tempComment.trim()) return;
-    const newComment = {
-      text: tempComment,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    };
-    setTimelineComments({
-      ...timelineComments,
-      [id]: [...(timelineComments[id] || []), newComment]
-    });
+    
+    const text = tempComment;
     setTempComment('');
     setActiveCommentId(null);
+
+    const res = await postTimelineComment(id, text);
+    if (res.error) {
+      alert(res.error);
+      setTempComment(text); // Restore text
+    }
   };
 
   useEffect(() => {
@@ -270,7 +299,7 @@ export default function TimelineDashboard({
               ))}
               {!timeline.length && (
                 <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">
-                  The journey hasn't started yet.
+                  The journey hasn&apos;t started yet.
                 </p>
               )}
             </div>

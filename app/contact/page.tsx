@@ -1,17 +1,31 @@
 'use client';
 
 import { useState } from 'react';
+import { sendContactMessage } from '@/app/actions/engagement';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setStatus('success');
-    // Clear form
-    setFormData({ name: '', email: '', message: '' });
+    setStatus('loading');
+    
+    const fd = new FormData();
+    fd.append('name', formData.name);
+    fd.append('email', formData.email);
+    fd.append('message', formData.message);
+
+    const res = await sendContactMessage(fd);
+    
+    if (res.success) {
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    } else {
+      setStatus('error');
+      setErrorMessage(res.error || 'Something went wrong');
+    }
   };
 
   return (
@@ -69,15 +83,22 @@ export default function Contact() {
           </div>
           <button
             type="submit"
-            className="w-full py-3 bg-action text-background rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-[0.98] text-[10px] uppercase tracking-widest"
+            disabled={status === 'loading'}
+            className="w-full py-3 bg-action text-background rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-[0.98] text-[10px] uppercase tracking-widest disabled:opacity-50"
           >
-            Send Message _
+            {status === 'loading' ? 'Sending...' : 'Send Message _'}
           </button>
         </form>
 
         {status === 'success' && (
           <div className="mt-6 p-3 bg-action/10 text-action rounded-lg border border-action/20 text-[9px] font-bold uppercase tracking-widest text-center">
             Message Sent Successfully _
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="mt-6 p-3 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20 text-[9px] font-bold uppercase tracking-widest text-center">
+            Error: {errorMessage} _
           </div>
         )}
       </div>

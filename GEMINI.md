@@ -41,7 +41,13 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 ### Security Model
 - **Admin Role:** Defined in `auth.users.raw_user_meta_data -> 'role' = 'admin'`.
 - **RLS:** Public read-only for content; Admin full access; Authenticated engagement (likes/comments).
-- **Enforcement:** All administrative server actions in `app/actions/admin.ts` call `checkAdmin()`.
+- **Enforcement:** All administrative server actions in `app/actions/admin.ts` call `checkAdmin()`. Authenticated engagement actions are in `app/actions/engagement.ts`.
+
+## // ENGAGEMENT & INTERACTION
+
+- **Timeline:** Users can "Like" and "Comment" on journey events. Data is persisted in `timeline_likes` and `timeline_comments`.
+- **Contact:** Form submissions are saved to `contact_messages` and are viewable by admins.
+- **Profiles:** User usernames are synced between `auth.users` metadata and the public `profiles` table for relational consistency in comments.
 
 ## // LESSONS LEARNED & HICCUPS
 

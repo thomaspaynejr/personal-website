@@ -52,7 +52,11 @@ export async function updateProfile(formData: FormData) {
   const password = formData.get('password') as string
   const username = formData.get('username') as string
 
-  const updateData: any = {
+  const updateData: {
+    data: { username: string };
+    email?: string;
+    password?: string;
+  } = {
     data: { username }
   }
 
@@ -70,7 +74,16 @@ export async function updateProfile(formData: FormData) {
     return redirect('/profile?error=' + encodeURIComponent(error.message))
   }
 
+  // Also update public profiles table
+  if (username) {
+    await supabase
+      .from('profiles')
+      .update({ username })
+      .eq('id', (await supabase.auth.getUser()).data.user?.id)
+  }
+
   revalidatePath('/profile')
+  revalidatePath('/') // Revalidate home for comments
   return redirect('/profile?success=' + encodeURIComponent('Profile updated successfully. Please check your email for confirmation if you changed it.'))
 }
 

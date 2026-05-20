@@ -23,7 +23,7 @@ export default function MatrixRain() {
     const chars = [...phoenician, ...greek, ...katakana, ...tech];
     const fontSize = 22;
     let columns = Math.floor(width / fontSize);
-    let drops: number[] = Array(columns).fill(1).map(() => Math.random() * -100);
+    const drops: number[] = Array(columns).fill(1).map(() => Math.random() * -100);
 
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
