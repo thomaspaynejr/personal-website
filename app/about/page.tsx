@@ -25,8 +25,8 @@ export default async function About() {
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
-        <h1 className="text-2xl font-bold uppercase tracking-tight">About Me _</h1>
+      <div className="flex flex-col md:flex-row md:items-baseline mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
+        <h1 className="text-2xl font-bold uppercase tracking-tight text-action">About Me // UPDATED _</h1>
       </div>
       
       <div className="space-y-8">
