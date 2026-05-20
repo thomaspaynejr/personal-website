@@ -3,6 +3,8 @@ import { Mail } from 'lucide-react';
 import { FaInstagram, FaXTwitter, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { createClient } from '@/lib/supabase/server';
 
+export const revalidate = 0;
+
 const socialIconMap: Record<string, React.ReactNode> = {
   instagram: <FaInstagram size={18} />,
   x: <FaXTwitter size={18} />,
@@ -25,9 +27,11 @@ export default async function Footer() {
     .eq('id', '00000000-0000-0000-0000-000000000001')
     .single();
 
-  const socials = (about?.social_links as unknown as SocialLink[]) || [
-    { name: 'Instagram', href: '#', icon_type: 'instagram' },
-    { name: 'X', href: '#', icon_type: 'x' }
+  const dbSocials = about?.social_links as unknown as SocialLink[] | null;
+  // Use DB socials if they exist and are not empty, otherwise use fallbacks
+  const socials = (dbSocials && dbSocials.length > 0) ? dbSocials : [
+    { name: 'Instagram', href: 'https://instagram.com', icon_type: 'instagram' },
+    { name: 'X', href: 'https://x.com', icon_type: 'x' }
   ];
 
   return (

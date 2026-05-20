@@ -42,6 +42,7 @@ export async function upsertPortfolioProject(formData: FormData) {
 
   revalidatePath('/portfolio')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -58,6 +59,7 @@ export async function deletePortfolioProject(id: string) {
 
   revalidatePath('/portfolio')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -89,6 +91,7 @@ export async function upsertTrackerProject(formData: FormData) {
 
   revalidatePath('/dashboard')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -105,6 +108,7 @@ export async function deleteTrackerProject(id: string) {
 
   revalidatePath('/dashboard')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -136,6 +140,7 @@ export async function upsertTimelineEvent(formData: FormData) {
 
   revalidatePath('/')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -204,6 +209,7 @@ export async function updateAboutContent(formData: FormData) {
 
   revalidatePath('/about')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -241,6 +247,7 @@ export async function deleteTimelineEvent(id: string) {
 
   revalidatePath('/')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -272,6 +279,7 @@ export async function upsertExperience(formData: FormData) {
 
   revalidatePath('/about')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -288,5 +296,6 @@ export async function deleteExperience(id: string) {
 
   revalidatePath('/about')
   revalidatePath('/admin')
+  revalidatePath('/', 'layout')
   return { success: true }
 }

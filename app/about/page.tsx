@@ -3,6 +3,8 @@ import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
 
+export const revalidate = 0;
+
 const socialIconMap: Record<string, React.ReactNode> = {
   linkedin: <FaLinkedin size={16} />,
   instagram: <FaInstagram size={16} />,
