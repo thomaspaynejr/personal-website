@@ -1,23 +1,8 @@
 import { ArrowUpRight } from 'lucide-react';
-import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
 
 export const revalidate = 0;
-
-const socialIconMap: Record<string, React.ReactNode> = {
-  linkedin: <FaLinkedin size={16} />,
-  instagram: <FaInstagram size={16} />,
-  github: <FaGithub size={16} />,
-  x: <FaXTwitter size={16} />,
-  twitter: <FaXTwitter size={16} />
-};
-
-interface SocialLink {
-  name: string;
-  href: string;
-  icon_type: string;
-}
 
 export default async function About() {
   const supabase = await createClient();
@@ -30,14 +15,7 @@ export default async function About() {
   const bio_text = about?.bio_text || 'My path into technology is a blend of discipline, service, and continuous learning.';
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
-  
-  // Use professional social links only for the About page
-  const allSocials = (about?.social_links as unknown as SocialLink[]) || [];
-  const socials = allSocials.filter(s => 
-    s.icon_type?.toLowerCase() === 'linkedin' || 
-    s.icon_type?.toLowerCase() === 'github'
-  );
-  
+
   // Fetch Experience from new table
   const { data: experiences } = await supabase!
     .from('experiences')
@@ -48,20 +26,6 @@ export default async function About() {
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
       <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
         <h1 className="text-2xl font-bold">About Me</h1>
-        <div className="mt-4 md:mt-0 flex gap-4">
-          {(socials as SocialLink[]).map((social) => (
-            <a 
-              key={social.name} 
-              href={social.href} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-1.5 border border-border-custom rounded-lg text-foreground hover:text-action hover:border-action transition-all duration-300 bg-card/50" 
-              aria-label={social.name}
-            >
-              {socialIconMap[social.icon_type?.toLowerCase()] || socialIconMap.github}
-            </a>
-          ))}
-        </div>
       </div>
       
       <div className="space-y-8">
