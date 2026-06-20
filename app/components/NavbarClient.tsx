@@ -36,7 +36,17 @@ export default function NavbarClient({ user, isAdmin, signoutAction }: NavbarCli
   }
 
   return (
-    <nav className="flex justify-start md:justify-end items-center py-6 md:py-10 px-6 max-w-4xl mx-auto w-full relative z-50">
+    <nav className="flex justify-between md:justify-end items-center py-6 md:py-10 px-6 max-w-4xl mx-auto w-full relative z-50">
+      
+      {/* Mobile Hamburger Button (Left) */}
+      <div className="md:hidden flex items-center">
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-foreground p-1 z-[60] relative transition-transform hover:scale-110 cursor-none"
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-6 text-accent">
@@ -69,15 +79,9 @@ export default function NavbarClient({ user, isAdmin, signoutAction }: NavbarCli
         </div>
       </div>
 
-      {/* Mobile Hamburger Button */}
-      <div className="md:hidden flex items-center gap-4">
+      {/* Mobile Theme Toggle (Right) */}
+      <div className="md:hidden flex items-center">
         <ThemeToggle />
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-foreground p-1 z-[60] relative transition-transform hover:scale-110 cursor-none"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
       </div>
 
       {/* Mobile Dropdown Menu */}
