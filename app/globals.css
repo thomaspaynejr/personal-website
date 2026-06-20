@@ -64,7 +64,16 @@ body {
   scrollbar-color: var(--border) transparent;
 }
 
+/* Hide scrollbar utility for mobile nav */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Ensure interactive elements also hide the cursor */
-a, button, input, textarea {
+a, button, input, textarea, [role="button"] {
   cursor: none !important;
 }
