@@ -36,11 +36,7 @@ export default function NavbarClient({ user, isAdmin, signoutAction }: NavbarCli
   }
 
   return (
-    <nav className="flex justify-between md:justify-end items-center py-6 md:py-10 px-6 max-w-4xl mx-auto w-full relative z-50">
-      {/* Mobile Logo / Left Side (Optional, helps balance the hamburger) */}
-      <div className="md:hidden text-xs font-bold tracking-widest text-foreground">
-        TP // 2024
-      </div>
+    <nav className="flex justify-start md:justify-end items-center py-6 md:py-10 px-6 max-w-4xl mx-auto w-full relative z-50">
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-6 text-accent">
@@ -92,7 +88,7 @@ export default function NavbarClient({ user, isAdmin, signoutAction }: NavbarCli
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 right-6 w-48 bg-card/95 backdrop-blur-md border border-border-custom rounded-xl shadow-2xl overflow-hidden flex flex-col p-2 md:hidden z-50"
+            className="absolute top-16 left-6 w-48 bg-card/95 backdrop-blur-md border border-border-custom rounded-xl shadow-2xl overflow-hidden flex flex-col p-2 md:hidden z-50"
           >
             {navLinks.map((link) => (
               <Link 
