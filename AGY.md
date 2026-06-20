@@ -65,6 +65,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 
 - **[UI/UX Refinement]**: Refactored `CustomCursor.tsx` to use `framer-motion` (`useMotionValue`, `useSpring`) for buttery smooth 60fps physics, removing conflicting Tailwind CSS transitions and expensive `getComputedStyle` layout thrashing.
 - **[UI/UX Polish]**: Added a contextual 3-way hover state to `CustomCursor.tsx` ('none', 'normal', 'nav'). When hovering over links in the `<nav>` or `<footer>`, the cursor shrinks by half (`scale: 0.5`) and fills solid (`bg-action`) for a precise 'magnetic dot' feel.
+- **[Mobile UX]**: Implemented horizontal scrolling for `<Navbar />` on mobile screens. Used `overflow-x-auto` with a custom hidden scrollbar utility (`.no-scrollbar`) and applied `shrink-0` to all links to prevent layout clipping while maintaining the "shrunk" minimalist aesthetic.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*
