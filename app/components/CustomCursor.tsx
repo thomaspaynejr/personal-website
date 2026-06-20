@@ -1,51 +1,61 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+
+type HoverState = 'none' | 'normal' | 'nav';
 
 export default function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: 0, y: 0 });
-  const cursorPos = useRef({ x: 0, y: 0 });
+  const [hoverState, setHoverState] = useState<HoverState>('none');
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+
+  // Buttery smooth spring physics for the trailing effect
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+  const x = useSpring(cursorX, springConfig);
+  const y = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      mousePos.current = { x: e.clientX, y: e.clientY };
-      
+      // Offset by 8px (half of w-4 h-4) to center the cursor
+      cursorX.set(e.clientX - 8);
+      cursorY.set(e.clientY - 8);
+
       const target = e.target as HTMLElement;
-      const isPointer = window.getComputedStyle(target).cursor === 'pointer';
-      if (cursorRef.current) {
-        if (isPointer) {
-          cursorRef.current.classList.add('scale-[2.5]', 'bg-action/10');
-        } else {
-          cursorRef.current.classList.remove('scale-[2.5]', 'bg-action/10');
-        }
+      
+      if (target.closest('nav a, nav button, footer a, footer button')) {
+        setHoverState('nav');
+      } else if (target.closest('a, button, input, textarea, [role="button"]')) {
+        setHoverState('normal');
+      } else {
+        setHoverState('none');
       }
-    };
-
-    const animate = () => {
-      const lerp = 0.15;
-      cursorPos.current.x += (mousePos.current.x - cursorPos.current.x) * lerp;
-      cursorPos.current.y += (mousePos.current.y - cursorPos.current.y) * lerp;
-
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${cursorPos.current.x - 8}px, ${cursorPos.current.y - 8}px)`;
-      }
-      requestAnimationFrame(animate);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    const animationId = requestAnimationFrame(animate);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [cursorX, cursorY]);
 
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
+  // Determine animation properties based on hover state
+  let scale = 1;
+  let bgColor = 'transparent';
+
+  if (hoverState === 'normal') {
+    scale = 2.5;
+    bgColor = 'var(--color-action-10, rgba(var(--color-action), 0.1))'; // using tailwind color mapping equivalent if possible, or fallback via CSS class
+  } else if (hoverState === 'nav') {
+    scale = 0.5; // Reduce size by half
+    bgColor = 'var(--color-foreground)'; // Solid dot for nav
+  }
 
   return (
-    <div 
-      ref={cursorRef}
-      className="fixed top-0 left-0 w-4 h-4 rounded-full border border-action pointer-events-none z-[9999] transition-transform duration-300 ease-out hidden md:block will-change-transform"
+    <motion.div
+      className={`fixed top-0 left-0 w-4 h-4 rounded-full border border-action pointer-events-none z-[9999] hidden md:block will-change-transform ${
+        hoverState === 'normal' ? 'bg-action/10' : hoverState === 'nav' ? 'bg-action' : 'bg-transparent'
+      }`}
+      style={{ x, y }}
+      animate={{ scale }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     />
   );
 }

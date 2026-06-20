@@ -19,7 +19,7 @@ export default async function Portfolio() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects?.map((project, index) => (
+        {projects?.map((project: any, index: number) => (
           <div
             key={project.id}
             className="group flex flex-col border border-border-custom/30 rounded-2xl p-6 bg-card/40 backdrop-blur-md hover:-translate-y-1 hover:border-action transition-all duration-300 shadow-sm"

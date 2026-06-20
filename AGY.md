@@ -1,4 +1,4 @@
-# GEMINI AGENT RULES // THOMAS PAYNE WEBSITE
+# AGY AGENT RULES // THOMAS PAYNE WEBSITE
 
 This codebase uses an experimental/future version of **Next.js 16**. Standard training data for Next.js 13/14/15 **WILL NOT** always apply.
 
@@ -11,7 +11,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[TYPESCRIPT]** Native HTML elements (like `<label>`) are strictly typed. Do not pass custom non-standard attributes (e.g., `underline`) directly to them; use `className` with Tailwind instead.
 - **[BUILD]** The `npm run dev` script runs in the background (`&`). If the process persists after closing the terminal, find and kill the PID (usually port 3000/3001) using `lsof -i :3000`.
 - **[TURBOPACK]** Avoid experimental CSS features like `animation-timeline: scroll()`. They can cause Turbopack to panic (crash). Use `framer-motion` (`useScroll`) for scroll-linked animations instead.
-- **[GIT]** After every successful change and verification, automatically stage, commit, and push the updates to the GitHub repository. Use concise, descriptive commit messages following the Conventional Commits standard.
+- **[GIT CRITICAL RULE]** EVERY TIME you work on an issue and complete a change, you MUST ALWAYS automatically stage, commit, and push the updates to the GitHub repository using git commands. Use concise, descriptive commit messages. NEVER forget to push to GitHub as we move forward.
 - **[SUPABASE]** Use `.env.local` for local development. Ensure `NEXT_PUBLIC_SUPABASE_URL` follows the `https://[ref].supabase.co` format.
 
 ## // ARCHITECTURAL KNOWLEDGE
@@ -61,5 +61,10 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[ICONS]**: `react-icons/si` can have inconsistent naming or missing exports (e.g., `SiLinkedin`). Preferred fallback is `react-icons/fa6` for social brands.
 - **[PORT CONFLICTS]**: Resolved by automating port 3000 cleanup in `package.json` dev script: `(lsof -t -i:3000 | xargs kill -9 || true) && next dev`.
 
+## // AGENT ACTIVITY LOG (ANNOTATIONS)
+
+- **[UI/UX Refinement]**: Refactored `CustomCursor.tsx` to use `framer-motion` (`useMotionValue`, `useSpring`) for buttery smooth 60fps physics, removing conflicting Tailwind CSS transitions and expensive `getComputedStyle` layout thrashing.
+- **[UI/UX Polish]**: Added a contextual 3-way hover state to `CustomCursor.tsx` ('none', 'normal', 'nav'). When hovering over links in the `<nav>` or `<footer>`, the cursor shrinks by half (`scale: 0.5`) and fills solid (`bg-action`) for a precise 'magnetic dot' feel.
+
 ---
-*Maintained by Gemini for Thomas Payne.*
+*Maintained by Antigravity for Thomas Payne.*

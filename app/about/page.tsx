@@ -59,7 +59,7 @@ export default async function About() {
         <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
           <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">02 // EXPERIENCE</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {(experiences || []).map((exp, idx) => (
+            {(experiences || []).map((exp: any, idx: number) => (
               <div key={idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
                 <h3 className="font-bold text-sm mb-2 flex items-center justify-between">
                   <span>{exp.title}</span>

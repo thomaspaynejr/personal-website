@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Github, Info, Camera, Mail } from 'lucide-react';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Info, Camera, Mail } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 
@@ -121,7 +121,7 @@ function AboutManager({ about }: { about: any }) {
         .from('hero-images')
         .getPublicUrl(fileName);
 
-      setFormData(prev => ({ ...prev, hero_image_url: publicUrl }));
+      setFormData((prev: any) => ({ ...prev, hero_image_url: publicUrl }));
       alert('Photo uploaded! Link: ' + publicUrl);
     } catch (err: any) {
       alert('Upload failed: ' + err.message);
