@@ -66,7 +66,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[UI/UX Refinement]**: Refactored `CustomCursor.tsx` to use `framer-motion` (`useMotionValue`, `useSpring`) for buttery smooth 60fps physics, removing conflicting Tailwind CSS transitions and expensive `getComputedStyle` layout thrashing.
 - **[UI/UX Polish]**: Added a contextual 3-way hover state to `CustomCursor.tsx` ('none', 'normal', 'nav'). When hovering over links in the `<nav>` or `<footer>`, the cursor shrinks by half (`scale: 0.5`) and fills solid (`bg-action`) for a precise 'magnetic dot' feel.
 - **[Mobile UX]**: Implemented horizontal scrolling for `<Navbar />` on mobile screens. Used `overflow-x-auto` with a custom hidden scrollbar utility (`.no-scrollbar`) and applied `shrink-0` to all links to prevent layout clipping while maintaining the "shrunk" minimalist aesthetic.
-- **[Mobile UX Dropdown Refactor]**: Upgraded the mobile navbar to a Framer Motion-powered dropdown hamburger menu. Extracted the UI into a new `NavbarClient.tsx` Client Component while keeping `Navbar.tsx` as a pure Server Component for auth data fetching. The new dropdown features an animated backdrop-blur menu, positioned cleanly on the left side of the screen after removing the text logo.
+- **[Mobile UX Dropdown Refactor]**: Upgraded the mobile navbar to a Framer Motion-powered dropdown hamburger menu. Extracted the UI into a new `NavbarClient.tsx` Client Component while keeping `Navbar.tsx` as a pure Server Component for auth data fetching. The new dropdown features an animated backdrop-blur menu, positioned cleanly on the left side of the screen with the light/dark mode toggle balancing it on the right.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*
