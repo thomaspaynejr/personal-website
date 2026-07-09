@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Info, Camera, Mail } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
@@ -62,27 +63,37 @@ export default function AdminClient({
 
       {/* Content Area */}
       <div className="space-y-8">
-        {activeTab === 'PORTFOLIO' && (
-          <PortfolioManager projects={initialPortfolio} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
-        )}
-        {activeTab === 'TRACKER' && (
-          <TrackerManager projects={initialTracker} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
-        )}
-        {activeTab === 'TIMELINE' && (
-          <TimelineManager events={initialEvents} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
-        )}
-        {activeTab === 'EXPERIENCE' && (
-          <ExperienceManager experiences={initialExperiences} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
-        )}
-        {activeTab === 'ABOUT' && (
-          <AboutManager about={initialAbout} />
-        )}
-        {activeTab === 'MESSAGES' && (
-          <MessageManager messages={initialMessages} />
-        )}
-        {activeTab === 'USERS' && (
-          <UserManager profiles={initialProfiles} />
-        )}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'PORTFOLIO' && (
+              <PortfolioManager projects={initialPortfolio} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+            )}
+            {activeTab === 'TRACKER' && (
+              <TrackerManager projects={initialTracker} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+            )}
+            {activeTab === 'TIMELINE' && (
+              <TimelineManager events={initialEvents} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+            )}
+            {activeTab === 'EXPERIENCE' && (
+              <ExperienceManager experiences={initialExperiences} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+            )}
+            {activeTab === 'ABOUT' && (
+              <AboutManager about={initialAbout} />
+            )}
+            {activeTab === 'MESSAGES' && (
+              <MessageManager messages={initialMessages} />
+            )}
+            {activeTab === 'USERS' && (
+              <UserManager profiles={initialProfiles} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

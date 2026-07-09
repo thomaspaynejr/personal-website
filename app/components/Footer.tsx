@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { FaInstagram, FaXTwitter, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { createClient } from '@/lib/supabase/server';
+import { FadeIn } from './Animations';
 
 export const revalidate = 0;
 
@@ -35,7 +36,8 @@ export default async function Footer() {
   ];
 
   return (
-    <footer className="border-t border-border-custom mt-20">
+    <FadeIn delay={0.4}>
+      <footer className="border-t border-border-custom mt-20">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-center md:items-start gap-2">
@@ -69,5 +71,6 @@ export default async function Footer() {
         </div>
       </div>
     </footer>
+    </FadeIn>
   );
 }

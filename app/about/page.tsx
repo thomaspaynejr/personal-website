@@ -1,7 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
-
+import { FadeIn, StaggerContainer, StaggerItem } from '../components/Animations';
 // Forced update to clear potential cache
 export const revalidate = 0;
 
@@ -25,62 +25,70 @@ export default async function About() {
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-baseline mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
-        <h1 className="text-2xl font-bold uppercase tracking-tight text-action">About Me // UPDATED _</h1>
-      </div>
+      <FadeIn>
+        <div className="flex flex-col md:flex-row md:items-baseline mb-4 bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 shadow-sm">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-action">About Me // UPDATED _</h1>
+        </div>
+      </FadeIn>
       
-      <div className="space-y-8">
+      <StaggerContainer delay={0.2} className="space-y-8">
         {/* Bio Section with Hero Image */}
-        <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 overflow-hidden">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-1 order-2 md:order-1">
-              <div className="text-[10px] font-bold text-action mb-3 tracking-tighter uppercase">01 // THE JOURNEY</div>
-              <div className="text-accent max-w-none space-y-4">
-                <p className="leading-relaxed text-sm whitespace-pre-wrap">
-                  {bio_text}
-                </p>
-                <p className="leading-relaxed text-sm whitespace-pre-wrap">
-                  {journey_text}
-                </p>
+        <StaggerItem>
+          <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 overflow-hidden">
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              <div className="flex-1 order-2 md:order-1">
+                <div className="text-[10px] font-bold text-action mb-3 tracking-tighter uppercase">01 // THE JOURNEY</div>
+                <div className="text-accent max-w-none space-y-4">
+                  <p className="leading-relaxed text-sm whitespace-pre-wrap">
+                    {bio_text}
+                  </p>
+                  <p className="leading-relaxed text-sm whitespace-pre-wrap">
+                    {journey_text}
+                  </p>
+                </div>
               </div>
+              {hero_image && (
+                <div className="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50 order-1 md:order-2">
+                  <img 
+                    src={hero_image} 
+                    alt="Thomas Payne" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
-            {hero_image && (
-              <div className="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50 order-1 md:order-2">
-                <img 
-                  src={hero_image} 
-                  alt="Thomas Payne" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-          </div>
-        </section>
+          </section>
+        </StaggerItem>
 
-        <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
-          <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">02 // EXPERIENCE</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {(experiences || []).map((exp: any, idx: number) => (
-              <div key={idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
-                <h3 className="font-bold text-sm mb-2 flex items-center justify-between">
-                  <span>{exp.title}</span>
-                  <ArrowUpRight size={12} className="text-accent" />
-                </h3>
-                <p className="text-[9px] text-accent mb-2 font-medium italic uppercase">{exp.period}</p>
-                <p className="text-[11px] text-accent/80 leading-relaxed">
-                  {exp.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <StaggerItem>
+          <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
+            <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">02 // EXPERIENCE</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {(experiences || []).map((exp: any, idx: number) => (
+                <div key={idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
+                  <h3 className="font-bold text-sm mb-2 flex items-center justify-between">
+                    <span>{exp.title}</span>
+                    <ArrowUpRight size={12} className="text-accent" />
+                  </h3>
+                  <p className="text-[9px] text-accent mb-2 font-medium italic uppercase">{exp.period}</p>
+                  <p className="text-[11px] text-accent/80 leading-relaxed">
+                    {exp.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </StaggerItem>
 
-        <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
-          <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">03 // TOOLKIT</div>
-          <div className="flex flex-wrap items-center -ml-2">
-            <TechIcon items={['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Node.js', 'Supabase', 'Firebase']} />
-          </div>
-        </section>
-      </div>
+        <StaggerItem>
+          <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
+            <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">03 // TOOLKIT</div>
+            <div className="flex flex-wrap items-center -ml-2">
+              <TechIcon items={['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Node.js', 'Supabase', 'Firebase']} />
+            </div>
+          </section>
+        </StaggerItem>
+      </StaggerContainer>
     </main>
   );
 }

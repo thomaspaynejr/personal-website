@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
@@ -99,14 +100,21 @@ const TimelineItem = ({
             </button>
           </div>
 
-          {activeCommentId === event.id && user && (
-            <div className="space-y-4 mt-4 animate-in fade-in slide-in-from-top-2">
-              <div className="flex gap-2">
-                <input type="text" value={tempComment} onChange={(e) => setTempComment(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all shadow-sm" onKeyDown={(e) => e.key === 'Enter' && handlePostTimelineComment(event.id)} />
-                <button onClick={(e) => { e.preventDefault(); handlePostTimelineComment(event.id); }} className="p-2 bg-action text-background rounded-lg hover:opacity-90"><Send size={12} className="text-foreground" /></button>
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {activeCommentId === event.id && user && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="space-y-4 mt-4 overflow-hidden"
+              >
+                <div className="flex gap-2 pb-1">
+                  <input type="text" value={tempComment} onChange={(e) => setTempComment(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all shadow-sm" onKeyDown={(e) => e.key === 'Enter' && handlePostTimelineComment(event.id)} />
+                  <button onClick={(e) => { e.preventDefault(); handlePostTimelineComment(event.id); }} className="p-2 bg-action text-background rounded-lg hover:opacity-90"><Send size={12} className="text-foreground" /></button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {timelineComments[event.id] && timelineComments[event.id].length > 0 && (
             <div className="space-y-2 mt-4 ml-2">
               {timelineComments[event.id].map((comm, idx) => (
@@ -244,38 +252,45 @@ export default function TimelineDashboard({
         </FadeIn>
 
         {/* Form */}
-        {showForm && isAdmin && (
-          <FadeIn>
-            <section className="animate-in fade-in slide-in-from-top-4 duration-500 max-w-3xl mx-auto">
-              <form onSubmit={handleAddEntry} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
-                <div className="flex gap-3 mb-1">
-                  <div className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border transition-all bg-action text-background border-action uppercase`}>
-                    {editingEvent ? 'EDITING EVENT' : 'NEW JOURNEY EVENT'}
+        <AnimatePresence>
+          {showForm && isAdmin && (
+            <motion.section 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="max-w-3xl mx-auto overflow-hidden"
+            >
+              <div className="pb-4">
+                <form onSubmit={handleAddEntry} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
+                  <div className="flex gap-3 mb-1">
+                    <div className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border transition-all bg-action text-background border-action uppercase`}>
+                      {editingEvent ? 'EDITING EVENT' : 'NEW JOURNEY EVENT'}
+                    </div>
                   </div>
-                </div>
-                <input 
-                  type="text"
-                  value={newPostTitle}
-                  onChange={(e) => setNewPostTitle(e.target.value)}
-                  placeholder="Entry Title..."
-                  className="w-full bg-background border border-border-custom rounded-lg px-3 py-1.5 text-xs outline-none focus:border-action transition-all text-foreground"
-                />
-                <textarea
-                  value={newPostContent}
-                  onChange={(e) => setNewPostContent(e.target.value)}
-                  placeholder="Describe the journey..."
-                  className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
-                />
-                <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => { setShowForm(false); setEditingEvent(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-4 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
-                    {editingEvent ? 'Update Event' : 'Save Entry'}
-                  </button>
-                </div>
-              </form>
-            </section>
-          </FadeIn>
-        )}
+                  <input 
+                    type="text"
+                    value={newPostTitle}
+                    onChange={(e) => setNewPostTitle(e.target.value)}
+                    placeholder="Entry Title..."
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-1.5 text-xs outline-none focus:border-action transition-all text-foreground"
+                  />
+                  <textarea
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                    placeholder="Describe the journey..."
+                    className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
+                  />
+                  <div className="flex justify-end gap-3">
+                    <button type="button" onClick={() => { setShowForm(false); setEditingEvent(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
+                    <button type="submit" className="px-4 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
+                      {editingEvent ? 'Update Event' : 'Save Entry'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
         {/* Timeline Section */}
         <section className="max-w-2xl mx-auto">

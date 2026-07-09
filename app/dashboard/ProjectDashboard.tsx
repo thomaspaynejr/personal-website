@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Activity, CheckCircle2, Construction, X, Edit, Trash2 } from 'lucide-react';
 import { StaggerContainer, StaggerItem, FadeIn } from '../components/Animations';
 import { upsertTrackerProject, deleteTrackerProject } from '@/app/actions/admin';
@@ -86,59 +87,66 @@ export default function ProjectDashboard({
           </div>
         </FadeIn>
 
-        {showForm && isAdmin && (
-          <FadeIn>
-            <section className="animate-in fade-in slide-in-from-top-4 duration-500 mb-6 max-w-3xl mx-auto">
-              <form onSubmit={handleAddProject} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
-                <div className="text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border border-action bg-action text-white inline-block uppercase">
-                  {editingId ? 'EDIT PROJECT' : 'NEW PROJECT'}
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input 
-                    type="text"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="Project Name..."
-                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all text-foreground"
-                  />
-                  <div className="grid grid-cols-2 gap-2">
-                    <select 
-                      value={newProjectStatus}
-                      onChange={(e) => setNewProjectStatus(e.target.value as any)}
-                      className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
-                    >
-                      <option value="ACTIVE">ACTIVE</option>
-                      <option value="COMPLETED">COMPLETED</option>
-                      <option value="RESEARCHING">RESEARCHING</option>
-                    </select>
-                    <input 
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={newProjectProgress}
-                      onChange={(e) => setNewProjectProgress(parseInt(e.target.value) || 0)}
-                      className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
-                    />
+        <AnimatePresence>
+          {showForm && isAdmin && (
+            <motion.section 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="mb-6 max-w-3xl mx-auto overflow-hidden"
+            >
+              <div className="pb-4">
+                <form onSubmit={handleAddProject} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
+                  <div className="text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border border-action bg-action text-white inline-block uppercase">
+                    {editingId ? 'EDIT PROJECT' : 'NEW PROJECT'}
                   </div>
-                </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input 
+                      type="text"
+                      value={newProjectName}
+                      onChange={(e) => setNewProjectName(e.target.value)}
+                      placeholder="Project Name..."
+                      className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action transition-all text-foreground"
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <select 
+                        value={newProjectStatus}
+                        onChange={(e) => setNewProjectStatus(e.target.value as any)}
+                        className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
+                      >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="RESEARCHING">RESEARCHING</option>
+                      </select>
+                      <input 
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={newProjectProgress}
+                        onChange={(e) => setNewProjectProgress(parseInt(e.target.value) || 0)}
+                        className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
+                      />
+                    </div>
+                  </div>
 
-                <textarea
-                  value={newProjectDescription}
-                  onChange={(e) => setNewProjectDescription(e.target.value)}
-                  placeholder="What are you building?"
-                  className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
-                />
-                <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                  <button type="submit" className="px-4 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
-                    {editingId ? 'Update Project' : 'Save Project'}
-                  </button>
-                </div>
-              </form>
-            </section>
-          </FadeIn>
-        )}
+                  <textarea
+                    value={newProjectDescription}
+                    onChange={(e) => setNewProjectDescription(e.target.value)}
+                    placeholder="What are you building?"
+                    className="w-full bg-background border border-border-custom rounded-xl p-3 text-xs text-foreground outline-none focus:border-action transition-all min-h-[80px] resize-none"
+                  />
+                  <div className="flex justify-end gap-3">
+                    <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
+                    <button type="submit" className="px-4 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
+                      {editingId ? 'Update Project' : 'Save Project'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
         <StaggerContainer>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
