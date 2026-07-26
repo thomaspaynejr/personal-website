@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Clock, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
+import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';

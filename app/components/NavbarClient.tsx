@@ -8,7 +8,7 @@ import { Home, User as UserIcon, Laptop, LogOut, LogIn, Activity, Shield, Menu, 
 import ThemeToggle from './ThemeToggle';
 
 interface NavbarClientProps {
-  user: any;
+  user: { id: string; email?: string; user_metadata?: { role?: string } } | null;
   isAdmin: boolean;
   signoutAction: () => void;
 }

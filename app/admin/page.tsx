@@ -13,13 +13,13 @@ export default async function AdminDashboard() {
   }
 
   // Fetch all data for the dashboard
-  const { data: events } = await supabase!.from('timeline_events').select('*').order('created_at', { ascending: false });
-  const { data: profiles } = await supabase!.from('profiles').select('*').order('username', { ascending: true });
-  const { data: portfolio } = await supabase!.from('portfolio_projects').select('*').order('display_order', { ascending: true });
-  const { data: tracker } = await supabase!.from('tracker_projects').select('*').order('created_at', { ascending: false });
-  const { data: experiences } = await supabase!.from('experiences').select('*').order('display_order', { ascending: true });
-  const { data: about } = await supabase!.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single();
-  const { data: messages } = await supabase!.from('contact_messages').select('*').order('created_at', { ascending: false });
+  const events = supabase ? (await supabase.from('timeline_events').select('*').order('created_at', { ascending: false })).data : [];
+  const profiles = supabase ? (await supabase.from('profiles').select('*').order('username', { ascending: true })).data : [];
+  const portfolio = supabase ? (await supabase.from('portfolio_projects').select('*').order('display_order', { ascending: true })).data : [];
+  const tracker = supabase ? (await supabase.from('tracker_projects').select('*').order('created_at', { ascending: false })).data : [];
+  const experiences = supabase ? (await supabase.from('experiences').select('*').order('display_order', { ascending: true })).data : [];
+  const about = supabase ? (await supabase.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single()).data : null;
+  const messages = supabase ? (await supabase.from('contact_messages').select('*').order('created_at', { ascending: false })).data : [];
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">

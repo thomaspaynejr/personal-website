@@ -5,23 +5,28 @@ import { FadeIn, StaggerContainer, StaggerItem } from '../components/Animations'
 // Forced update to clear potential cache
 export const revalidate = 0;
 
+interface Experience {
+  id: string;
+  title: string;
+  period: string;
+  description: string;
+  display_order?: number;
+}
+
 export default async function About() {
   const supabase = await createClient();
-  const { data: about } = await supabase!
-    .from('about_content')
-    .select('*')
-    .eq('id', '00000000-0000-0000-0000-000000000001')
-    .single();
+  const about = supabase
+    ? (await supabase.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single()).data
+    : null;
 
   const bio_text = about?.bio_text || 'My path into technology is a blend of discipline, service, and continuous learning.';
   const journey_text = about?.journey_text || 'Following my military service, I pursued higher education...';
   const hero_image = about?.hero_image_url || about?.profile_image_url;
 
   // Fetch Experience from new table
-  const { data: experiences } = await supabase!
-    .from('experiences')
-    .select('*')
-    .order('display_order', { ascending: true });
+  const experiences = (supabase
+    ? (await supabase.from('experiences').select('*').order('display_order', { ascending: true })).data
+    : []) as Experience[] | null;
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
@@ -64,8 +69,8 @@ export default async function About() {
           <section className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30">
             <div className="text-[10px] font-bold text-action mb-4 tracking-tighter uppercase">02 // EXPERIENCE</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(experiences || []).map((exp: any, idx: number) => (
-                <div key={idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
+              {(experiences || []).map((exp, idx) => (
+                <div key={exp.id || idx} className="border border-border-custom rounded-xl p-5 hover:border-accent transition-all duration-300 bg-background/30">
                   <h3 className="font-bold text-sm mb-2 flex items-center justify-between">
                     <span>{exp.title}</span>
                     <ArrowUpRight size={12} className="text-accent" />

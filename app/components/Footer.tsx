@@ -22,11 +22,13 @@ interface SocialLink {
 
 export default async function Footer() {
   const supabase = await createClient();
-  const { data: about } = await supabase!
-    .from('about_content')
-    .select('social_links')
-    .eq('id', '00000000-0000-0000-0000-000000000001')
-    .single();
+  const about = supabase
+    ? (await supabase
+        .from('about_content')
+        .select('social_links')
+        .eq('id', '00000000-0000-0000-0000-000000000001')
+        .single()).data
+    : null;
 
   const dbSocials = about?.social_links as unknown as SocialLink[] | null;
   // Use DB socials if they exist and are not empty, otherwise use fallbacks

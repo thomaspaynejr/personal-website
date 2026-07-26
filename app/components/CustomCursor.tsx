@@ -38,14 +38,11 @@ export default function CustomCursor() {
 
   // Determine animation properties based on hover state
   let scale = 1;
-  let bgColor = 'transparent';
 
   if (hoverState === 'normal') {
     scale = 2.5;
-    bgColor = 'var(--color-action-10, rgba(var(--color-action), 0.1))'; // using tailwind color mapping equivalent if possible, or fallback via CSS class
   } else if (hoverState === 'nav') {
     scale = 0.5; // Reduce size by half
-    bgColor = 'var(--color-foreground)'; // Solid dot for nav
   }
 
   return (

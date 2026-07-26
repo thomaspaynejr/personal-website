@@ -33,19 +33,21 @@ export default async function Home() {
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   // Fetch timeline events with counts and user specific like status
-  const { data: events } = await supabase!
-    .from('timeline_events')
-    .select(`
-      *,
-      timeline_likes(user_id),
-      timeline_comments(
-        id,
-        text,
-        created_at,
-        profiles(username)
-      )
-    `)
-    .order('created_at', { ascending: false });
+  const events = supabase 
+    ? (await supabase
+        .from('timeline_events')
+        .select(`
+          *,
+          timeline_likes(user_id),
+          timeline_comments(
+            id,
+            text,
+            created_at,
+            profiles(username)
+          )
+        `)
+        .order('created_at', { ascending: false })).data
+    : [];
 
   // Map events and extract comments
   const timelineComments: Record<string, { id: string; text: string; date: string; username: string }[]> = {};

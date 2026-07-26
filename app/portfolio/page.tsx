@@ -2,12 +2,22 @@ import TechIcon from "../components/TechIcon";
 import { createClient } from '@/lib/supabase/server';
 import { FadeIn, StaggerContainer, StaggerItem } from '../components/Animations';
 
+interface PortfolioProject {
+  id: string;
+  title: string;
+  description: string;
+  tech?: string[];
+  demo_url?: string;
+  source_url?: string;
+  display_order?: number;
+}
+
 export default async function Portfolio() {
   const supabase = await createClient();
-  const { data: projects } = await supabase!
-    .from('portfolio_projects')
-    .select('*')
-    .order('display_order', { ascending: true });
+  const projectsRes = supabase 
+    ? await supabase.from('portfolio_projects').select('*').order('display_order', { ascending: true })
+    : { data: [] };
+  const projects = (projectsRes.data || []) as PortfolioProject[];
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-10 space-y-10">
@@ -22,7 +32,7 @@ export default async function Portfolio() {
       </FadeIn>
 
       <StaggerContainer delay={0.2} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects?.map((project: any, index: number) => (
+        {projects.map((project) => (
           <StaggerItem key={project.id} className="h-full">
             <div
               className="group flex flex-col h-full border border-border-custom/30 rounded-2xl p-6 bg-card/40 backdrop-blur-md hover:-translate-y-1 hover:border-action transition-all duration-300 shadow-sm"

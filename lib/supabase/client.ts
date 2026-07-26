@@ -6,7 +6,7 @@ export function createClient() {
 
   if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('your-project-id')) {
     console.warn("Supabase credentials missing or invalid. Auth will not work.")
-    return null as any;
+    return null as unknown as ReturnType<typeof createBrowserClient>;
   }
 
   return createBrowserClient(

@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -162,7 +161,7 @@ export async function updateAboutContent(formData: FormData) {
     const fileExt = hero_image_file.name.split('.').pop()
     const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`
     
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('hero-images')
       .upload(fileName, hero_image_file)
 

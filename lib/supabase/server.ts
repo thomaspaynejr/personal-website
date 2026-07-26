@@ -9,7 +9,7 @@ export async function createClient() {
   if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('your-project-id')) {
     // Return a dummy object or throw a descriptive error that doesn't crash the whole app
     console.warn("Supabase credentials missing or invalid. Auth will not work.")
-    return null as any; 
+    return null as unknown as ReturnType<typeof createServerClient>; 
   }
 
   return createServerClient(
@@ -23,14 +23,14 @@ export async function createClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options })
-          } catch (error) {
+          } catch {
             // Handle cookies in middleware or server actions
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
+          } catch {
             // Handle cookies in middleware or server actions
           }
         },

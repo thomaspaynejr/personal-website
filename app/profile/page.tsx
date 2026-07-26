@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { updateProfile } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default async function ProfilePage({

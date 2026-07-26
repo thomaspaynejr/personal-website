@@ -18,7 +18,7 @@ export default function ProjectDashboard({
   user,
   initialProjects
 }: { 
-  user: any;
+  user: { user_metadata?: { role?: string } } | null;
   initialProjects: Project[];
 }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
@@ -112,7 +112,7 @@ export default function ProjectDashboard({
                     <div className="grid grid-cols-2 gap-2">
                       <select 
                         value={newProjectStatus}
-                        onChange={(e) => setNewProjectStatus(e.target.value as any)}
+                        onChange={(e) => setNewProjectStatus(e.target.value as Project['status'])}
                         className="bg-background border border-border-custom rounded-lg px-2 py-1 text-[10px] outline-none focus:border-action text-foreground"
                       >
                         <option value="ACTIVE">ACTIVE</option>

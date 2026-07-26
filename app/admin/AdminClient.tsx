@@ -2,9 +2,75 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, ExternalLink, Info, Camera, Mail } from 'lucide-react';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
+
+export interface SocialLink {
+  name: string;
+  href: string;
+  icon_type: string;
+}
+
+export interface AboutContent {
+  id?: string;
+  bio_text?: string;
+  journey_text?: string;
+  hero_image_url?: string;
+  profile_image_url?: string;
+  social_links?: SocialLink[];
+  experience_json?: unknown[];
+}
+
+export interface TimelineEvent {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  icon_type?: string;
+}
+
+export interface Profile {
+  id: string;
+  username?: string;
+  is_blocked?: boolean;
+}
+
+export interface PortfolioProject {
+  id: string;
+  title: string;
+  description: string;
+  tech?: string[];
+  demo_url?: string;
+  source_url?: string;
+  display_order?: number;
+}
+
+export interface TrackerProject {
+  id: string;
+  name: string;
+  status: 'ACTIVE' | 'COMPLETED' | 'RESEARCHING';
+  progress: number;
+  description: string;
+}
+
+export interface Experience {
+  id: string;
+  title: string;
+  period: string;
+  description: string;
+  display_order?: number;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  created_at: string;
+}
+
+type TabType = 'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE' | 'MESSAGES';
 
 export default function AdminClient({ 
   initialEvents, 
@@ -15,19 +81,19 @@ export default function AdminClient({
   initialExperiences,
   initialMessages
 }: { 
-  initialEvents: any[], 
-  initialProfiles: any[],
-  initialPortfolio: any[],
-  initialTracker: any[],
-  initialAbout: any,
-  initialExperiences: any[],
-  initialMessages: any[]
+  initialEvents: TimelineEvent[], 
+  initialProfiles: Profile[],
+  initialPortfolio: PortfolioProject[],
+  initialTracker: TrackerProject[],
+  initialAbout: AboutContent | null,
+  initialExperiences: Experience[],
+  initialMessages: ContactMessage[]
 }) {
-  const [activeTab, setActiveTab] = useState<'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE' | 'MESSAGES'>('PORTFOLIO');
+  const [activeTab, setActiveTab] = useState<TabType>('PORTFOLIO');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  const tabs = [
+  const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     { id: 'PORTFOLIO', label: 'Portfolio', icon: <Briefcase size={14} /> },
     { id: 'TRACKER', label: 'Project Tracker', icon: <Activity size={14} /> },
     { id: 'TIMELINE', label: 'Timeline', icon: <Clock size={14} /> },
@@ -45,7 +111,7 @@ export default function AdminClient({
           <button
             key={tab.id}
             onClick={() => {
-              setActiveTab(tab.id as any);
+              setActiveTab(tab.id);
               setEditingId(null);
               setIsAdding(false);
             }}
@@ -99,8 +165,8 @@ export default function AdminClient({
   );
 }
 
-function AboutManager({ about }: { about: any }) {
-  const [formData, setFormData] = useState(about || {
+function AboutManager({ about }: { about: AboutContent | null }) {
+  const [formData, setFormData] = useState<AboutContent>(about || {
     bio_text: '',
     journey_text: '',
     hero_image_url: '',
@@ -115,14 +181,14 @@ function AboutManager({ about }: { about: any }) {
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !supabase) return;
 
     try {
       setIsUploading(true);
       const fileExt = file.name.split('.').pop();
       const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('hero-images')
         .upload(fileName, file);
 
@@ -132,10 +198,11 @@ function AboutManager({ about }: { about: any }) {
         .from('hero-images')
         .getPublicUrl(fileName);
 
-      setFormData((prev: any) => ({ ...prev, hero_image_url: publicUrl }));
+      setFormData((prev) => ({ ...prev, hero_image_url: publicUrl }));
       alert('Photo uploaded! Link: ' + publicUrl);
-    } catch (err: any) {
-      alert('Upload failed: ' + err.message);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert('Upload failed: ' + msg);
     } finally {
       setIsUploading(false);
     }
@@ -180,7 +247,7 @@ function AboutManager({ about }: { about: any }) {
                     <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
                     <input 
                       name="hero_image_url_dummy" 
-                      value={formData.hero_image_url} 
+                      value={formData.hero_image_url || ''} 
                       onChange={(e) => setFormData({...formData, hero_image_url: e.target.value})}
                       className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
                       placeholder="https://..." 
@@ -228,14 +295,14 @@ function AboutManager({ about }: { about: any }) {
               </button>
             </div>
             <div className="space-y-3">
-              {(formData.social_links || []).map((link: any, idx: number) => (
+              {(formData.social_links || []).map((link, idx) => (
                 <div key={idx} className="flex gap-2 items-end bg-background/30 p-3 rounded-xl border border-border-custom/20">
                   <div className="flex-1 space-y-1">
                     <p className="text-[7px] text-accent font-bold uppercase ml-1">Name</p>
                     <input 
                       value={link.name} 
                       onChange={(e) => {
-                        const newSocials = [...formData.social_links];
+                        const newSocials = [...(formData.social_links || [])];
                         newSocials[idx].name = e.target.value;
                         setFormData({...formData, social_links: newSocials});
                       }}
@@ -248,7 +315,7 @@ function AboutManager({ about }: { about: any }) {
                     <input 
                       value={link.href} 
                       onChange={(e) => {
-                        const newSocials = [...formData.social_links];
+                        const newSocials = [...(formData.social_links || [])];
                         newSocials[idx].href = e.target.value;
                         setFormData({...formData, social_links: newSocials});
                       }}
@@ -261,7 +328,7 @@ function AboutManager({ about }: { about: any }) {
                     <select 
                       value={link.icon_type} 
                       onChange={(e) => {
-                        const newSocials = [...formData.social_links];
+                        const newSocials = [...(formData.social_links || [])];
                         newSocials[idx].icon_type = e.target.value;
                         setFormData({...formData, social_links: newSocials});
                       }}
@@ -276,7 +343,7 @@ function AboutManager({ about }: { about: any }) {
                   <button 
                     type="button"
                     onClick={() => {
-                      const newSocials = formData.social_links.filter((_: any, i: number) => i !== idx);
+                      const newSocials = (formData.social_links || []).filter((_, i) => i !== idx);
                       setFormData({...formData, social_links: newSocials});
                     }}
                     className="p-2 text-accent hover:text-red-500"
@@ -299,7 +366,14 @@ function AboutManager({ about }: { about: any }) {
   );
 }
 
-function ExperienceManager({ experiences, editingId, setEditingId, isAdding, setIsAdding }: any) {
+interface ManagerProps {
+  editingId: string | null;
+  setEditingId: (id: string | null) => void;
+  isAdding: boolean;
+  setIsAdding: (val: boolean) => void;
+}
+
+function ExperienceManager({ experiences, editingId, setEditingId, isAdding, setIsAdding }: { experiences: Experience[] } & ManagerProps) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -328,22 +402,22 @@ function ExperienceManager({ experiences, editingId, setEditingId, isAdding, set
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Job Title</label>
-              <input name="title" required defaultValue={experiences.find((e: any) => e.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Title" />
+              <input name="title" required defaultValue={experiences.find((e) => e.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Title" />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Period</label>
-              <input name="period" required defaultValue={experiences.find((e: any) => e.id === editingId)?.period} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="MAY 2026 - PRESENT" />
+              <input name="period" required defaultValue={experiences.find((e) => e.id === editingId)?.period} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="MAY 2026 - PRESENT" />
             </div>
           </div>
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
-            <textarea name="description" required defaultValue={experiences.find((e: any) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Details..." />
+            <textarea name="description" required defaultValue={experiences.find((e) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Details..." />
           </div>
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Display Order</label>
-            <input name="display_order" type="number" defaultValue={experiences.find((e: any) => e.id === editingId)?.display_order || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
+            <input name="display_order" type="number" defaultValue={experiences.find((e) => e.id === editingId)?.display_order || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
@@ -356,7 +430,7 @@ function ExperienceManager({ experiences, editingId, setEditingId, isAdding, set
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {experiences.map((exp: any) => (
+        {experiences.map((exp) => (
           <div key={exp.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 flex flex-col justify-between group hover:border-action/30 transition-all">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
@@ -376,7 +450,7 @@ function ExperienceManager({ experiences, editingId, setEditingId, isAdding, set
   );
 }
 
-function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAdding }: any) {
+function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAdding }: { projects: PortfolioProject[] } & ManagerProps) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -405,31 +479,31 @@ function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAd
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Title</label>
-              <input name="title" required defaultValue={projects.find((p: any) => p.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Project Title" />
+              <input name="title" required defaultValue={projects.find((p) => p.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Project Title" />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Tech Stack (comma separated)</label>
-              <input name="tech" defaultValue={projects.find((p: any) => p.id === editingId)?.tech?.join(', ')} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Next.js, React, Tailwind" />
+              <input name="tech" defaultValue={projects.find((p) => p.id === editingId)?.tech?.join(', ')} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Next.js, React, Tailwind" />
             </div>
           </div>
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
-            <textarea name="description" required defaultValue={projects.find((p: any) => p.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Project Description" />
+            <textarea name="description" required defaultValue={projects.find((p) => p.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Project Description" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Demo URL</label>
-              <input name="demo_url" defaultValue={projects.find((p: any) => p.id === editingId)?.demo_url} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://..." />
+              <input name="demo_url" defaultValue={projects.find((p) => p.id === editingId)?.demo_url} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://..." />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Source URL</label>
-              <input name="source_url" defaultValue={projects.find((p: any) => p.id === editingId)?.source_url} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://github..." />
+              <input name="source_url" defaultValue={projects.find((p) => p.id === editingId)?.source_url} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://github..." />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Display Order</label>
-              <input name="display_order" type="number" defaultValue={projects.find((p: any) => p.id === editingId)?.display_order || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
+              <input name="display_order" type="number" defaultValue={projects.find((p) => p.id === editingId)?.display_order || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
             </div>
           </div>
 
@@ -443,7 +517,7 @@ function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAd
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projects.map((project: any) => (
+        {projects.map((project) => (
           <div key={project.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 flex flex-col justify-between group hover:border-action/30 transition-all">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
@@ -467,7 +541,7 @@ function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAd
   );
 }
 
-function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAdding }: any) {
+function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAdding }: { projects: TrackerProject[] } & ManagerProps) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -496,12 +570,12 @@ function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAddi
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Project Name</label>
-              <input name="name" required defaultValue={projects.find((p: any) => p.id === editingId)?.name} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Name" />
+              <input name="name" required defaultValue={projects.find((p) => p.id === editingId)?.name} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Name" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Status</label>
-                <select name="status" defaultValue={projects.find((p: any) => p.id === editingId)?.status || 'ACTIVE'} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action">
+                <select name="status" defaultValue={projects.find((p) => p.id === editingId)?.status || 'ACTIVE'} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action">
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="COMPLETED">COMPLETED</option>
                   <option value="RESEARCHING">RESEARCHING</option>
@@ -509,14 +583,14 @@ function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAddi
               </div>
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Progress %</label>
-                <input name="progress" type="number" min="0" max="100" defaultValue={projects.find((p: any) => p.id === editingId)?.progress || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
+                <input name="progress" type="number" min="0" max="100" defaultValue={projects.find((p) => p.id === editingId)?.progress || 0} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" />
               </div>
             </div>
           </div>
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
-            <textarea name="description" required defaultValue={projects.find((p: any) => p.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Details..." />
+            <textarea name="description" required defaultValue={projects.find((p) => p.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Details..." />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
@@ -539,7 +613,7 @@ function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAddi
             </tr>
           </thead>
           <tbody className="divide-y divide-border-custom/20">
-            {projects.map((project: any) => (
+            {projects.map((project) => (
               <tr key={project.id} className="hover:bg-action/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="text-xs font-bold uppercase">{project.name}</div>
@@ -566,7 +640,7 @@ function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAddi
   );
 }
 
-function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAdding }: any) {
+function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAdding }: { events: TimelineEvent[] } & ManagerProps) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
@@ -595,16 +669,16 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Event Title</label>
-              <input name="title" required defaultValue={events.find((e: any) => e.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Title" />
+              <input name="title" required defaultValue={events.find((e) => e.id === editingId)?.title} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="Title" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Date</label>
-                <input name="date" required defaultValue={events.find((e: any) => e.id === editingId)?.date} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="MAY 2026" />
+                <input name="date" required defaultValue={events.find((e) => e.id === editingId)?.date} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="MAY 2026" />
               </div>
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Icon Type</label>
-                <select name="icon_type" defaultValue={events.find((e: any) => e.id === editingId)?.icon_type || 'clock'} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action">
+                <select name="icon_type" defaultValue={events.find((e) => e.id === editingId)?.icon_type || 'clock'} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action">
                   <option value="clock">CLOCK</option>
                   <option value="plus">PLUS</option>
                   <option value="activity">ACTIVITY</option>
@@ -616,7 +690,7 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
-            <textarea name="description" required defaultValue={events.find((e: any) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Describe the moment..." />
+            <textarea name="description" required defaultValue={events.find((e) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Describe the moment..." />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
@@ -629,7 +703,7 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
       )}
 
       <div className="space-y-4">
-        {events.map((event: any) => (
+        {events.map((event) => (
           <div key={event.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3 transition-all hover:border-action/30">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
@@ -649,7 +723,7 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
   );
 }
 
-function UserManager({ profiles }: any) {
+function UserManager({ profiles }: { profiles: Profile[] }) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-2 px-2">
@@ -667,7 +741,7 @@ function UserManager({ profiles }: any) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border-custom/20">
-            {profiles.map((profile: any) => (
+            {profiles.map((profile) => (
               <tr key={profile.id} className="hover:bg-action/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="text-xs font-bold text-foreground">{profile.username || 'Anonymous'}</div>
@@ -705,7 +779,7 @@ function UserManager({ profiles }: any) {
   );
 }
 
-function MessageManager({ messages }: { messages: any[] }) {
+function MessageManager({ messages }: { messages: ContactMessage[] }) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-2 px-2">
@@ -714,7 +788,7 @@ function MessageManager({ messages }: { messages: any[] }) {
       </div>
 
       <div className="space-y-4">
-        {messages.map((msg: any) => (
+        {messages.map((msg) => (
           <div key={msg.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3">
             <div className="flex justify-between items-start">
               <div>
