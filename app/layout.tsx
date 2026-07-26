@@ -8,6 +8,7 @@ import CustomCursor from "./components/CustomCursor";
 import ScrollProgressBar from "./components/ScrollProgressBar";
 import MatrixRain from "./components/MatrixRain";
 import LightStrike from "./components/LightStrike";
+import TerminalHUD from "./components/TerminalHUD";
 
 const mono = JetBrains_Mono({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           {/* UI Overlays */}
           <ScrollProgressBar />
           <CustomCursor />
+          <TerminalHUD />
           
           {/* Background Effects (Middle Z-Index) */}
           <MatrixRain />
