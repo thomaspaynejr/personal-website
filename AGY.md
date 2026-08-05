@@ -77,6 +77,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[System Dashboard Telemetry]**: Enhanced `/dashboard` with a live telemetry status panel (Supabase DB latency ping, Next.js 16 Turbopack compiler health, build status 100% passing) and a Developer Git Ticker stream displaying recent commits.
 - **[Rich Journey Feed Filters]**: Integrated live search input and category tag filter pills (`ALL`, `#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`) into `TimelineDashboard.tsx` on the home page.
 - **[Dark Mode Contrast Fix]**: Fixed selected filter pill text readability in dark mode across `TimelineDashboard.tsx`, `WritingClient.tsx`, `AdminClient.tsx`, and `ProjectDashboard.tsx` by switching active state text utility from `text-white` to `text-background` (which dynamically turns black on white in dark mode and white on black in light mode).
+- **[Admin Analytics Hub & Quick Reply Manager]**: Added real-time telemetry analytics metrics cards (timeline events, active projects, articles, unread messages, registered users) and 1-click email reply links with direct message deletion in `AdminClient.tsx` (`deleteContactMessage` server action). Synced Linear issue `PW-12`.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

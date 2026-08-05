@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen } from 'lucide-react';
-import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience, upsertArticle, deleteArticle } from '@/app/actions/admin';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen, Send, Users, CheckCircle } from 'lucide-react';
+import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience, upsertArticle, deleteArticle, deleteContactMessage } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 
 export interface SocialLink {
@@ -119,6 +119,49 @@ export default function AdminClient({
 
   return (
     <div className="space-y-8">
+      {/* Real-time Analytics & Telemetry Metrics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30 space-y-1">
+          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent">
+            <span>TIMELINE EVENTS</span>
+            <Clock size={12} className="text-action" />
+          </div>
+          <div className="text-xl font-bold text-foreground font-mono">{initialEvents.length}</div>
+        </div>
+
+        <div className="bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30 space-y-1">
+          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent">
+            <span>ACTIVE PROJECTS</span>
+            <Activity size={12} className="text-action" />
+          </div>
+          <div className="text-xl font-bold text-foreground font-mono">{initialTracker.length}</div>
+        </div>
+
+        <div className="bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30 space-y-1">
+          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent">
+            <span>ARTICLES</span>
+            <BookOpen size={12} className="text-action" />
+          </div>
+          <div className="text-xl font-bold text-foreground font-mono">{initialArticles.length}</div>
+        </div>
+
+        <div className="bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30 space-y-1">
+          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent">
+            <span>MESSAGES</span>
+            <Mail size={12} className="text-action" />
+          </div>
+          <div className="text-xl font-bold text-foreground font-mono">{initialMessages.length}</div>
+        </div>
+
+        <div className="bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30 space-y-1">
+          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent">
+            <span>USERS</span>
+            <Users size={12} className="text-action" />
+          </div>
+          <div className="text-xl font-bold text-foreground font-mono">{initialProfiles.length}</div>
+        </div>
+      </div>
+
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 border-b border-border-custom/30 pb-4">
         {tabs.map((tab) => (
@@ -799,26 +842,61 @@ function UserManager({ profiles }: { profiles: Profile[] }) {
 function MessageManager({ messages }: { messages: ContactMessage[] }) {
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center gap-2 px-2">
-        <Mail size={14} className="text-action" />
-        <h2 className="text-xs font-bold uppercase tracking-widest">Contact Form Submissions</h2>
+      <div className="flex justify-between items-center px-2">
+        <div className="flex items-center gap-2">
+          <Mail size={14} className="text-action" />
+          <h2 className="text-xs font-bold uppercase tracking-widest">Contact Inbox & Messages ({messages.length})</h2>
+        </div>
       </div>
 
       <div className="space-y-4">
         {messages.map((msg) => (
-          <div key={msg.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3">
+          <div key={msg.id} className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3 relative group">
             <div className="flex justify-between items-start">
               <div>
                 <h4 className="text-xs font-bold uppercase text-foreground">{msg.name}</h4>
-                <p className="text-[9px] text-action font-bold uppercase tracking-widest">{msg.email}</p>
+                <a 
+                  href={`mailto:${msg.email}?subject=Re:%20Personal%20Website%20Inquiry`} 
+                  className="text-[9px] text-action font-bold uppercase tracking-widest hover:underline flex items-center gap-1 mt-0.5"
+                >
+                  <span>{msg.email}</span>
+                  <Send size={10} />
+                </a>
               </div>
-              <span className="text-[8px] text-accent uppercase font-bold">{new Date(msg.created_at).toLocaleString()}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-[8px] text-accent uppercase font-bold font-mono">{new Date(msg.created_at).toLocaleString()}</span>
+                <button
+                  onClick={async () => {
+                    if (confirm('Delete message from inbox?')) {
+                      await deleteContactMessage(msg.id);
+                    }
+                  }}
+                  className="p-1 text-accent hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                  title="Delete message"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
             </div>
-            <p className="text-[10px] text-accent leading-relaxed bg-background/30 p-3 rounded-lg border border-border-custom/20">{msg.message}</p>
+
+            <p className="text-[10px] text-accent leading-relaxed bg-background/30 p-3 rounded-lg border border-border-custom/20 font-mono whitespace-pre-wrap">
+              {msg.message}
+            </p>
+
+            <div className="flex justify-end pt-1">
+              <a
+                href={`mailto:${msg.email}?subject=Re:%20Personal%20Website%20Inquiry`}
+                className="px-3 py-1 bg-action text-background rounded-md text-[8px] font-bold uppercase tracking-widest hover:opacity-90 transition-all inline-flex items-center gap-1.5"
+              >
+                <Send size={10} />
+                <span>Quick Reply _</span>
+              </a>
+            </div>
           </div>
         ))}
+
         {!messages.length && (
-          <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">No messages received yet.</p>
+          <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">No messages received in inbox yet.</p>
         )}
       </div>
     </section>

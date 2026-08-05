@@ -354,3 +354,18 @@ export async function deleteArticle(id: string) {
   return { success: true }
 }
 
+export async function deleteContactMessage(id: string) {
+  const isAdmin = await checkAdmin()
+  if (!isAdmin) return { error: 'Unauthorized' }
+
+  const supabase = await createClient()
+  if (!supabase) return { error: 'Database connection failed' }
+
+  const { error } = await supabase.from('contact_messages').delete().eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
