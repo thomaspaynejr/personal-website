@@ -94,22 +94,27 @@ export async function deleteTimelineComment(commentId: string) {
  */
 
 export async function sendContactMessage(formData: FormData) {
-  const supabase = await createClient()
-  if (!supabase) return { error: 'Database connection failed' }
+  try {
+    const supabase = await createClient()
+    if (!supabase) return { error: 'Database connection failed' }
 
-  const name = formData.get('name') as string
-  const email = formData.get('email') as string
-  const message = formData.get('message') as string
+    const name = formData.get('name') as string
+    const email = formData.get('email') as string
+    const message = formData.get('message') as string
 
-  if (!name || !email || !message) {
-    return { error: 'All fields are required' }
+    if (!name || !email || !message) {
+      return { error: 'All fields are required' }
+    }
+
+    const { error } = await supabase
+      .from('contact_messages')
+      .insert([{ name, email, message }])
+
+    if (error) return { error: error.message }
+
+    return { success: true }
+  } catch (e: unknown) {
+    const err = e as Error;
+    return { error: err.message || 'Supabase service is currently offline. Spin up Supabase to persist messages.' }
   }
-
-  const { error } = await supabase
-    .from('contact_messages')
-    .insert([{ name, email, message }])
-
-  if (error) return { error: error.message }
-
-  return { success: true }
 }

@@ -74,14 +74,18 @@ export default async function WritingPage() {
   let articles: Article[] = [];
 
   if (supabase) {
-    const { data, error } = await supabase
-      .from('articles')
-      .select('*')
-      .eq('is_published', true)
-      .order('published_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('is_published', true)
+        .order('published_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
-      articles = data as Article[];
+      if (!error && data && data.length > 0) {
+        articles = data as Article[];
+      }
+    } catch {
+      // Supabase is unseeded or offline - fallback to default sample articles
     }
   }
 

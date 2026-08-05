@@ -98,15 +98,19 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   let article: Article | null = null;
 
   if (supabase) {
-    const { data } = await supabase
-      .from('articles')
-      .select('*')
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single();
+    try {
+      const { data } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_published', true)
+        .single();
 
-    if (data) {
-      article = data as Article;
+      if (data) {
+        article = data as Article;
+      }
+    } catch {
+      // Supabase is offline or unseeded
     }
   }
 
