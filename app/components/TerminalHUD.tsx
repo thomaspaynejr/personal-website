@@ -15,6 +15,7 @@ interface HistoryItem {
 const COMMANDS = [
   'help',
   'bio',
+  'writing',
   'projects',
   'skills',
   'contact',
@@ -131,6 +132,22 @@ export default function TerminalHUD() {
             <p className="text-[10px] leading-relaxed">
               Software Engineer & Former Military Service Member. Built on a foundation of discipline, service, and continuous learning. Specializing in high-performance web applications with Next.js, TypeScript, React, and Supabase.
             </p>
+          </div>
+        );
+        break;
+
+      case 'writing':
+      case 'articles':
+        outputNode = (
+          <div className="space-y-2 text-xs text-accent">
+            <div className="text-action font-bold uppercase tracking-widest">WRITING & ARTICLES:</div>
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex justify-between items-center border-b border-border-custom/30 pb-1">
+                <span className="text-foreground font-bold">Latest Technical Essays & Notes</span>
+                <a href="/writing" className="text-action hover:underline">View All Essays &rarr;</a>
+              </div>
+              <p className="text-accent text-[9px]">Explore write-ups on software architecture, discipline, military transition, and Next.js 16.</p>
+            </div>
           </div>
         );
         break;

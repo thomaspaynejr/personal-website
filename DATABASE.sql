@@ -173,3 +173,22 @@ CREATE TABLE experiences (
 ALTER TABLE experiences ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public Read: experiences" ON experiences FOR SELECT USING (true);
 CREATE POLICY "Admin All: experiences" ON experiences FOR ALL USING (is_admin());
+
+-- 24. Articles / Writing Table
+CREATE TABLE articles (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  excerpt TEXT,
+  content TEXT NOT NULL,
+  tags TEXT[] DEFAULT '{}',
+  reading_time TEXT DEFAULT '3 min read',
+  is_published BOOLEAN DEFAULT true,
+  published_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
+ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read: articles" ON articles FOR SELECT USING (true);
+CREATE POLICY "Admin All: articles" ON articles FOR ALL USING (is_admin());
+

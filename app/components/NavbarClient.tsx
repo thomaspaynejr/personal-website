@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, User as UserIcon, Laptop, LogOut, LogIn, Activity, Shield, Menu, X } from 'lucide-react';
+import { Home, User as UserIcon, Laptop, LogOut, LogIn, Activity, Shield, Menu, X, BookOpen } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 interface NavbarClientProps {
@@ -23,6 +23,7 @@ export default function NavbarClient({ user, isAdmin, signoutAction }: NavbarCli
   const navLinks = [
     { href: '/', label: 'HOME', icon: <Home size={14} className="group-hover:text-action transition-colors" /> },
     { href: '/dashboard', label: 'DASHBOARD', icon: <Activity size={14} className="group-hover:text-action transition-colors" /> },
+    { href: '/writing', label: 'WRITING', icon: <BookOpen size={14} className="group-hover:text-action transition-colors" /> },
     { href: '/about', label: 'ABOUT', icon: <UserIcon size={14} className="group-hover:text-action transition-colors" /> },
     { href: '/portfolio', label: 'PORTFOLIO', icon: <Laptop size={14} className="group-hover:text-action transition-colors" /> },
   ];

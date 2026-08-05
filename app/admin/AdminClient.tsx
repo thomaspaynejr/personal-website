@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail } from 'lucide-react';
-import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience } from '@/app/actions/admin';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen } from 'lucide-react';
+import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience, upsertArticle, deleteArticle } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 
 export interface SocialLink {
@@ -62,6 +62,17 @@ export interface Experience {
   display_order?: number;
 }
 
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  tags?: string[];
+  reading_time?: string;
+  is_published?: boolean;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;
@@ -70,7 +81,7 @@ export interface ContactMessage {
   created_at: string;
 }
 
-type TabType = 'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'USERS' | 'ABOUT' | 'EXPERIENCE' | 'MESSAGES';
+type TabType = 'PORTFOLIO' | 'TRACKER' | 'TIMELINE' | 'ARTICLES' | 'USERS' | 'ABOUT' | 'EXPERIENCE' | 'MESSAGES';
 
 export default function AdminClient({ 
   initialEvents, 
@@ -79,6 +90,7 @@ export default function AdminClient({
   initialTracker,
   initialAbout,
   initialExperiences,
+  initialArticles = [],
   initialMessages
 }: { 
   initialEvents: TimelineEvent[], 
@@ -87,6 +99,7 @@ export default function AdminClient({
   initialTracker: TrackerProject[],
   initialAbout: AboutContent | null,
   initialExperiences: Experience[],
+  initialArticles?: Article[],
   initialMessages: ContactMessage[]
 }) {
   const [activeTab, setActiveTab] = useState<TabType>('PORTFOLIO');
@@ -96,6 +109,7 @@ export default function AdminClient({
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     { id: 'PORTFOLIO', label: 'Portfolio', icon: <Briefcase size={14} /> },
     { id: 'TRACKER', label: 'Project Tracker', icon: <Activity size={14} /> },
+    { id: 'ARTICLES', label: 'Articles / Writing', icon: <BookOpen size={14} /> },
     { id: 'TIMELINE', label: 'Timeline', icon: <Clock size={14} /> },
     { id: 'EXPERIENCE', label: 'Experience', icon: <Briefcase size={14} /> },
     { id: 'ABOUT', label: 'About Me', icon: <Info size={14} /> },
@@ -145,6 +159,9 @@ export default function AdminClient({
             )}
             {activeTab === 'TIMELINE' && (
               <TimelineManager events={initialEvents} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
+            )}
+            {activeTab === 'ARTICLES' && (
+              <ArticlesManager articles={initialArticles} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
             )}
             {activeTab === 'EXPERIENCE' && (
               <ExperienceManager experiences={initialExperiences} editingId={editingId} setEditingId={setEditingId} isAdding={isAdding} setIsAdding={setIsAdding} />
@@ -807,3 +824,222 @@ function MessageManager({ messages }: { messages: ContactMessage[] }) {
     </section>
   );
 }
+
+function ArticlesManager({
+  articles,
+  editingId,
+  setEditingId,
+  isAdding,
+  setIsAdding
+}: {
+  articles: Article[];
+  editingId: string | null;
+  setEditingId: (id: string | null) => void;
+  isAdding: boolean;
+  setIsAdding: (val: boolean) => void;
+}) {
+  const currentEditing = articles.find((a) => a.id === editingId);
+
+  return (
+    <section className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center bg-card/40 backdrop-blur-md p-4 rounded-xl border border-border-custom/30">
+        <div className="flex items-center gap-2">
+          <BookOpen size={14} className="text-action" />
+          <h2 className="text-xs font-bold uppercase tracking-widest">Articles & Technical Writing</h2>
+        </div>
+        <button
+          onClick={() => {
+            setIsAdding(!isAdding);
+            setEditingId(null);
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest"
+        >
+          {isAdding ? <X size={12} /> : <Plus size={12} />}
+          <span>{isAdding ? 'Cancel' : 'New Article'}</span>
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {(isAdding || editingId) && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <form
+              action={async (formData) => {
+                await upsertArticle(formData);
+                setIsAdding(false);
+                setEditingId(null);
+              }}
+              className="p-6 bg-card/80 border-2 border-action rounded-2xl space-y-4 backdrop-blur-md"
+            >
+              <div className="text-[9px] font-bold uppercase tracking-widest text-action">
+                {editingId ? 'Edit Article' : 'Create New Article'}
+              </div>
+
+              {editingId && <input type="hidden" name="id" value={editingId} />}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    defaultValue={currentEditing?.title || ''}
+                    placeholder="Article Title..."
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Slug (URL)</label>
+                  <input
+                    type="text"
+                    name="slug"
+                    defaultValue={currentEditing?.slug || ''}
+                    placeholder="my-article-slug (auto-generated if empty)"
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action text-foreground"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Tags (Comma Separated)</label>
+                  <input
+                    type="text"
+                    name="tags"
+                    defaultValue={currentEditing?.tags?.join(', ') || ''}
+                    placeholder="Engineering, Next.js, Architecture"
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Reading Time</label>
+                  <input
+                    type="text"
+                    name="reading_time"
+                    defaultValue={currentEditing?.reading_time || '3 min read'}
+                    placeholder="3 min read"
+                    className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action text-foreground"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Excerpt</label>
+                <textarea
+                  name="excerpt"
+                  required
+                  rows={2}
+                  defaultValue={currentEditing?.excerpt || ''}
+                  placeholder="Short summary of the article..."
+                  className="w-full bg-background border border-border-custom rounded-lg p-3 text-xs outline-none focus:border-action text-foreground resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Content (Markdown Supported)</label>
+                <textarea
+                  name="content"
+                  required
+                  rows={8}
+                  defaultValue={currentEditing?.content || ''}
+                  placeholder="Full article content in markdown format..."
+                  className="w-full bg-background border border-border-custom rounded-lg p-3 text-xs outline-none focus:border-action text-foreground font-mono"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-accent cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="is_published"
+                    value="true"
+                    defaultChecked={currentEditing ? currentEditing.is_published : true}
+                    className="rounded border-border-custom text-action focus:ring-action"
+                  />
+                  <span>Published & Visible</span>
+                </label>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAdding(false);
+                      setEditingId(null);
+                    }}
+                    className="px-3 py-1.5 text-[9px] font-bold uppercase text-accent hover:text-foreground"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 bg-action text-white rounded-lg text-[9px] font-bold uppercase tracking-widest hover:opacity-90"
+                  >
+                    {editingId ? 'Save Changes' : 'Publish Article'}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Articles Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {articles.map((article) => (
+          <div
+            key={article.id}
+            className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 space-y-3 relative group"
+          >
+            <div className="flex justify-between items-start">
+              <h3 className="text-xs font-bold uppercase text-foreground group-hover:text-action transition-colors">
+                {article.title}
+              </h3>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => {
+                    setEditingId(article.id);
+                    setIsAdding(false);
+                  }}
+                  className="p-1 text-accent hover:text-action transition-colors"
+                >
+                  <Edit size={12} />
+                </button>
+                <button
+                  onClick={async () => {
+                    if (confirm('Delete article?')) {
+                      await deleteArticle(article.id);
+                    }
+                  }}
+                  className="p-1 text-accent hover:text-red-500 transition-colors"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-accent line-clamp-2 leading-relaxed">{article.excerpt}</p>
+
+            <div className="flex justify-between items-center text-[8px] font-bold uppercase text-accent font-mono pt-2 border-t border-border-custom/20">
+              <span>/{article.slug}</span>
+              <span className={article.is_published ? 'text-green-500' : 'text-amber-500'}>
+                {article.is_published ? 'PUBLISHED' : 'DRAFT'}
+              </span>
+            </div>
+          </div>
+        ))}
+
+        {!articles.length && (
+          <p className="col-span-full text-center py-16 text-xs text-accent uppercase tracking-widest italic opacity-50">
+            No articles created in database yet.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+

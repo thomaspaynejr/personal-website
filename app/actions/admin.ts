@@ -298,3 +298,59 @@ export async function deleteExperience(id: string) {
   revalidatePath('/', 'layout')
   return { success: true }
 }
+
+// --- Article / Writing Actions ---
+
+export async function upsertArticle(formData: FormData) {
+  const isAdmin = await checkAdmin()
+  if (!isAdmin) return { error: 'Unauthorized' }
+
+  const supabase = await createClient()
+  if (!supabase) return { error: 'Database connection failed' }
+
+  const id = formData.get('id') as string
+  const title = formData.get('title') as string
+  const rawSlug = formData.get('slug') as string
+  const slug = (rawSlug || title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+  const excerpt = formData.get('excerpt') as string
+  const content = formData.get('content') as string
+  const tagsStr = formData.get('tags') as string || ''
+  const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()) : []
+  const reading_time = formData.get('reading_time') as string || '3 min read'
+  const is_published = formData.get('is_published') === 'true'
+
+  const data = { title, slug, excerpt, content, tags, reading_time, is_published }
+
+  let error;
+  if (id) {
+    ({ error } = await supabase.from('articles').update(data).eq('id', id))
+  } else {
+    ({ error } = await supabase.from('articles').insert([data]))
+  }
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/writing')
+  revalidatePath(`/writing/${slug}`)
+  revalidatePath('/admin')
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
+
+export async function deleteArticle(id: string) {
+  const isAdmin = await checkAdmin()
+  if (!isAdmin) return { error: 'Unauthorized' }
+
+  const supabase = await createClient()
+  if (!supabase) return { error: 'Database connection failed' }
+
+  const { error } = await supabase.from('articles').delete().eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/writing')
+  revalidatePath('/admin')
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
+

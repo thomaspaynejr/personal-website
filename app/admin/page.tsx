@@ -18,6 +18,7 @@ export default async function AdminDashboard() {
   const portfolio = supabase ? (await supabase.from('portfolio_projects').select('*').order('display_order', { ascending: true })).data : [];
   const tracker = supabase ? (await supabase.from('tracker_projects').select('*').order('created_at', { ascending: false })).data : [];
   const experiences = supabase ? (await supabase.from('experiences').select('*').order('display_order', { ascending: true })).data : [];
+  const articles = supabase ? (await supabase.from('articles').select('*').order('created_at', { ascending: false })).data : [];
   const about = supabase ? (await supabase.from('about_content').select('*').eq('id', '00000000-0000-0000-0000-000000000001').single()).data : null;
   const messages = supabase ? (await supabase.from('contact_messages').select('*').order('created_at', { ascending: false })).data : [];
 
@@ -40,6 +41,7 @@ export default async function AdminDashboard() {
         initialTracker={tracker || []}
         initialAbout={about}
         initialExperiences={experiences || []}
+        initialArticles={articles || []}
         initialMessages={messages || []}
       />
     </main>
