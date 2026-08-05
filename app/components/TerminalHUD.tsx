@@ -79,6 +79,13 @@ export default function TerminalHUD() {
     }
   }, [isOpen]);
 
+  // Auto-scroll screen to bottom when history changes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [history]);
+
   const processCommand = (cmdStr: string) => {
     const trimmed = cmdStr.trim();
     if (!trimmed) return;
