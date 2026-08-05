@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Rich Journey Feed Code Snippets & Image Lightbox Attachments (/)',
-    description: 'Added optional code snippet rendering with 1-click clipboard copy button and image attachment thumbnails with animated Framer Motion Lightbox modal preview to timeline events.',
+    title: 'Supabase Auto-Seeding Utility Script (scripts/seed-supabase.mjs)',
+    description: 'Built a 1-click Node.js seeding utility script (scripts/seed-supabase.mjs) that populates Supabase database tables (about_content, timeline_events, portfolio_projects, tracker_projects, experiences, articles) with initial content.',
     isDone: true
   }
 ];
