@@ -215,7 +215,7 @@ export default function ProjectDashboard({
             >
               <div className="pb-4">
                 <form onSubmit={handleAddProject} className="space-y-3 border-2 border-action p-5 rounded-2xl bg-card/80 backdrop-blur-md">
-                  <div className="text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border border-action bg-action text-white inline-block uppercase">
+                  <div className="text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border border-action bg-action text-background inline-block uppercase">
                     {editingId ? 'EDIT PROJECT' : 'NEW PROJECT'}
                   </div>
                   
@@ -256,7 +256,7 @@ export default function ProjectDashboard({
                   />
                   <div className="flex justify-end gap-3">
                     <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-[9px] font-bold text-accent uppercase hover:text-foreground underline underline-offset-4">Cancel</button>
-                    <button type="submit" className="px-4 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
+                    <button type="submit" className="px-4 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest border-2 border-action shadow-sm">
                       {editingId ? 'Update Project' : 'Save Project'}
                     </button>
                   </div>

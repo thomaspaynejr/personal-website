@@ -76,6 +76,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Terminal HUD Overhaul]**: Expanded `TerminalHUD.tsx` with dynamic background FX controls (`matrix` / `lightning` on/off toggles with `localStorage` persistence and `fx-toggle` events), direct CLI messaging (`message <text>`) with server action transmit, system telemetry benchmark (`bench` / `ping`), and instant route navigation (`goto <route>`).
 - **[System Dashboard Telemetry]**: Enhanced `/dashboard` with a live telemetry status panel (Supabase DB latency ping, Next.js 16 Turbopack compiler health, build status 100% passing) and a Developer Git Ticker stream displaying recent commits.
 - **[Rich Journey Feed Filters]**: Integrated live search input and category tag filter pills (`ALL`, `#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`) into `TimelineDashboard.tsx` on the home page.
+- **[Dark Mode Contrast Fix]**: Fixed selected filter pill text readability in dark mode across `TimelineDashboard.tsx`, `WritingClient.tsx`, `AdminClient.tsx`, and `ProjectDashboard.tsx` by switching active state text utility from `text-white` to `text-background` (which dynamically turns black on white in dark mode and white on black in light mode).
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

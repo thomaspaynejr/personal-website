@@ -852,7 +852,7 @@ function ArticlesManager({
             setIsAdding(!isAdding);
             setEditingId(null);
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-action text-white rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-action text-background rounded-lg hover:opacity-90 transition-all text-[9px] font-bold uppercase tracking-widest"
         >
           {isAdding ? <X size={12} /> : <Plus size={12} />}
           <span>{isAdding ? 'Cancel' : 'New Article'}</span>
@@ -977,7 +977,7 @@ function ArticlesManager({
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-action text-white rounded-lg text-[9px] font-bold uppercase tracking-widest hover:opacity-90"
+                    className="px-4 py-1.5 bg-action text-background rounded-lg text-[9px] font-bold uppercase tracking-widest hover:opacity-90"
                   >
                     {editingId ? 'Save Changes' : 'Publish Article'}
                   </button>

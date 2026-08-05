@@ -293,7 +293,7 @@ export default function TimelineDashboard({
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider transition-all ${
                       selectedCategory === cat
-                        ? 'bg-action text-white border border-action'
+                        ? 'bg-action text-background border border-action'
                         : 'bg-background/40 text-accent hover:text-foreground border border-border-custom/30'
                     }`}
                   >

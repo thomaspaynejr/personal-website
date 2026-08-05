@@ -83,7 +83,7 @@ export default function WritingClient({ initialArticles }: { initialArticles: Ar
                 onClick={() => setSelectedTag(null)}
                 className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest transition-all ${
                   selectedTag === null
-                    ? 'bg-action text-white border border-action'
+                    ? 'bg-action text-background border border-action'
                     : 'bg-card/60 text-accent hover:text-foreground border border-border-custom/50'
                 }`}
               >
@@ -95,7 +95,7 @@ export default function WritingClient({ initialArticles }: { initialArticles: Ar
                   onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
                   className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest transition-all ${
                     selectedTag === tag
-                      ? 'bg-action text-white border border-action'
+                      ? 'bg-action text-background border border-action'
                       : 'bg-card/60 text-accent hover:text-foreground border border-border-custom/50'
                   }`}
                 >
