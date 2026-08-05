@@ -14,6 +14,12 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[GIT CRITICAL RULE]** EVERY TIME you work on an issue and complete a change, you MUST ALWAYS automatically stage, commit, and push the updates to the GitHub repository using git commands. Use concise, descriptive commit messages. NEVER forget to push to GitHub as we move forward.
 - **[SUPABASE]** Use `.env.local` for local development. Ensure `NEXT_PUBLIC_SUPABASE_URL` follows the `https://[ref].supabase.co` format.
 
+## // DATABASE SEEDING SCRIPT & REMINDER MANDATE
+
+- **[SEEDING UTILITY]**: `scripts/seed-supabase.mjs` is an automated Node.js script used to populate empty Supabase tables (`about_content`, `timeline_events`, `portfolio_projects`, `tracker_projects`, `experiences`, `articles`) with default content.
+- **[USAGE COMMAND]**: `node scripts/seed-supabase.mjs`
+- ⚠️ **[CRITICAL REMINDER FOR USER / AGENT]**: **REMOVE OR CLEAN UP `scripts/seed-supabase.mjs` (OR SAFEGUARD PRODUCTION KEYS) AFTER COMPLETING FINAL TESTING AND DATABASE VERIFICATION** to prevent accidental production database re-seeding or data overwrites.
+
 ## // ARCHITECTURAL KNOWLEDGE
 
 - **Styling:** Uses Tailwind CSS 4 with a strict monochromatic palette (#000000, #1A1A1A, #DEDEDE).
