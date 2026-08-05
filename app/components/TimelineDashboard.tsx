@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2 } from 'lucide-react';
+import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';
@@ -134,6 +134,8 @@ const TimelineItem = ({
   );
 };
 
+const CATEGORIES = ['ALL', 'BUILD', 'MILESTONE', 'MILITARY', 'LEARNING'];
+
 export default function TimelineDashboard({ 
   user,
   initialTimeline,
@@ -153,11 +155,31 @@ export default function TimelineDashboard({
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [tempComment, setTempComment] = useState('');
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+
   const isAdmin = user?.user_metadata?.role === 'admin';
 
   useEffect(() => {
     setTimeline(initialTimeline);
   }, [initialTimeline]);
+
+  // Filter timeline events by category & search query
+  const filteredTimeline = useMemo(() => {
+    return timeline.filter((event) => {
+      const matchesSearch = 
+        searchQuery.trim() === '' ||
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === 'ALL' ||
+        event.title.toUpperCase().includes(selectedCategory) ||
+        event.description.toUpperCase().includes(selectedCategory);
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [timeline, searchQuery, selectedCategory]);
 
   const handleAddEntry = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,7 +203,6 @@ export default function TimelineDashboard({
   const handleLikeTimeline = async (id: string) => {
     if (!user) return;
     
-    // Optimistic UI
     const updatedTimeline = timeline.map(event => {
       if (event.id === id) {
         const hasLiked = event.userHasLiked;
@@ -197,7 +218,6 @@ export default function TimelineDashboard({
 
     const res = await toggleTimelineLike(id);
     if (res.error) {
-      // Revert if error
       setTimeline(timeline);
       alert(res.error);
     }
@@ -214,7 +234,7 @@ export default function TimelineDashboard({
     const res = await postTimelineComment(id, text);
     if (res.error) {
       alert(res.error);
-      setTempComment(text); // Restore text
+      setTempComment(text);
     }
   };
 
@@ -228,26 +248,60 @@ export default function TimelineDashboard({
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-8 relative">
-      <div className="relative space-y-12">
+      <div className="relative space-y-8">
         {/* Header */}
         <FadeIn>
-          <section className="flex justify-between items-center bg-card/10 backdrop-blur-md p-3 px-5 rounded-xl border border-border-custom/50 shadow-sm max-w-3xl mx-auto">
-            <div className="text-[10px] font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
-              <Activity size={12} className="text-action animate-pulse" />
-              THE JOURNEY // ACTIVITY FEED
-            </div>
-            {isAdmin ? (
-              <button 
-                onClick={() => { setShowForm(!showForm); if(showForm) setEditingEvent(null); }}
-                className="p-1 border-2 border-action rounded-md hover:bg-action hover:text-background transition-all text-action shadow-sm"
-              >
-                {showForm ? <X size={14} /> : <Plus size={14} />}
-              </button>
-            ) : (
-              <div className="text-[9px] text-accent font-bold uppercase tracking-widest flex items-center gap-2 italic opacity-60">
-                Tracking Active _
+          <section className="bg-card/40 backdrop-blur-md p-5 rounded-2xl border border-border-custom/30 shadow-sm max-w-3xl mx-auto space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="text-[10px] font-bold text-foreground tracking-[0.2em] uppercase flex items-center gap-2">
+                <Activity size={12} className="text-action animate-pulse" />
+                THE JOURNEY // ACTIVITY FEED
               </div>
-            )}
+              {isAdmin ? (
+                <button 
+                  onClick={() => { setShowForm(!showForm); if(showForm) setEditingEvent(null); }}
+                  className="p-1 border-2 border-action rounded-md hover:bg-action hover:text-background transition-all text-action shadow-sm"
+                >
+                  {showForm ? <X size={14} /> : <Plus size={14} />}
+                </button>
+              ) : (
+                <div className="text-[9px] text-accent font-bold uppercase tracking-widest flex items-center gap-2 italic opacity-60">
+                  Tracking Active _
+                </div>
+              )}
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center pt-2 border-t border-border-custom/20">
+              <div className="relative flex-1">
+                <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
+                <input
+                  type="text"
+                  placeholder="Filter journey events..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-background/50 border border-border-custom/50 rounded-xl pl-8 pr-3 py-1.5 text-xs text-foreground outline-none focus:border-action transition-all"
+                />
+              </div>
+
+              {/* Tag Pills */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Filter size={10} className="text-action shrink-0 mr-1" />
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider transition-all ${
+                      selectedCategory === cat
+                        ? 'bg-action text-white border border-action'
+                        : 'bg-background/40 text-accent hover:text-foreground border border-border-custom/30'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
           </section>
         </FadeIn>
 
@@ -296,7 +350,7 @@ export default function TimelineDashboard({
         <section className="max-w-2xl mx-auto">
           <StaggerContainer delay={0.2}>
             <div className="relative border-l border-border-custom/50 ml-2 space-y-4">
-              {timeline.map((event) => (
+              {filteredTimeline.map((event) => (
                 <TimelineItem 
                   key={event.id}
                   event={event}
@@ -312,9 +366,9 @@ export default function TimelineDashboard({
                   setEditingEvent={setEditingEvent}
                 />
               ))}
-              {!timeline.length && (
+              {!filteredTimeline.length && (
                 <p className="text-center py-20 text-xs text-accent uppercase tracking-widest italic opacity-50">
-                  The journey hasn&apos;t started yet.
+                  No journey events match your search or filter.
                 </p>
               )}
             </div>

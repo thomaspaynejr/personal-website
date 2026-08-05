@@ -75,6 +75,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Writing & Articles Feature]**: Implemented `/writing` and `/writing/[slug]` routes with tag filtering, search, reading time badges, Next.js 16 async params, Supabase `articles` table integration, fallback sample write-ups, terminal `writing` command, and full Admin Dashboard Article Manager (`upsertArticle`/`deleteArticle`).
 - **[Terminal HUD Overhaul]**: Expanded `TerminalHUD.tsx` with dynamic background FX controls (`matrix` / `lightning` on/off toggles with `localStorage` persistence and `fx-toggle` events), direct CLI messaging (`message <text>`) with server action transmit, system telemetry benchmark (`bench` / `ping`), and instant route navigation (`goto <route>`).
 - **[System Dashboard Telemetry]**: Enhanced `/dashboard` with a live telemetry status panel (Supabase DB latency ping, Next.js 16 Turbopack compiler health, build status 100% passing) and a Developer Git Ticker stream displaying recent commits.
+- **[Rich Journey Feed Filters]**: Integrated live search input and category tag filter pills (`ALL`, `#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`) into `TimelineDashboard.tsx` on the home page.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*
