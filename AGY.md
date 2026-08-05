@@ -73,6 +73,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Interactive Developer HUD]**: Built `TerminalHUD.tsx`, a Framer Motion-powered Command Line Interface triggered globally via `Cmd+K`, `Ctrl+K`, backtick (``` ` ```), or floating `[CLI ⌘K]` badge. Features autocomplete (`Tab`), command history (`Up/Down`), live theme toggling, system diagnostics (`sys`/`status`), bio, project listings, skills breakdown, and quick navigation.
 - **[Linear Integration & API Sync]**: Configured Linear Team **Nebuchadnezzar (`PW`)** and Project **Personal Website**. Configured GraphQL issue synchronization to assign tasks under `PW-1` through `PW-5` keys and linked them to 3 Project Milestones (Milestone 1: 100% Complete). Added helper script `scripts/sync-linear.mjs`.
 - **[Writing & Articles Feature]**: Implemented `/writing` and `/writing/[slug]` routes with tag filtering, search, reading time badges, Next.js 16 async params, Supabase `articles` table integration, fallback sample write-ups, terminal `writing` command, and full Admin Dashboard Article Manager (`upsertArticle`/`deleteArticle`).
+- **[Terminal HUD Overhaul]**: Expanded `TerminalHUD.tsx` with dynamic background FX controls (`matrix` / `lightning` on/off toggles with `localStorage` persistence and `fx-toggle` events), direct CLI messaging (`message <text>`) with server action transmit, system telemetry benchmark (`bench` / `ping`), and instant route navigation (`goto <route>`).
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, X, CornerDownLeft, CheckCircle } from 'lucide-react';
+import { Terminal, X, CornerDownLeft, CheckCircle, Zap } from 'lucide-react';
 import { useTheme } from '@/app/providers';
+import { sendContactMessage } from '@/app/actions/engagement';
 
 interface HistoryItem {
   id: string;
@@ -19,6 +20,14 @@ const COMMANDS = [
   'projects',
   'skills',
   'contact',
+  'message',
+  'send',
+  'matrix',
+  'lightning',
+  'bench',
+  'ping',
+  'goto',
+  'nav',
   'theme',
   'whoami',
   'status',
@@ -108,18 +117,24 @@ export default function TerminalHUD() {
           <div className="space-y-2 text-xs">
             <div className="text-action font-bold uppercase tracking-widest">AVAILABLE COMMANDS:</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-[10px]">
-              <div><span className="text-foreground font-bold w-20 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">skills</span> <span className="text-accent">- Display full technical stack</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">contact</span> <span className="text-accent">- Get email & social links</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">theme</span> <span className="text-accent">- Toggle theme [dark|light]</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">whoami</span> <span className="text-accent">- Display visitor role</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">status</span> <span className="text-accent">- View system health & runtime</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">date</span> <span className="text-accent">- Current timestamp</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">admin</span> <span className="text-accent">- Direct to Admin control center</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">clear</span> <span className="text-accent">- Clear terminal screen</span></div>
-              <div><span className="text-foreground font-bold w-20 inline-block">exit</span> <span className="text-accent">- Close terminal overlay</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">writing</span> <span className="text-accent">- View articles & essays</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">skills</span> <span className="text-accent">- Display full technical stack</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">contact</span> <span className="text-accent">- View contact info</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">message &lt;msg&gt;</span> <span className="text-accent">- Direct transmit to admin inbox</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">matrix [on|off]</span> <span className="text-accent">- Toggle Matrix Rain FX</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">lightning [on|off]</span> <span className="text-accent">- Toggle LightStrike FX</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">bench</span> <span className="text-accent">- System telemetry & diagnostics</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">goto &lt;route&gt;</span> <span className="text-accent">- Jump to page route</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">theme</span> <span className="text-accent">- Toggle theme [dark|light]</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">whoami</span> <span className="text-accent">- Display visitor role</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">status</span> <span className="text-accent">- View system health & runtime</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">date</span> <span className="text-accent">- Current timestamp</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">admin</span> <span className="text-accent">- Direct to Admin control center</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">clear</span> <span className="text-accent">- Clear terminal screen</span></div>
+              <div><span className="text-foreground font-bold w-24 inline-block">exit</span> <span className="text-accent">- Close terminal overlay</span></div>
             </div>
           </div>
         );
@@ -204,12 +219,146 @@ export default function TerminalHUD() {
             <div className="text-action font-bold uppercase tracking-widest">CONTACT DETAILS:</div>
             <div className="space-y-1 text-[10px] text-accent">
               <div><span className="text-foreground font-bold w-20 inline-block">Form:</span> <a href="/contact" className="text-action hover:underline">/contact</a></div>
+              <div><span className="text-foreground font-bold w-20 inline-block">CLI Transmit:</span> Type &apos;<span className="text-foreground font-bold">message &lt;text&gt;</span>&apos; right here</div>
               <div><span className="text-foreground font-bold w-20 inline-block">GitHub:</span> github.com/thomaspaynejr</div>
               <div><span className="text-foreground font-bold w-20 inline-block">LinkedIn:</span> linkedin.com</div>
             </div>
           </div>
         );
         break;
+
+      case 'matrix': {
+        const currentSaved = typeof window !== 'undefined' ? localStorage.getItem('fx_matrix') !== 'false' : true;
+        const targetState = args[0] === 'off' ? false : args[0] === 'on' ? true : !currentSaved;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('fx_matrix', targetState ? 'true' : 'false');
+          window.dispatchEvent(new CustomEvent('fx-toggle', { detail: { type: 'matrix', enabled: targetState } }));
+        }
+        outputNode = (
+          <div className="text-[10px] text-action">
+            Matrix Rain FX turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [DISABLED]'}</span>.
+          </div>
+        );
+        break;
+      }
+
+      case 'lightning': {
+        const currentSaved = typeof window !== 'undefined' ? localStorage.getItem('fx_lightning') !== 'false' : true;
+        const targetState = args[0] === 'off' ? false : args[0] === 'on' ? true : !currentSaved;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('fx_lightning', targetState ? 'true' : 'false');
+          window.dispatchEvent(new CustomEvent('fx-toggle', { detail: { type: 'lightning', enabled: targetState } }));
+        }
+        outputNode = (
+          <div className="text-[10px] text-action">
+            LightStrike FX turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [DISABLED]'}</span>.
+          </div>
+        );
+        break;
+      }
+
+      case 'message':
+      case 'send': {
+        const messageBody = args.join(' ');
+        if (!messageBody.trim()) {
+          outputNode = (
+            <div className="text-[10px] text-amber-400">
+              Usage: <span className="font-bold text-foreground">message &lt;your message text&gt;</span> (e.g. &apos;message Hello Thomas!&apos;)
+            </div>
+          );
+        } else {
+          outputNode = (
+            <div className="text-[10px] text-action">
+              [CLI] Transmitting message to admin inbox...
+            </div>
+          );
+          const fd = new FormData();
+          fd.append('name', 'CLI Terminal Visitor');
+          fd.append('email', 'cli-visitor@personal-website.local');
+          fd.append('message', messageBody);
+          sendContactMessage(fd).then((res) => {
+            const resultNode = res.success ? (
+              <div className="text-[10px] text-green-400 font-bold">
+                [CLI] Message transmitted successfully to admin inbox! _
+              </div>
+            ) : (
+              <div className="text-[10px] text-red-400 font-bold">
+                [CLI] Transmission failed: {res.error}
+              </div>
+            );
+            setHistory((prev) => [
+              ...prev,
+              {
+                id: Math.random().toString(36).substring(2),
+                command: 'sys.msg_confirm',
+                output: resultNode,
+                timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+              }
+            ]);
+          });
+        }
+        break;
+      }
+
+      case 'bench':
+      case 'ping': {
+        const domCount = typeof document !== 'undefined' ? document.querySelectorAll('*').length : 0;
+        const resWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+        const resHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
+        const navConn = (typeof navigator !== 'undefined' && (navigator as unknown as { connection?: { effectiveType?: string } }).connection?.effectiveType) || '4g';
+        const perfMemory = typeof performance !== 'undefined' ? (performance as unknown as { memory?: { usedJSHeapSize?: number } }).memory : null;
+        const usedMB = perfMemory?.usedJSHeapSize ? Math.round(perfMemory.usedJSHeapSize / (1024 * 1024)) : null;
+
+        outputNode = (
+          <div className="space-y-1 text-[10px] font-mono">
+            <div className="text-action font-bold uppercase tracking-widest flex items-center gap-1">
+              <Zap size={10} />
+              SYSTEM BENCHMARK & TELEMETRY:
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-accent bg-card/40 p-2.5 rounded-lg border border-border-custom/30">
+              <div><span className="text-foreground font-bold">DOM Nodes:</span> {domCount}</div>
+              <div><span className="text-foreground font-bold">Viewport:</span> {resWidth}x{resHeight}</div>
+              <div><span className="text-foreground font-bold">Network Type:</span> {navConn.toUpperCase()}</div>
+              <div><span className="text-foreground font-bold">JS Heap:</span> {usedMB ? `${usedMB} MB` : 'Optimal'}</div>
+              <div><span className="text-foreground font-bold">Theme:</span> {(theme || 'dark').toUpperCase()}</div>
+              <div><span className="text-foreground font-bold">Engine:</span> Turbopack</div>
+            </div>
+          </div>
+        );
+        break;
+      }
+
+      case 'goto':
+      case 'nav': {
+        const target = args[0] ? args[0].toLowerCase().replace(/^\//, '') : '';
+        const validRoutes: Record<string, string> = {
+          '': '/',
+          'home': '/',
+          'about': '/about',
+          'writing': '/writing',
+          'articles': '/writing',
+          'portfolio': '/portfolio',
+          'dashboard': '/dashboard',
+          'tracker': '/dashboard',
+          'contact': '/contact',
+          'admin': '/admin'
+        };
+
+        if (target in validRoutes) {
+          const dest = validRoutes[target];
+          outputNode = <div className="text-action text-[10px]">Navigating to {dest}...</div>;
+          setTimeout(() => {
+            window.location.href = dest;
+          }, 300);
+        } else {
+          outputNode = (
+            <div className="text-[10px] text-red-400">
+              Invalid route: &apos;{target}&apos;. Available: home, about, writing, portfolio, dashboard, contact, admin.
+            </div>
+          );
+        }
+        break;
+      }
 
       case 'theme':
         if (args[0] === 'light') {

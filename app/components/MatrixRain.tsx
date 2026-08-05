@@ -1,11 +1,28 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function MatrixRain() {
+  const [enabled, setEnabled] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const saved = localStorage.getItem('fx_matrix');
+    if (saved === 'false') setEnabled(false);
+
+    const handleFxToggle = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      if (customEvt.detail?.type === 'matrix') {
+        setEnabled(customEvt.detail.enabled);
+      }
+    };
+
+    window.addEventListener('fx-toggle', handleFxToggle);
+    return () => window.removeEventListener('fx-toggle', handleFxToggle);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -92,7 +109,9 @@ export default function MatrixRain() {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <canvas

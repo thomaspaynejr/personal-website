@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface BoltSegment {
   x1: number;
@@ -17,11 +17,28 @@ interface Bolt {
 }
 
 export default function LightStrike() {
+  const [enabled, setEnabled] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const activeBoltsRef = useRef<Bolt[]>([]);
   const flashOpacityRef = useRef(0);
 
   useEffect(() => {
+    const saved = localStorage.getItem('fx_lightning');
+    if (saved === 'false') setEnabled(false);
+
+    const handleFxToggle = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      if (customEvt.detail?.type === 'lightning') {
+        setEnabled(customEvt.detail.enabled);
+      }
+    };
+
+    window.addEventListener('fx-toggle', handleFxToggle);
+    return () => window.removeEventListener('fx-toggle', handleFxToggle);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -158,7 +175,9 @@ export default function LightStrike() {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <canvas
