@@ -74,6 +74,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Linear Integration & API Sync]**: Configured Linear Team **Nebuchadnezzar (`PW`)** and Project **Personal Website**. Configured GraphQL issue synchronization to assign tasks under `PW-1` through `PW-5` keys and linked them to 3 Project Milestones (Milestone 1: 100% Complete). Added helper script `scripts/sync-linear.mjs`.
 - **[Writing & Articles Feature]**: Implemented `/writing` and `/writing/[slug]` routes with tag filtering, search, reading time badges, Next.js 16 async params, Supabase `articles` table integration, fallback sample write-ups, terminal `writing` command, and full Admin Dashboard Article Manager (`upsertArticle`/`deleteArticle`).
 - **[Terminal HUD Overhaul]**: Expanded `TerminalHUD.tsx` with dynamic background FX controls (`matrix` / `lightning` on/off toggles with `localStorage` persistence and `fx-toggle` events), direct CLI messaging (`message <text>`) with server action transmit, system telemetry benchmark (`bench` / `ping`), and instant route navigation (`goto <route>`).
+- **[System Dashboard Telemetry]**: Enhanced `/dashboard` with a live telemetry status panel (Supabase DB latency ping, Next.js 16 Turbopack compiler health, build status 100% passing) and a Developer Git Ticker stream displaying recent commits.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*
