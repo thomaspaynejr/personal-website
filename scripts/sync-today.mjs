@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Admin Analytics Hub & Quick Reply Manager (/admin)',
-    description: 'Added real-time analytics telemetry metrics cards (timeline events, active projects, articles, unread messages, registered users) and quick email reply tools with direct deletion in Admin Messages tab.',
+    title: 'Rich Journey Feed Code Snippets & Image Lightbox Attachments (/)',
+    description: 'Added optional code snippet rendering with 1-click clipboard copy button and image attachment thumbnails with animated Framer Motion Lightbox modal preview to timeline events.',
     isDone: true
   }
 ];

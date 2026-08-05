@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2, Search, Filter, Code, Copy, Check, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';
@@ -17,6 +17,8 @@ interface TimelineEvent {
   likes: number;
   commentsCount?: number;
   userHasLiked?: boolean;
+  code_snippet?: string;
+  image_url?: string;
 }
 
 interface Comment {
@@ -51,6 +53,15 @@ const TimelineItem = ({
   isAdmin: boolean;
   setEditingEvent: (e: TimelineEvent) => void;
 }) => {
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [showLightbox, setShowLightbox] = useState(false);
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
   return (
     <StaggerItem>
       <div className="relative pl-6 group py-6 transition-all duration-500">
@@ -72,6 +83,76 @@ const TimelineItem = ({
             <h3 className="text-lg font-bold tracking-tight text-foreground group-hover:text-action transition-colors duration-300 uppercase">{event.title}</h3>
             <p className="text-xs text-accent leading-relaxed max-w-2xl">{event.description}</p>
           </div>
+
+          {/* Optional Formatted Code Snippet Block */}
+          {event.code_snippet && (
+            <div className="relative mt-3 rounded-xl border border-border-custom/40 bg-background/80 overflow-hidden font-mono text-xs">
+              <div className="flex items-center justify-between px-3 py-1.5 bg-card/60 border-b border-border-custom/30 text-[9px] font-bold uppercase tracking-widest text-accent">
+                <span className="flex items-center gap-1.5">
+                  <Code size={10} className="text-action" />
+                  Code Snippet
+                </span>
+                <button
+                  onClick={() => handleCopyCode(event.code_snippet!)}
+                  className="flex items-center gap-1 hover:text-foreground transition-colors"
+                >
+                  {copiedCode ? <Check size={10} className="text-green-500" /> : <Copy size={10} />}
+                  <span>{copiedCode ? 'COPIED' : 'COPY'}</span>
+                </button>
+              </div>
+              <pre className="p-3 text-[10px] text-foreground/90 overflow-x-auto whitespace-pre leading-relaxed">
+                <code>{event.code_snippet}</code>
+              </pre>
+            </div>
+          )}
+
+          {/* Optional Image Attachment Preview & Lightbox Modal */}
+          {event.image_url && (
+            <div className="mt-3">
+              <button
+                onClick={() => setShowLightbox(true)}
+                className="group/img relative rounded-xl border border-border-custom/30 overflow-hidden block max-w-md hover:border-action transition-all"
+              >
+                <img 
+                  src={event.image_url} 
+                  alt={event.title} 
+                  className="w-full h-40 object-cover group-hover/img:scale-105 transition-transform duration-500" 
+                />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-[9px] text-white font-bold uppercase tracking-widest gap-1">
+                  <ImageIcon size={12} />
+                  <span>Expand Preview</span>
+                </div>
+              </button>
+
+              {/* Lightbox Modal */}
+              <AnimatePresence>
+                {showLightbox && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setShowLightbox(false)}
+                    className="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+                  >
+                    <motion.div
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0.9 }}
+                      className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/20"
+                    >
+                      <button
+                        onClick={() => setShowLightbox(false)}
+                        className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full hover:bg-black"
+                      >
+                        <X size={16} />
+                      </button>
+                      <img src={event.image_url} alt={event.title} className="w-full h-full object-contain max-h-[85vh]" />
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
           <div className="flex gap-3 border-t border-border-custom/30 pt-4">
             <button 

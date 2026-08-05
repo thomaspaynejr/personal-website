@@ -28,6 +28,8 @@ export interface TimelineEvent {
   title: string;
   description: string;
   icon_type?: string;
+  code_snippet?: string;
+  image_url?: string;
 }
 
 export interface Profile {
@@ -751,6 +753,17 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Description</label>
             <textarea name="description" required defaultValue={events.find((e) => e.id === editingId)?.description} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action min-h-[80px] resize-none" placeholder="Describe the moment..." />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Optional Code Snippet</label>
+              <textarea name="code_snippet" defaultValue={events.find((e) => e.id === editingId)?.code_snippet || ''} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action font-mono min-h-[70px] resize-none" placeholder="const example = () => true;" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Optional Image URL</label>
+              <input name="image_url" defaultValue={events.find((e) => e.id === editingId)?.image_url || ''} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://..." />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">

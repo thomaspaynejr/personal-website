@@ -67,6 +67,8 @@ CREATE TABLE timeline_events (
   title TEXT NOT NULL,
   description TEXT,
   icon_type TEXT DEFAULT 'clock',
+  code_snippet TEXT,
+  image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 

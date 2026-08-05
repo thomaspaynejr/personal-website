@@ -78,6 +78,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Rich Journey Feed Filters]**: Integrated live search input and category tag filter pills (`ALL`, `#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`) into `TimelineDashboard.tsx` on the home page.
 - **[Dark Mode Contrast Fix]**: Fixed selected filter pill text readability in dark mode across `TimelineDashboard.tsx`, `WritingClient.tsx`, `AdminClient.tsx`, and `ProjectDashboard.tsx` by switching active state text utility from `text-white` to `text-background` (which dynamically turns black on white in dark mode and white on black in light mode).
 - **[Admin Analytics Hub & Quick Reply Manager]**: Added real-time telemetry analytics metrics cards (timeline events, active projects, articles, unread messages, registered users) and 1-click email reply links with direct message deletion in `AdminClient.tsx` (`deleteContactMessage` server action). Synced Linear issue `PW-12`.
+- **[Rich Journey Feed Attachments]**: Added optional code snippet rendering with 1-click clipboard copy button and image attachment thumbnails with animated Framer Motion Lightbox modal preview to timeline events on home feed (`TimelineDashboard.tsx`), database schema (`DATABASE.sql`), and admin manager (`AdminClient.tsx`). Synced Linear issue `PW-13`.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

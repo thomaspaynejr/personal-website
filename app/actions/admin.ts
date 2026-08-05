@@ -125,8 +125,10 @@ export async function upsertTimelineEvent(formData: FormData) {
   const description = formData.get('description') as string
   const date = formData.get('date') as string
   const icon_type = formData.get('icon_type') as string || 'clock'
+  const code_snippet = formData.get('code_snippet') as string
+  const image_url = formData.get('image_url') as string
 
-  const data = { title, description, date, icon_type }
+  const data = { title, description, date, icon_type, code_snippet, image_url }
 
   let error;
   if (id) {
