@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Phase 2: Technical Writing & Knowledge Engine (Markdown, Syntax Highlighter, TOC, Reading Progress, RSS Feed)',
-    description: 'Built custom monochromatic syntax highlighter (CodeBlock.tsx) with 1-click copy, automated TableOfContents extraction with scroll-spy, ArticleReadingProgress spring bar, MarkdownRenderer supporting rich formatting, and RSS 2.0 XML feed endpoint (/feed.xml).',
+    title: 'Phase 3: Interactive Portfolio Deep Dives & System Case Studies (/portfolio/[slug], tech filters, live demo links)',
+    description: 'Built interactive PortfolioClient with real-time search and tech stack filter pills, and created dedicated /portfolio/[slug] system case study routes featuring architectural diagrams, challenge/solution breakdowns, reading progress, and live demo links.',
     isDone: true
   }
 ];

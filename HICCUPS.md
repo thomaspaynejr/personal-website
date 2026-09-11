@@ -61,3 +61,8 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Issue:** Anchor links in the Table of Contents failed to scroll to headings or missed elements when headings contained punctuation or inline formatting (e.g., `Next.js 16`, `###`, backticks).
 - **Cause:** Discrepancies between the TOC extraction regex and the markdown heading renderer's ID generator.
 - **Fix:** Unified the slug generator across `TableOfContents.tsx` and `MarkdownRenderer.tsx` by stripping inline markdown delimiters (`**`, `*`, `` ` ``), sanitizing special characters, normalizing whitespace to hyphens, and tracking collision counts (`seenSlugs`) to guarantee matching anchor IDs.
+
+## 13. Lucide React Brand Icon Restrictions
+- **Issue:** Next.js Turbopack build failed with `Export Github doesn't exist in target module lucide-react`.
+- **Cause:** `lucide-react` focuses strictly on general UI glyphs and intentionally excludes proprietary brand/social logos (e.g., GitHub, Twitter/X, Instagram, LinkedIn).
+- **Fix:** Switched brand icon imports in `PortfolioClient.tsx` and `app/portfolio/[slug]/page.tsx` to `FaGithub` from `react-icons/fa6`, maintaining aesthetic and architectural alignment with `Footer.tsx`.

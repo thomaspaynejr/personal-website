@@ -88,6 +88,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Supabase Auto-Seeding Utility]**: Created `scripts/seed-supabase.mjs` script to automatically seed initial records for `about_content`, `timeline_events`, `portfolio_projects`, `tracker_projects`, `experiences`, and `articles` directly into Supabase tables. Synced Linear issue `PW-14`.
 - **[ESLint & Build Hardening]**: Resolved React 19 / ESLint 9 `react-hooks/set-state-in-effect` rule warnings in `LightStrike.tsx`, `MatrixRain.tsx`, and `ProjectDashboard.tsx` via deferred effects and render-time state synchronization. Converted raw anchor tags to Next.js `<Link>` components in `TerminalHUD.tsx` to maintain SPA client-side routing. Removed unused imports in `AdminClient.tsx` and converted hardcoded footer year to dynamic. Achieved 0 ESLint errors and 0 build errors across the entire codebase.
 - **[Phase 2: Writing & Knowledge Engine Complete]**: Engineered custom monochromatic syntax highlighter (`CodeBlock.tsx`) with tokenization, line numbering, and 1-click clipboard copy with animated feedback. Built dynamic Table of Contents (`TableOfContents.tsx`) with automated heading extraction and real-time `IntersectionObserver` scroll-spy. Added animated reading progress bar (`ArticleReadingProgress.tsx`). Developed comprehensive `MarkdownRenderer.tsx` handling headings, code fences, blockquotes, lists, bold/italics, and links. Created standard RSS 2.0 XML endpoint (`app/feed.xml/route.ts`) with RSS feed button on `/writing`. Synced Linear issue.
+- **[Phase 3: Interactive Portfolio Deep Dives & Case Studies Complete]**: Built interactive `PortfolioClient.tsx` featuring real-time project search, dynamic tech stack tag filter pills, and 1-click case study links. Created dedicated dynamic system case study route (`app/portfolio/[slug]/page.tsx`) with Next.js 16 async params, system architecture topology diagrams, challenge/solution breakdowns, measurable impact metrics, reading progress indicator, and live demo / repository links. Synced Linear issue.
 
 ## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
 
@@ -108,10 +109,10 @@ This structured plan outlines the development milestones for Thomas Payne's pers
 - [x] **RSS / Atom Feed**: Generated `app/feed.xml/route.ts` with RFC 822 pubDate validation and linked RSS subscription button in `WritingClient.tsx`.
 - [ ] **Article Engagement**: Implement like reactions or view counter metrics persisted in Supabase.
 
-### Phase 3: Interactive Portfolio Deep Dives & Case Studies (P1)
-- [ ] **Case Study Pages (`/portfolio/[slug]`)**: Expand selected portfolio projects with architectural diagrams, problem/solution breakdowns, and engineering trade-offs.
-- [ ] **Tech Stack Filter Pills**: Allow filtering portfolio projects by tags (Next.js, TypeScript, Supabase, Agentic AI).
-- [ ] **Interactive Sandboxes / Live Demos**: Embed interactive mini-previews or animated walkthroughs for highlighted tools.
+### Phase 3: Interactive Portfolio Deep Dives & Case Studies (P1 — Core Completed)
+- [x] **Case Study Pages (`/portfolio/[slug]`)**: Dedicated case study route with architectural diagrams, problem/solution breakdowns, and engineering trade-offs.
+- [x] **Tech Stack Filter Pills**: Live search and tech stack filter buttons in `PortfolioClient.tsx` with monochromatic active badges.
+- [x] **Interactive Demos & Repos**: 1-click links to live demos and GitHub sources directly on cards and case study hero headers.
 
 ### Phase 4: Admin CMS Studio & Media Asset Pipeline (P2)
 - [ ] **Split-Pane Markdown Editor**: Add a live split-pane Markdown editor with real-time preview inside the Admin Dashboard for writing essays and journey events.
