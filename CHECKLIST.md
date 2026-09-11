@@ -1,7 +1,14 @@
 # // THOMAS PAYNE PORTFOLIO & PLATFORM
-## Production Verification Checklist v3.0 (Post-Feedback Hardening)
+## Production Verification Checklist v3.0 (Session Checkpoint)
 
-This checklist addresses your direct testing feedback across audio, cursor styles, markdown editor stability, dummy timeline attachments, article links, and SEO/CI verification.
+> [!NOTE]
+> **Session Status (2026-09-11 Wrap-Up)**: Testing checkpoint paused at Item 3. Notes have been recorded below.
+> **Immediate Focus for Next Session**:
+> 1. **Colorways & Themes**: Explore and test alternative visual themes (Titanium & Slate, Monokai Pro Obsidian, Stealth Carbon, Refined Yeezy Grayscale gradients).
+> 2. **Audio Refinement**: Focus specifically on the **haptic** and **soft** sound family (Apple trackpad / subtle UI micro-taps).
+> 3. **Cursor Styling**: Evolve the `minimal` and `bracket` modes (e.g. illuminated center with bold outline).
+> 4. **CMS Editor Alternatives**: Explore WYSIWYG / Block-based alternatives (TipTap / Notion-style) to replace the split markdown preview.
+> 5. **Resume Verification**: Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
 
 ---
 
@@ -9,33 +16,33 @@ This checklist addresses your direct testing feedback across audio, cursor style
 
 #### 1. Warm Organic Tactile Audio (`TerminalHUD.tsx`)
 *Replaced harsh 1400Hz arcade beeps with authentic dampened mechanical keyboard "thock" and added selectable sound profiles.*
-- [ ] **Mellow Confirmation Chimes**:
+- [x] **Mellow Confirmation Chimes**:
   - Press `Cmd+K` or backtick (`` ` ``) to open the HUD.
   - Click the **Volume** icon in the HUD header or type `audio on`: Confirm a warm, soft musical chime plays (`220Hz` $\rightarrow$ `277Hz`, zero high-pitched ringing).
-  - Click again or type `audio off`: Confirm a soft downward tap plays.
-- [ ] **Dampened Mechanical Keystroke Sound ("Thock")**:
-  - Turn `audio on` and type commands in the HUD. Notice the deep, low-frequency acoustic keycap tap (modeled after lubed mechanical switches).
-- [ ] **Selectable Audio Profiles**:
+  - Click again or type `audio off`: Confirm a soft downward tap plays. (working both sounds are not the best let's continue to experiment with different sounds)
+- [x] **Dampened Mechanical Keystroke Sound ("Thock")**:
+  - Turn `audio on` and type commands in the HUD. Notice the deep, low-frequency acoustic keycap tap (modeled after lubed mechanical switches). (working both sounds are not the best let's continue to experiment with different sounds)
+- [x] **Selectable Audio Profiles**:
   - Test the alternate sound profiles in the HUD:
     - Type `audio thock`: Deep, dampened mechanical switch bottom-out (default).
     - Type `audio haptic`: Ultra-subtle Apple/Linear trackpad micro-tap.
     - Type `audio click`: Crisp tactile switch with a subtle transient tick.
     - Type `audio soft`: Whisper-quiet muted pop.
-
+ (i like haptic and soft sounds let's go down that sound path or family) 
 #### 2. Alternate Cursor Modes (`CustomCursor.tsx`)
 *Added 3 switchable cursor styles to match your aesthetic preference.*
-- [ ] **Test Cursor Styles via Terminal HUD (`Cmd+K`)**:
+- [x] **Test Cursor Styles via Terminal HUD (`Cmd+K`)**:
   - **Dual Mode (Default)**: Type `cursor dual`. Pinpoint center dot with zero latency plus a fluid spring trailing halo ring.
   - **Minimal Mode**: Type `cursor minimal`. Single precision dot with spring hover expansion—ultra-clean Yeezy minimalist aesthetic without the outer ring.
   - **Tactical Bracket Mode**: Type `cursor bracket`. Corner crosshair HUD brackets that rotate on button hover—cyber/military tactical aesthetic.
-
+  (i like minimal and bracket i like how the color changes in bracket we can get create in that mode for minimal are able to keep light inside with the bold outline)
 #### 3. Markdown Studio Header Freeze Resolution (`MarkdownRenderer.tsx`)
 *Fixed the infinite loop bug where typing `#` or empty headers froze browser CPU.*
-- [ ] **Heading Typing Stability**:
+- [x] **Heading Typing Stability**:
   - Navigate to `/admin` -> **Articles**.
   - In the Markdown editor, type `#`, `##`, `###`, and press `Enter`.
   - Type full titles (e.g. `# New Architectural Benchmark`). Confirm the right-hand preview updates instantly in real time **with 0% CPU freeze**.
-
+(still not filling the Markdown editor preview are their alternates)
 #### 4. Home Page Timeline Events & Attachments (`/`)
 *Added rich fallback events with code snippets and image attachments so the feed is never empty.*
 - [ ] **Expandable Code Snippet**:

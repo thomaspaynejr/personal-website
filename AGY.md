@@ -93,39 +93,33 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Phase 5: Agentic AI Assistant & Tactile Audio Synthesis Complete]**: Engineered intelligent assistant endpoint (`app/api/assistant/route.ts`) answering visitor queries on military background, full tech stack, Next.js 16 architecture, obsidian design philosophy, and portfolio projects. Built Web Audio API mechanical switch click synthesizer (`playMechanicalClick`) for tactile keystroke sound feedback in `TerminalHUD.tsx`, complete with `ask <query>` command execution, `audio [on|off]` control, terminal header volume toggle button, and persistent `localStorage` state. Synced Linear issue.
 - **[Phase 1: Foundation Hardening, SEO & Asset Pipeline Complete]**: Configured `images.remotePatterns` in `next.config.ts` and migrated all `<img>` elements across `About`, `MediaDropzone`, and `TimelineDashboard` to `next/image` with unoptimized preview flags, achieving 0 ESLint warnings. Upgraded root metadata with full OpenGraph, Twitter Cards, robots directives, and canonical URL alternates in `app/layout.tsx`. Implemented dynamic `generateMetadata` for `/writing/[slug]` and `/portfolio/[slug]`. Created automated `app/sitemap.ts` (indexing static pages, dynamic articles, and case studies) and `app/robots.ts`. Set up GitHub Actions CI workflow in `.github/workflows/ci.yml` for automated lint and production build verification. Synced Linear issue.
 - **[UX & Audio Hardening Post-QA]**: Resolved user checklist feedback: Upgraded Web Audio synthesizer with dual-layer authentic mechanical switch acoustics (1400Hz -> 450Hz click + 260Hz -> 90Hz thock) and singleton context management with auto-resume, making keystroke audio crystal clear on laptop speakers. Re-engineered `CustomCursor.tsx` to a zero-lag pinpoint center dot paired with a fluid outer spring halo, eliminating click-miss offset on small buttons ("Live Demo", "View Source"). Hardened `TechIcon.tsx` against Framer Motion `Infinity` distance errors. Enhanced `AdminMarkdownStudio.tsx` with Tab indentation, Cmd+B/I/K shortcuts, and synchronized editor-preview scrolling. Documented issues 16 & 17 in `HICCUPS.md`.
+- **[Post-Feedback Hardening & Subsystem Polish (2026-09-11 Wrap-Up)]**:
+  - **Audio Sound Profiles**: Replaced shrill 1400Hz beeps with dampened mechanical "thock" and added 4 user-selectable profiles (`thock`, `haptic`, `click`, `soft`) accessible via `audio [mode]`. User feedback affirmed strong preference for the `haptic` and `soft` sound families (subtle Apple trackpad / modern UI micro-taps).
+  - **Alternate Cursor Modes**: Added switchable cursor modes (`cursor [dual|minimal|bracket]`). User noted preference for `minimal` and `bracket`, with a request to explore an illuminated center dot with bold outline.
+  - **Markdown Studio Freeze Fix**: Resolved the paragraph-heading regex mismatch infinite loop in `MarkdownRenderer.tsx`, restoring 100% stable real-time typing across headings.
+  - **Journey Feed Dummy Wireframe Fallbacks**: Injected 4 structured default timeline events (`#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`) in `app/page.tsx` with expandable code blocks, photographic image attachments for lightbox testing, and sample comments.
+  - **Writing Slug Aliasing**: Added slug alias `nextjs-16-async-server-components` to guarantee 0 404s when navigating to technical essays.
+  - **Portfolio Expansion**: Expanded default portfolio catalog from 2 to 4 flagship case studies (`Distributed Telemetry Engine`, `Tactical Operations C2 Matrix`) and made project titles clickable directly into case study readers.
+  - **SEO & CI Verification**: Documented 1-click DevTools console snippet for OpenGraph/Twitter inspection and GitHub Actions workflow testing.
 
-## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
+## // STRATEGIC ROADMAP & NEXT-SESSION PRIORITY
 
-This structured plan outlines the development milestones for Thomas Payne's personal website platform:
-
-### Phase 1: Foundation Hardening, SEO & Asset Pipeline (P0 — Complete)
-- [x] **Zero-Error Codebase**: Satisfy strict ESLint 9 and React 19 compiler rules with 0 errors and 0 warnings.
-- [x] **Hiccups & Architectural Log**: Document all 17 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
-- [x] **SEO & Social Graph Metadata**: Implement dynamic OpenGraph, Twitter Cards, and canonical URLs in `app/layout.tsx`, `app/writing/[slug]/page.tsx`, and `app/portfolio/[slug]/page.tsx`.
-- [x] **Dynamic Sitemap & Robots**: Added `app/sitemap.ts` and `app/robots.ts` for automated search engine indexing.
-- [x] **Next/Image Optimization**: Configured `images.remotePatterns` in `next.config.ts` (for Unsplash, Supabase Storage, and GitHub) and migrated `<img>` tags to `<Image />`.
-- [x] **Continuous Integration**: Set up `.github/workflows/ci.yml` running lint and build checks on push and pull requests.
-
-### Phase 2: Technical Writing & Knowledge Engine (P1 — Core Completed)
-- [x] **Syntax Highlighting & Code Blocks**: Custom monochromatic tokenizer (`CodeBlock.tsx`) with line numbering, language pill, and 1-click copy-to-clipboard.
-- [x] **Reading Progress & TOC**: Scroll-linked spring reading progress indicator (`ArticleReadingProgress.tsx`) and dynamic `TableOfContents.tsx` with smooth scroll and active section scroll-spy.
-- [x] **Rich Markdown Parser**: `MarkdownRenderer.tsx` parsing headings with matching TOC anchor IDs, blockquotes, code blocks, lists, and inline links.
-- [x] **RSS / Atom Feed**: Generated `app/feed.xml/route.ts` with RFC 822 pubDate validation and linked RSS subscription button in `WritingClient.tsx`.
-- [ ] **Article Engagement**: Implement like reactions or view counter metrics persisted in Supabase.
-
-### Phase 3: Interactive Portfolio Deep Dives & Case Studies (P1 — Core Completed)
-- [x] **Case Study Pages (`/portfolio/[slug]`)**: Dedicated case study route with architectural diagrams, problem/solution breakdowns, and engineering trade-offs.
-- [x] **Tech Stack Filter Pills**: Live search and tech stack filter buttons in `PortfolioClient.tsx` with monochromatic active badges.
-- [x] **Interactive Demos & Repos**: 1-click links to live demos and GitHub sources directly on cards and case study hero headers.
-
-### Phase 4: Admin CMS Studio & Media Asset Pipeline (P2 — Core Completed)
-- [x] **Split-Pane Markdown Editor**: `AdminMarkdownStudio.tsx` live split-pane editor with syntax formatting toolbar, real-time preview, word/character metrics, and reading time estimation.
-- [x] **Direct Storage Upload Pipeline**: `MediaDropzone.tsx` drag-and-drop file uploader directly to Supabase Storage with instant thumbnail previews and manual URL fallback.
-- [ ] **Visitor Telemetry Dashboard**: Add privacy-first metrics tracking (daily unique visits, top accessed CLI commands, popular articles).
-
-### Phase 5: Agentic AI Integration & Terminal HUD 2.0 (P2 — Core Completed)
-- [x] **Terminal AI Assistant (`ask <query>`)**: Integrated agentic AI endpoint (`/api/assistant`) into `TerminalHUD.tsx` answering questions regarding Thomas's engineering philosophy, military background, tech stack, and portfolio.
-- [x] **Tactile Audio Feedback**: Added tactile mechanical switch audio feedback using Web Audio API synthesis for CLI keystrokes with mute toggle and `localStorage` persistence.
+### IMMEDIATE PRIORITY FOR NEXT SESSION: Themes, Colorways & Sensory Design
+Based on user testing notes and strategic direction, the upcoming session will focus on:
+1. **Palette & Colorways Exploration**:
+   - **Option A (Titanium & Slate)**: Subtle deep navy/slate undertones (`#0B0E14`, `#151B26`) with ice-blue accents.
+   - **Option B (Monokai Pro Obsidian)**: Deep charcoal with selective minimalist neon accents (electric emerald or amber).
+   - **Option C (Stealth Carbon)**: Pure matte carbon weaves (`#0C0C0C`) with bone-white typography (`#E6E6E6`).
+   - **Option D (Refined Yeezy Grayscale)**: Pure monochrome with softened warm graphite gradients and high-contrast tokens.
+2. **Audio Refinement (Haptic & Soft Family)**:
+   - Deepen the `haptic` and `soft` sound design paths (Apple trackpad micro-taps, whisper-quiet UI clicks, subtle acoustic confirmations).
+3. **Cursor Styling Evolution**:
+   - Refine `minimal` cursor mode with an illuminated inner core and crisp bold outline.
+   - Expand `bracket` cursor mode with interactive rotation and tactical HUD animations.
+4. **CMS Authoring Experience Exploration**:
+   - Evaluate WYSIWYG / Block-based alternatives (TipTap / Notion-style block editor) to replace or enhance the split markdown preview.
+5. **Resume Checklist Verification**:
+   - Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

@@ -86,5 +86,25 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Cause:** Framer Motion spring physics on a single cursor element introduce an intentional ~100-200ms trailing lag. The visual circle lagged behind the true physical mouse coordinates where the browser dispatches click events.
 - **Fix:** Refactored `CustomCursor.tsx` to a dual-layer architecture: a zero-latency center pinpoint dot tracking true client coordinates immediately without spring lag, paired with a fluid outer spring halo that floats and expands around it on interactive hover.
 
+## 18. MarkdownRenderer Infinite Loop on Heading / Real-Time Typing
+- **Issue:** Typing `#` or `##` in real-time inside the Admin Markdown Studio editor froze the browser tab with 100% CPU lockup.
+- **Cause:** In `MarkdownRenderer.tsx`, the paragraph parsing loop checked `!lines[i].trim().startsWith('#')` and broke out before pushing to `pLines`. However, the heading regex required `/^(#{1,4})\s+(.+)$/`. When typing `#` alone, neither branch consumed the line, leaving `i` unincremented and triggering an infinite loop.
+- **Fix:** Relaxed heading regex to `/^(#{1,4})(\s+.*)?$/` to safely handle partial header typing, and added a guaranteed `else { i++; }` advancement fallback in the paragraph loop.
+
+## 19. Web Audio Psychoacoustics & User Sound Perception
+- **Issue:** Keystroke clicks at 1400Hz and ascending 440/880Hz confirmation chimes sounded harsh, shrill, and arcade-like on laptop speakers.
+- **Cause:** High-frequency pure sine/triangle oscillators lack mechanical body resonance and acoustic dampening, creating sharp digital beeps rather than physical key feedback.
+- **Fix:** Redesigned sound synthesis around low-frequency dampened mechanical keyboard acoustics (triangle wave sweeping 220Hz down to 65Hz in 14ms at soft 0.04 gain). Introduced selectable sound profiles (`thock`, `haptic`, `click`, `soft`) via `audio [mode]` in `TerminalHUD.tsx`. User testing revealed strong preference for the `haptic` and `soft` sound family (subtle Apple trackpad / modern UI micro-taps).
+
+## 20. Dynamic Route Slug Mismatches in Offline Mode
+- **Issue:** Navigating to `/writing/nextjs-16-async-server-components` threw 404 "Article Not Found" when running without a seeded database.
+- **Cause:** The default article was keyed as `nextjs-16-async-server-components-turbopack`, while checklist links omitted the `-turbopack` suffix.
+- **Fix:** Added an explicit slug alias in `DEFAULT_ARTICLES` in `app/writing/[slug]/page.tsx` mapping both slug variants to the same 4-section architecture deep dive.
+
+## 21. Unseeded Home Timeline Feed Rendering & Missing Test Wireframes
+- **Issue:** The Home page Journey Feed was completely blank when `timeline_events` table was unseeded, preventing verification of expandable code snippets and image lightboxes.
+- **Cause:** `app/page.tsx` returned `timeline: []` when database rows were absent without providing structured fallback events.
+- **Fix:** Seeded a deterministic `DEFAULT_TIMELINE` fallback in `app/page.tsx` featuring 4 categorized events (`#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`), an expandable Web Audio code block with copy button, and a photographic thumbnail linked to the Framer Motion lightbox modal.
+
 
 
