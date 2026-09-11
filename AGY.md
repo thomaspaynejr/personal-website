@@ -90,6 +90,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Phase 2: Writing & Knowledge Engine Complete]**: Engineered custom monochromatic syntax highlighter (`CodeBlock.tsx`) with tokenization, line numbering, and 1-click clipboard copy with animated feedback. Built dynamic Table of Contents (`TableOfContents.tsx`) with automated heading extraction and real-time `IntersectionObserver` scroll-spy. Added animated reading progress bar (`ArticleReadingProgress.tsx`). Developed comprehensive `MarkdownRenderer.tsx` handling headings, code fences, blockquotes, lists, bold/italics, and links. Created standard RSS 2.0 XML endpoint (`app/feed.xml/route.ts`) with RSS feed button on `/writing`. Synced Linear issue.
 - **[Phase 3: Interactive Portfolio Deep Dives & Case Studies Complete]**: Built interactive `PortfolioClient.tsx` featuring real-time project search, dynamic tech stack tag filter pills, and 1-click case study links. Created dedicated dynamic system case study route (`app/portfolio/[slug]/page.tsx`) with Next.js 16 async params, system architecture topology diagrams, challenge/solution breakdowns, measurable impact metrics, reading progress indicator, and live demo / repository links. Synced Linear issue.
 - **[Phase 4: Admin CMS Studio & Media Asset Pipeline Complete]**: Built `AdminMarkdownStudio.tsx` offering a split-pane live Markdown authoring studio with syntax quick-formatting tools, real-time preview, word/character counts, and reading time estimation. Engineered `MediaDropzone.tsx` drag-and-drop client uploader for direct Supabase Storage transmission with thumbnail previews, remove controls, and URL fallback inputs across `AboutManager`, `ArticlesManager`, and `TimelineManager`. Synced Linear issue.
+- **[Phase 5: Agentic AI Assistant & Tactile Audio Synthesis Complete]**: Engineered intelligent assistant endpoint (`app/api/assistant/route.ts`) answering visitor queries on military background, full tech stack, Next.js 16 architecture, obsidian design philosophy, and portfolio projects. Built Web Audio API mechanical switch click synthesizer (`playMechanicalClick`) for tactile keystroke sound feedback in `TerminalHUD.tsx`, complete with `ask <query>` command execution, `audio [on|off]` control, terminal header volume toggle button, and persistent `localStorage` state. Synced Linear issue.
 
 ## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
 
@@ -97,7 +98,7 @@ This structured plan outlines the development milestones for Thomas Payne's pers
 
 ### Phase 1: Foundation Hardening, SEO & Asset Pipeline (P0 — In Progress)
 - [x] **Zero-Error Codebase**: Satisfy strict ESLint 9 and React 19 compiler rules with 0 errors.
-- [x] **Hiccups & Architectural Log**: Document all 11 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
+- [x] **Hiccups & Architectural Log**: Document all 14 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
 - [ ] **SEO & Social Graph Metadata**: Implement dynamic OpenGraph, Twitter Cards, and canonical URLs in `app/layout.tsx` and `app/writing/[slug]/page.tsx`.
 - [ ] **Dynamic Sitemap & Robots**: Add `app/sitemap.ts` and `app/robots.ts` for automated search engine indexing.
 - [ ] **Next/Image Optimization**: Configure `images.remotePatterns` in `next.config.ts` (for Unsplash & Supabase Storage) and migrate `<img>` tags to `<Image />`.
@@ -120,9 +121,9 @@ This structured plan outlines the development milestones for Thomas Payne's pers
 - [x] **Direct Storage Upload Pipeline**: `MediaDropzone.tsx` drag-and-drop file uploader directly to Supabase Storage with instant thumbnail previews and manual URL fallback.
 - [ ] **Visitor Telemetry Dashboard**: Add privacy-first metrics tracking (daily unique visits, top accessed CLI commands, popular articles).
 
-### Phase 5: Agentic AI Integration & Terminal HUD 2.0 (P2)
-- [ ] **Terminal AI Assistant (`ask <query>`)**: Integrate a streaming agentic AI endpoint into `TerminalHUD.tsx` to answer questions regarding Thomas's engineering philosophy, military background, and portfolio.
-- [ ] **Tactile Audio Feedback**: Add optional, subtle mechanical switch audio feedback using Web Audio API synthesis for CLI keystrokes.
+### Phase 5: Agentic AI Integration & Terminal HUD 2.0 (P2 — Core Completed)
+- [x] **Terminal AI Assistant (`ask <query>`)**: Integrated agentic AI endpoint (`/api/assistant`) into `TerminalHUD.tsx` answering questions regarding Thomas's engineering philosophy, military background, tech stack, and portfolio.
+- [x] **Tactile Audio Feedback**: Added tactile mechanical switch audio feedback using Web Audio API synthesis for CLI keystrokes with mute toggle and `localStorage` persistence.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

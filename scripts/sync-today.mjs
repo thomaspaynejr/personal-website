@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Phase 4: Admin CMS Studio & Media Asset Pipeline (Split-pane Markdown Studio & Supabase Storage MediaDropzone)',
-    description: 'Developed AdminMarkdownStudio.tsx featuring a split-pane live Markdown editor with syntax formatting toolbar, real-time preview, word/character metrics, and reading time estimation. Engineered MediaDropzone.tsx providing drag-and-drop client uploads to Supabase Storage with instant thumbnail previews and manual URL fallback.',
+    title: 'Phase 5: Agentic AI Assistant & Tactile Audio Keystroke Synthesis in Terminal HUD',
+    description: 'Engineered POST /api/assistant knowledge endpoint answering queries regarding military background, technical stack, Next.js 16 architecture, obsidian design philosophy, and portfolio projects. Built Web Audio API mechanical switch oscillator synthesizer (playMechanicalClick) providing tactile keystroke audio in TerminalHUD.tsx, complete with ask <query>, audio [on|off], header volume toggle button, and persistent localStorage state.',
     isDone: true
   }
 ];

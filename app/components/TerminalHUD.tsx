@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, X, CornerDownLeft, CheckCircle, Zap } from 'lucide-react';
+import { Terminal, X, CornerDownLeft, CheckCircle, Zap, Bot, Volume2, VolumeX } from 'lucide-react';
 import { useTheme } from '@/app/providers';
 import { sendContactMessage } from '@/app/actions/engagement';
 
@@ -16,6 +16,8 @@ interface HistoryItem {
 
 const COMMANDS = [
   'help',
+  'ask',
+  'audio',
   'bio',
   'writing',
   'projects',
@@ -38,6 +40,36 @@ const COMMANDS = [
   'exit'
 ];
 
+function playMechanicalClick() {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'triangle';
+    const now = ctx.currentTime;
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(35, now + 0.035);
+
+    gain.gain.setValueAtTime(0.04, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.035);
+    setTimeout(() => {
+      ctx.close().catch(() => {});
+    }, 50);
+  } catch {
+    // AudioContext blocked or unsupported
+  }
+}
+
 const DEFAULT_WELCOME_ITEM: HistoryItem = {
   id: 'init-0',
   command: 'sys.init',
@@ -48,7 +80,7 @@ const DEFAULT_WELCOME_ITEM: HistoryItem = {
         THOMAS PAYNE // INTERACTIVE CLI HUD v1.0.0
       </div>
       <p className="text-[10px] leading-relaxed">
-        Welcome to the command line interface. Type <span className="text-foreground font-bold">&apos;help&apos;</span> to see available commands or press <span className="text-foreground font-bold">&apos;Tab&apos;</span> for autocomplete.
+        Welcome to the command line interface. Type <span className="text-foreground font-bold">&apos;help&apos;</span> to see available commands, <span className="text-foreground font-bold">&apos;ask &lt;query&gt;&apos;</span> to query the AI assistant, or press <span className="text-foreground font-bold">&apos;Tab&apos;</span> for autocomplete.
       </p>
     </div>
   )
@@ -60,9 +92,29 @@ export default function TerminalHUD() {
   const [history, setHistory] = useState<HistoryItem[]>([DEFAULT_WELCOME_ITEM]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const [audioEnabled, setAudioEnabled] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
+
+  // Initialize audio preference safely without React 19 setState-in-effect warning
+  useEffect(() => {
+    const saved = localStorage.getItem('fx_terminal_audio');
+    if (saved === 'true') {
+      setTimeout(() => setAudioEnabled(true), 0);
+    }
+  }, []);
+
+  const toggleAudio = (explicit?: boolean) => {
+    const nextState = explicit !== undefined ? explicit : !audioEnabled;
+    setAudioEnabled(nextState);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fx_terminal_audio', nextState ? 'true' : 'false');
+    }
+    if (nextState) {
+      playMechanicalClick();
+    }
+  };
 
   // Listen for Cmd+K, Ctrl+K, or Backtick
   useEffect(() => {
@@ -118,28 +170,126 @@ export default function TerminalHUD() {
           <div className="space-y-2 text-xs">
             <div className="text-action font-bold uppercase tracking-widest">AVAILABLE COMMANDS:</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-[10px]">
-              <div><span className="text-foreground font-bold w-24 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">writing</span> <span className="text-accent">- View articles & essays</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">skills</span> <span className="text-accent">- Display full technical stack</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">contact</span> <span className="text-accent">- View contact info</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">message &lt;msg&gt;</span> <span className="text-accent">- Direct transmit to admin inbox</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">matrix [on|off]</span> <span className="text-accent">- Toggle Matrix Rain FX</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">lightning [on|off]</span> <span className="text-accent">- Toggle LightStrike FX</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">bench</span> <span className="text-accent">- System telemetry & diagnostics</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">goto &lt;route&gt;</span> <span className="text-accent">- Jump to page route</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">theme</span> <span className="text-accent">- Toggle theme [dark|light]</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">whoami</span> <span className="text-accent">- Display visitor role</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">status</span> <span className="text-accent">- View system health & runtime</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">date</span> <span className="text-accent">- Current timestamp</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">admin</span> <span className="text-accent">- Direct to Admin control center</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">clear</span> <span className="text-accent">- Clear terminal screen</span></div>
-              <div><span className="text-foreground font-bold w-24 inline-block">exit</span> <span className="text-accent">- Close terminal overlay</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">ask &lt;query&gt;</span> <span className="text-accent">- Query AI agent on background & stack</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">audio [on|off]</span> <span className="text-accent">- Toggle tactile keystroke audio</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">writing</span> <span className="text-accent">- View articles & essays</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">skills</span> <span className="text-accent">- Display full technical stack</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">contact</span> <span className="text-accent">- View contact info</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">message &lt;msg&gt;</span> <span className="text-accent">- Direct transmit to admin inbox</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">matrix [on|off]</span> <span className="text-accent">- Toggle Matrix Rain FX</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">lightning [on|off]</span> <span className="text-accent">- Toggle LightStrike FX</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">bench</span> <span className="text-accent">- System telemetry & diagnostics</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">goto &lt;route&gt;</span> <span className="text-accent">- Jump to page route</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">theme</span> <span className="text-accent">- Toggle theme [dark|light]</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">whoami</span> <span className="text-accent">- Display visitor role</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">status</span> <span className="text-accent">- View system health & runtime</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">date</span> <span className="text-accent">- Current timestamp</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">admin</span> <span className="text-accent">- Direct to Admin control center</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">clear</span> <span className="text-accent">- Clear terminal screen</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">exit</span> <span className="text-accent">- Close terminal overlay</span></div>
             </div>
           </div>
         );
+      case 'ask':
+      case 'ai':
+      case 'agent': {
+        const query = args.join(' ').trim();
+        if (!query) {
+          outputNode = (
+            <div className="text-[10px] text-amber-400">
+              Usage: <span className="font-bold text-foreground">ask &lt;query&gt;</span> (e.g. &apos;ask military background&apos;, &apos;ask tech stack&apos;, &apos;ask projects&apos;)
+            </div>
+          );
+        } else {
+          outputNode = (
+            <div className="space-y-1.5 text-[10px] text-accent">
+              <div className="flex items-center gap-1.5 text-action font-bold">
+                <Bot size={12} className="animate-spin" />
+                <span>AI ASSISTANT // QUERYING KNOWLEDGE MATRIX...</span>
+              </div>
+              <p className="text-[9px] text-accent/70">&quot;{query}&quot;</p>
+            </div>
+          );
+
+          // Fetch async from /api/assistant
+          fetch('/api/assistant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              const aiResponseNode = (
+                <div className="space-y-2 text-[10px] bg-card/60 p-3 rounded-xl border border-action/40">
+                  <div className="flex items-center justify-between border-b border-border-custom/40 pb-1.5">
+                    <div className="flex items-center gap-1.5 text-action font-bold uppercase tracking-wider">
+                      <Bot size={12} />
+                      <span>{data.topic || 'AI ASSISTANT INTELLIGENCE'}</span>
+                    </div>
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-action/10 text-action border border-action/20">AGENTIC AI</span>
+                  </div>
+                  <div className="text-foreground leading-relaxed whitespace-pre-line text-[10px] font-sans font-medium">
+                    {data.answer}
+                  </div>
+                </div>
+              );
+
+              setHistory((prev) => [
+                ...prev,
+                {
+                  id: Math.random().toString(36).substring(2),
+                  command: 'agent.reply',
+                  output: aiResponseNode,
+                  timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                }
+              ]);
+            })
+            .catch(() => {
+              setHistory((prev) => [
+                ...prev,
+                {
+                  id: Math.random().toString(36).substring(2),
+                  command: 'agent.error',
+                  output: (
+                    <div className="text-[10px] text-red-400">
+                      [AI ASSISTANT] Network or server error. Please retry your query.
+                    </div>
+                  ),
+                  timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+                }
+              ]);
+            });
+        }
         break;
+      }
+
+      case 'audio':
+      case 'sound': {
+        const subCmd = args[0]?.toLowerCase();
+        let targetState: boolean;
+        if (subCmd === 'on') targetState = true;
+        else if (subCmd === 'off') targetState = false;
+        else targetState = !audioEnabled;
+
+        setAudioEnabled(targetState);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('fx_terminal_audio', targetState ? 'true' : 'false');
+        }
+        if (targetState) {
+          playMechanicalClick();
+        }
+
+        outputNode = (
+          <div className="text-[10px] text-action flex items-center gap-1.5">
+            {targetState ? <Volume2 size={12} /> : <VolumeX size={12} />}
+            Tactile keystroke audio turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [MUTED]'}</span>.
+          </div>
+        );
+        break;
+      }
 
       case 'bio':
         outputNode = (
@@ -440,6 +590,9 @@ export default function TerminalHUD() {
   };
 
   const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (audioEnabled) {
+      playMechanicalClick();
+    }
     if (e.key === 'Enter') {
       processCommand(input);
     } else if (e.key === 'ArrowUp') {
@@ -505,6 +658,13 @@ export default function TerminalHUD() {
                   <span className="text-[8px] text-accent uppercase tracking-widest hidden sm:inline">
                     PRESS ESC OR TYPE EXIT
                   </span>
+                  <button
+                    onClick={() => toggleAudio()}
+                    className="p-1 text-accent hover:text-foreground transition-colors cursor-none flex items-center gap-1"
+                    title={audioEnabled ? 'Mute Keystroke Audio' : 'Enable Keystroke Audio'}
+                  >
+                    {audioEnabled ? <Volume2 size={13} className="text-action" /> : <VolumeX size={13} />}
+                  </button>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="p-1 text-accent hover:text-foreground transition-colors cursor-none"

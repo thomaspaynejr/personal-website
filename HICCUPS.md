@@ -66,3 +66,8 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Issue:** Next.js Turbopack build failed with `Export Github doesn't exist in target module lucide-react`.
 - **Cause:** `lucide-react` focuses strictly on general UI glyphs and intentionally excludes proprietary brand/social logos (e.g., GitHub, Twitter/X, Instagram, LinkedIn).
 - **Fix:** Switched brand icon imports in `PortfolioClient.tsx` and `app/portfolio/[slug]/page.tsx` to `FaGithub` from `react-icons/fa6`, maintaining aesthetic and architectural alignment with `Footer.tsx`.
+
+## 14. Web Audio Context Lifetime & Keystroke Audio Synthesis
+- **Issue:** Calling Web Audio API oscillators on every keystroke without proper lifecycle management can lead to browser console warnings regarding `AudioContext` limits, resource exhaustion, or blocked autoplay when initialized outside user interaction.
+- **Fix:** Instantiated short-lived, self-closing `AudioContext` instances with ramp-down exponential decays (140Hz -> 35Hz in 35ms) and wrapped them in `try-catch` blocks. Closed contexts via `ctx.close()` post-playback to prevent memory leaks and ensure cross-browser compatibility.
+
