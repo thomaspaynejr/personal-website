@@ -73,27 +73,64 @@ const cursorY = useSpring(mouseY, { stiffness: 400, damping: 28 });
     title: 'Next.js 16 Async Server Components & Turbopack In-Depth',
     slug: 'nextjs-16-async-server-components-turbopack',
     excerpt: 'Navigating breaking changes in Next.js 16 including promise-based searchParams, proxy.ts middleware, and Server Action limits.',
-    content: `### Embracing Next.js 16
+    content: `### 01 // Embracing Next.js 16 Architecture
 
-Next.js 16 brings powerful performance upgrades with Turbopack, but introduces key architectural shifts:
+Next.js 16 brings massive performance upgrades with Turbopack, but introduces key architectural shifts that require deliberate engineering:
 
-- \`searchParams\` and \`params\` are now Promises that **must be awaited** in Server Components.
+- \`searchParams\` and \`params\` are now **Promises** that must be explicitly awaited in Server Components.
 - \`middleware.ts\` is superseded by root-level \`proxy.ts\`.
-- Default Server Action payload limits require explicit scaling in \`next.config.ts\`.
+- Default Server Action payload limits require explicit configuration in \`next.config.ts\`.
 
-#### Awaiting Parameters in Next.js 16
+---
+
+### 02 // Awaiting Dynamic Parameters
+
+In previous versions of Next.js, \`params\` was passed synchronously. In Next.js 16, asynchronous resolution is enforced for streaming optimization:
+
 \`\`\`tsx
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Page({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
   const { slug } = await params;
-  // Fetch article data using slug...
+  // Fetch article or project data safely...
+  return <div>Article: {slug}</div>;
 }
-\`\`\``,
+\`\`\`
+
+---
+
+### 03 // Turbopack Compilation Benchmarks
+
+Turbopack reduces local cold start latency by **70%** and handles Hot Module Replacement (HMR) in under 20ms:
+
+\`\`\`bash
+# Run production Turbopack build
+npm run build --turbo
+\`\`\`
+
+#### Architectural Advantages:
+1. **Incremental Function Generation**: Only actively requested routes are parsed during dev cycles.
+2. **Deterministic Tree-Shaking**: Dead CSS and unused icon exports are removed automatically.
+3. **Strict Memory Isolation**: Workers prevent out-of-memory leaks across multi-page builds.
+
+---
+
+### 04 // Production Recommendations
+
+- Always wrap asynchronous database clients in deterministic try-catch blocks with offline fallbacks.
+- Keep Client Component boundaries at leaf nodes to preserve SSR performance.
+- Pair React 19 server actions with optimistic UI updates for instantaneous user interactions.`,
     tags: ['Next.js 16', 'TypeScript', 'Turbopack', 'Performance'],
     reading_time: '5 min read',
     published_at: '2026-07-20T00:00:00.000Z',
     is_published: true
   }
 };
+
+// Slug alias to guarantee zero 404s
+DEFAULT_ARTICLES['nextjs-16-async-server-components'] = DEFAULT_ARTICLES['nextjs-16-async-server-components-turbopack'];
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

@@ -21,6 +21,26 @@ const DEFAULT_PORTFOLIO_PROJECTS: PortfolioProject[] = [
     demo_url: 'https://linear.app',
     source_url: 'https://github.com/thomaspaynejr',
     display_order: 2
+  },
+  {
+    id: 'telemetry-engine',
+    slug: 'distributed-telemetry-engine',
+    title: 'Distributed Telemetry Engine',
+    description: 'High-throughput metrics aggregator processing gRPC telemetry streams, edge health probes, and sub-millisecond anomaly detection.',
+    tech: ['Go', 'gRPC', 'Docker', 'PostgreSQL', 'Redis'],
+    demo_url: 'https://thomaspayne.dev/dashboard',
+    source_url: 'https://github.com/thomaspaynejr',
+    display_order: 3
+  },
+  {
+    id: 'c2-matrix',
+    slug: 'tactical-operations-c2-matrix',
+    title: 'Tactical Operations C2 Matrix',
+    description: 'Mission-critical command and control system built on military operational doctrine with offline-first synchronization and cryptographic integrity.',
+    tech: ['TypeScript', 'Next.js', 'WebSockets', 'Tailwind CSS'],
+    demo_url: 'https://thomaspayne.dev',
+    source_url: 'https://github.com/thomaspaynejr',
+    display_order: 4
   }
 ];
 

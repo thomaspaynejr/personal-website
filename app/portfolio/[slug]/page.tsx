@@ -169,6 +169,74 @@ const mutation = \`
 
 ### 3. Mandatory Verification Loop
 Every code change must pass two independent verification gates (\`npm run lint\` and \`npm run build\`) before automatic staging, commit, and remote push.`
+  },
+  'distributed-telemetry-engine': {
+    id: 'telemetry-engine',
+    slug: 'distributed-telemetry-engine',
+    title: 'Distributed Telemetry Engine',
+    tagline: 'High-throughput metrics aggregator processing gRPC telemetry streams, edge health probes, and sub-millisecond anomaly detection.',
+    role: 'Systems & Infrastructure Architect',
+    timeline: '2026 // Production',
+    tech: ['Go', 'gRPC', 'Docker', 'PostgreSQL', 'Redis'],
+    demo_url: 'https://thomaspayne.dev/dashboard',
+    source_url: 'https://github.com/thomaspaynejr',
+    content: `## 01 // Architectural Overview
+
+The **Distributed Telemetry Engine** is a high-throughput event streaming pipeline engineered to ingest, aggregate, and analyze distributed system metrics across multi-region edge nodes.
+
+### High-Level Capabilities:
+1. **gRPC Event Pipeline**: Streaming telemetry frames over HTTP/2 transport with bidirectional stream buffering.
+2. **Sub-Millisecond In-Memory Caching**: Redis sliding-window rate limiters and real-time metrics buffering before persistent batch writes.
+3. **Automated Incident Flagging**: Heuristic anomaly detectors evaluating latency spikes and packet loss thresholds in real time.
+
+---
+
+## 02 // Pipeline Topology
+
+\`\`\`bash
+[ Edge Nodes ] ──(gRPC Stream)──> [ Telemetry Ingestion ] ──> [ Redis Buffer ]
+                                              │
+                                              ▼
+                                     [ Anomaly Detector ]
+                                              │
+                                              ▼
+                                   [ PostgreSQL Analytics ]
+\`\`\`
+
+---
+
+## 03 // Production Highlights
+
+- **Throughput**: Validated sustained load of 50,000 telemetry events per second at <8ms ingestion latency.
+- **Resource Footprint**: Minimal Alpine container consuming under 45MB of RAM per instance.
+- **Zero Data Loss Guarantee**: Write-ahead logging (WAL) guarantees deterministic recovery following worker restarts.`
+  },
+  'tactical-operations-c2-matrix': {
+    id: 'c2-matrix',
+    slug: 'tactical-operations-c2-matrix',
+    title: 'Tactical Operations C2 Matrix',
+    tagline: 'Mission-critical command and control system built on military operational doctrine with offline-first synchronization and cryptographic integrity.',
+    role: 'Lead Systems Engineer',
+    timeline: '2026 // Operational System',
+    tech: ['TypeScript', 'Next.js', 'WebSockets', 'Tailwind CSS'],
+    demo_url: 'https://thomaspayne.dev',
+    source_url: 'https://github.com/thomaspaynejr',
+    content: `## 01 // The Doctrine of Operational Rigor
+
+Military command and control requires extreme reliability: systems must function under disrupted communications, high friction, and zero-downtime tolerance.
+
+The **Tactical Operations C2 Matrix** bridges military doctrine with modern resilient web architecture:
+1. **Offline-First Synchronization**: Local IndexedDB cache with deterministic conflict-free replicated data types (CRDTs).
+2. **Cryptographic Checksums**: Every state mutation is signed with sha256 checksums to verify payload integrity over untrusted links.
+3. **High-Contrast Tactical UX**: Strictly monochromatic obsidian interfaces optimized for low-light tactical environments and rapid human comprehension.
+
+---
+
+## 02 // Engineering Constraints & Execution
+
+- **Zero External CDNs**: All icons, fonts, and assets are bundled locally to guarantee full standalone operation in air-gapped environments.
+- **Deterministic State Recovery**: State reconstruction completes in under 5ms upon network link restoration.
+- **Fail-Safe Architecture**: Graceful fallback states ensure essential operational data is never hidden behind loading skeletons.`
   }
 };
 

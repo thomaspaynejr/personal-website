@@ -143,9 +143,14 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
               <div className="group flex flex-col h-full border border-border-custom/30 rounded-2xl p-6 sm:p-7 bg-card/40 backdrop-blur-md hover:-translate-y-1 hover:border-action transition-all duration-300 shadow-sm justify-between">
                 <div>
                   <div className="flex justify-between items-start mb-3 gap-2">
-                    <h3 className="text-base sm:text-lg font-bold group-hover:text-action transition uppercase tracking-tight">
-                      {project.title}
-                    </h3>
+                    <Link
+                      href={`/portfolio/${slug}`}
+                      className="group-hover:text-action transition-colors"
+                    >
+                      <h3 className="text-base sm:text-lg font-bold uppercase tracking-tight hover:underline">
+                        {project.title}
+                      </h3>
+                    </Link>
                     <Link
                       href={`/portfolio/${slug}`}
                       className="p-1 text-accent group-hover:text-action transition-colors"

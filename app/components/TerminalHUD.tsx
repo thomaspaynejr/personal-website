@@ -18,6 +18,7 @@ const COMMANDS = [
   'help',
   'ask',
   'audio',
+  'cursor',
   'bio',
   'writing',
   'projects',
@@ -60,7 +61,12 @@ function getSharedAudioContext(): AudioContext | null {
   }
 }
 
-function playMechanicalClick(variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke') {
+export type AudioProfile = 'thock' | 'haptic' | 'click' | 'soft';
+
+function playMechanicalClick(
+  variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke',
+  profile: AudioProfile = 'thock'
+) {
   const ctx = getSharedAudioContext();
   if (!ctx) return;
 
@@ -72,66 +78,119 @@ function playMechanicalClick(variant: 'keystroke' | 'toggle_on' | 'toggle_off' =
     const now = ctx.currentTime;
 
     if (variant === 'toggle_on') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.setValueAtTime(880, now + 0.05);
-      gain.gain.setValueAtTime(0.16, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.12);
+      // Warm, mellow musical confirmation (A3 -> C#4, 220Hz -> 277Hz)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(220, now);
+      gain1.gain.setValueAtTime(0.04, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.04);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(277.18, now + 0.04);
+      gain2.gain.setValueAtTime(0.045, now + 0.04);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.04);
+      osc2.stop(now + 0.09);
       return;
     }
 
     if (variant === 'toggle_off') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, now);
-      osc.frequency.setValueAtTime(300, now + 0.05);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.1);
+      // Soft descending tap (C#4 -> A3, 277Hz -> 220Hz)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(277.18, now);
+      gain1.gain.setValueAtTime(0.035, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.035);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(220, now + 0.035);
+      gain2.gain.setValueAtTime(0.03, now + 0.035);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.035);
+      osc2.stop(now + 0.08);
       return;
     }
 
-    // High-frequency tactile mechanical click transient (crisp and clear on laptop speakers)
-    const clickOsc = ctx.createOscillator();
-    const clickGain = ctx.createGain();
-    clickOsc.type = 'triangle';
-    clickOsc.frequency.setValueAtTime(1400, now);
-    clickOsc.frequency.exponentialRampToValueAtTime(450, now + 0.025);
+    // Keystroke sound profiles
+    if (profile === 'thock') {
+      // Deep dampened mechanical switch (lubed linear / Topre keyboard feel)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(65, now + 0.014);
 
-    clickGain.gain.setValueAtTime(0.2, now);
-    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+      gain.gain.setValueAtTime(0.045, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.014);
 
-    clickOsc.connect(clickGain);
-    clickGain.connect(ctx.destination);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.014);
+    } else if (profile === 'haptic') {
+      // Ultra-subtle Apple/Linear trackpad tap
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(50, now + 0.009);
 
-    clickOsc.start(now);
-    clickOsc.stop(now + 0.025);
+      gain.gain.setValueAtTime(0.035, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.009);
 
-    // Subtle low body key clack
-    const thockOsc = ctx.createOscillator();
-    const thockGain = ctx.createGain();
-    thockOsc.type = 'sine';
-    thockOsc.frequency.setValueAtTime(260, now + 0.003);
-    thockOsc.frequency.exponentialRampToValueAtTime(90, now + 0.035);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.009);
+    } else if (profile === 'click') {
+      // Crisp mechanical switch click with brief high tick
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(420, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.012);
 
-    thockGain.gain.setValueAtTime(0.14, now + 0.003);
-    thockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
 
-    thockOsc.connect(thockGain);
-    thockGain.connect(ctx.destination);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.012);
+    } else {
+      // 'soft' - Whisper quiet muted pop
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(70, now + 0.01);
 
-    thockOsc.start(now + 0.003);
-    thockOsc.stop(now + 0.035);
+      gain.gain.setValueAtTime(0.025, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.01);
+    }
   } catch {
     // AudioContext blocked or unsupported
   }
@@ -160,6 +219,7 @@ export default function TerminalHUD() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioProfile, setAudioProfile] = useState<AudioProfile>('thock');
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
@@ -170,6 +230,10 @@ export default function TerminalHUD() {
     if (saved === 'true') {
       setTimeout(() => setAudioEnabled(true), 0);
     }
+    const savedProfile = localStorage.getItem('fx_terminal_audio_profile') as AudioProfile;
+    if (savedProfile && ['thock', 'haptic', 'click', 'soft'].includes(savedProfile)) {
+      setTimeout(() => setAudioProfile(savedProfile), 0);
+    }
   }, []);
 
   const toggleAudio = (explicit?: boolean) => {
@@ -178,7 +242,7 @@ export default function TerminalHUD() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('fx_terminal_audio', nextState ? 'true' : 'false');
     }
-    playMechanicalClick(nextState ? 'toggle_on' : 'toggle_off');
+    playMechanicalClick(nextState ? 'toggle_on' : 'toggle_off', audioProfile);
   };
 
   // Listen for Cmd+K, Ctrl+K, or Backtick
@@ -237,7 +301,8 @@ export default function TerminalHUD() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-[10px]">
               <div><span className="text-foreground font-bold w-28 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">ask &lt;query&gt;</span> <span className="text-accent">- Query AI agent on background & stack</span></div>
-              <div><span className="text-foreground font-bold w-28 inline-block">audio [on|off]</span> <span className="text-accent">- Toggle tactile keystroke audio</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">audio [mode]</span> <span className="text-accent">- Audio [on|off|thock|haptic|click|soft]</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">cursor [style]</span> <span className="text-accent">- Cursor [dual|minimal|bracket]</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">writing</span> <span className="text-accent">- View articles & essays</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
@@ -335,18 +400,62 @@ export default function TerminalHUD() {
       case 'sound': {
         const subCmd = args[0]?.toLowerCase();
         let targetState: boolean;
-        if (subCmd === 'on') targetState = true;
-        else if (subCmd === 'off') targetState = false;
-        else targetState = !audioEnabled;
+        if (subCmd === 'on') {
+          targetState = true;
+        } else if (subCmd === 'off') {
+          targetState = false;
+        } else if (['thock', 'haptic', 'click', 'soft'].includes(subCmd)) {
+          const profile = subCmd as AudioProfile;
+          setAudioProfile(profile);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('fx_terminal_audio_profile', profile);
+          }
+          if (!audioEnabled) toggleAudio(true);
+          playMechanicalClick('keystroke', profile);
+          outputNode = (
+            <div className="text-[10px] text-action flex items-center gap-1.5">
+              <Volume2 size={12} />
+              Audio profile switched to <span className="font-bold text-foreground uppercase">[{profile}]</span>. Keystroke audio enabled.
+            </div>
+          );
+          break;
+        } else {
+          targetState = !audioEnabled;
+        }
 
         toggleAudio(targetState);
 
         outputNode = (
           <div className="text-[10px] text-action flex items-center gap-1.5">
             {targetState ? <Volume2 size={12} /> : <VolumeX size={12} />}
-            Tactile keystroke audio turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [MUTED]'}</span>.
+            Keystroke audio turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [MUTED]'}</span>. Profile: <span className="font-bold text-foreground uppercase">[{audioProfile}]</span>.
           </div>
         );
+        break;
+      }
+
+      case 'cursor': {
+        const subCmd = args[0]?.toLowerCase();
+        if (subCmd === 'dual' || subCmd === 'minimal' || subCmd === 'bracket') {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('fx_cursor_mode', subCmd);
+            window.dispatchEvent(new CustomEvent('cursor_mode_change', { detail: subCmd }));
+          }
+          outputNode = (
+            <div className="text-[10px] text-action">
+              Cursor style switched to <span className="font-bold text-foreground uppercase">[{subCmd}]</span>.
+            </div>
+          );
+        } else {
+          outputNode = (
+            <div className="text-[10px] text-accent space-y-1">
+              <div>Usage: <span className="text-foreground font-bold font-mono">cursor [dual|minimal|bracket]</span></div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">dual</span>: Pinpoint center dot with fluid spring trailing halo (default)</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">minimal</span>: Single precision dot, ultra-clean Yeezy aesthetic</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">bracket</span>: Tactical corner crosshairs for HUD interface</div>
+            </div>
+          );
+        }
         break;
       }
 
@@ -650,7 +759,7 @@ export default function TerminalHUD() {
 
   const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (audioEnabled) {
-      playMechanicalClick();
+      playMechanicalClick('keystroke', audioProfile);
     }
     if (e.key === 'Enter') {
       processCommand(input);

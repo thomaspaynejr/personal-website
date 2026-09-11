@@ -9,7 +9,7 @@ import { StaggerContainer, StaggerItem, FadeIn } from './Animations';
 import { upsertTimelineEvent, deleteTimelineEvent } from '@/app/actions/admin';
 import { toggleTimelineLike, postTimelineComment } from '@/app/actions/engagement';
 
-interface TimelineEvent {
+export interface TimelineEvent {
   id: string;
   date: string;
   title: string;
@@ -20,6 +20,7 @@ interface TimelineEvent {
   userHasLiked?: boolean;
   code_snippet?: string;
   image_url?: string;
+  icon_type?: string;
 }
 
 interface Comment {

@@ -146,19 +146,21 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     }
 
     // 3. Headings #, ##, ###, ####
-    const headingMatch = trimmed.match(/^(#{1,4})\s+(.+)$/);
+    const headingMatch = trimmed.match(/^(#{1,4})(\s+.*)?$/);
     if (headingMatch) {
       const level = headingMatch[1].length;
-      const rawText = headingMatch[2].trim();
+      const rawText = (headingMatch[2] || '').trim();
       const cleanText = rawText
         .replace(/\*\*/g, '')
         .replace(/\*/g, '')
         .replace(/`([^`]+)`/g, '$1');
 
       let slug = cleanText
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
+        ? cleanText
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+        : `section-${blockKey}`;
 
       if (seenSlugs.has(slug)) {
         const count = seenSlugs.get(slug)! + 1;
@@ -175,7 +177,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             id={slug}
             className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-foreground mt-8 mb-4 border-b border-border-custom/20 pb-2 scroll-mt-20"
           >
-            {parseInline(rawText)}
+            {parseInline(rawText || 'Heading')}
           </h1>
         );
       } else if (level === 2) {
@@ -186,7 +188,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             className="text-lg sm:text-xl font-bold uppercase tracking-tight text-foreground mt-8 mb-4 border-b border-border-custom/20 pb-2 scroll-mt-20 flex items-center gap-2"
           >
             <span className="text-action opacity-60">#</span>
-            <span>{parseInline(rawText)}</span>
+            <span>{parseInline(rawText || 'Heading')}</span>
           </h2>
         );
       } else if (level === 3) {
@@ -197,7 +199,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             className="text-sm sm:text-base font-bold uppercase tracking-tight text-foreground mt-6 mb-3 scroll-mt-20 flex items-center gap-1.5"
           >
             <span className="text-action/50 text-xs">##</span>
-            <span>{parseInline(rawText)}</span>
+            <span>{parseInline(rawText || 'Heading')}</span>
           </h3>
         );
       } else {
@@ -207,7 +209,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             id={slug}
             className="text-xs font-bold uppercase tracking-widest text-action mt-4 mb-2 scroll-mt-20"
           >
-            {parseInline(rawText)}
+            {parseInline(rawText || 'Heading')}
           </h4>
         );
       }
@@ -289,7 +291,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     while (
       i < lines.length &&
       lines[i].trim() !== '' &&
-      !lines[i].trim().startsWith('#') &&
+      !/^#{1,4}(\s|$)/.test(lines[i].trim()) &&
       !lines[i].trim().startsWith('```') &&
       !lines[i].trim().startsWith('>') &&
       !/^[-*]\s+/.test(lines[i].trim()) &&
@@ -300,11 +302,16 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       i++;
     }
 
-    blocks.push(
-      <p key={blockKey++} className="text-xs text-foreground/85 leading-relaxed my-3 font-mono">
-        {parseInline(pLines.join(' '))}
-      </p>
-    );
+    if (pLines.length > 0) {
+      blocks.push(
+        <p key={blockKey++} className="text-xs text-foreground/85 leading-relaxed my-3 font-mono">
+          {parseInline(pLines.join(' '))}
+        </p>
+      );
+    } else {
+      // Guaranteed loop advancement to prevent any infinite loop freeze
+      i++;
+    }
   }
 
   return <div className="space-y-1">{blocks}</div>;
