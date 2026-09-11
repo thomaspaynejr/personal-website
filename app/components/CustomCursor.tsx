@@ -7,52 +7,88 @@ type HoverState = 'none' | 'normal' | 'nav';
 
 export default function CustomCursor() {
   const [hoverState, setHoverState] = useState<HoverState>('none');
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Buttery smooth spring physics for the trailing effect
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
-  const x = useSpring(cursorX, springConfig);
-  const y = useSpring(cursorY, springConfig);
+  // Exact clientX, clientY without spring lag for zero-latency click feedback
+  const dotX = useMotionValue(-100);
+  const dotY = useMotionValue(-100);
+
+  // Outer trailing halo coordinates with smooth spring physics
+  const haloX = useMotionValue(-100);
+  const haloY = useMotionValue(-100);
+
+  const springConfig = { damping: 28, stiffness: 350, mass: 0.3 };
+  const smoothHaloX = useSpring(haloX, springConfig);
+  const smoothHaloY = useSpring(haloY, springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Offset by 8px (half of w-4 h-4) to center the cursor
-      cursorX.set(e.clientX - 8);
-      cursorY.set(e.clientY - 8);
+      if (!isVisible) setIsVisible(true);
 
-      const target = e.target as HTMLElement;
-      
+      // Center the dot
+      dotX.set(e.clientX - 2);
+      dotY.set(e.clientY - 2);
+
+      // Center the 28px halo (14px offset)
+      haloX.set(e.clientX - 14);
+      haloY.set(e.clientY - 14);
+
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
       if (target.closest('nav a, nav button, footer a, footer button')) {
         setHoverState('nav');
-      } else if (target.closest('a, button, input, textarea, [role="button"]')) {
+      } else if (target.closest('a, button, input, textarea, [role="button"], label, select')) {
         setHoverState('normal');
       } else {
         setHoverState('none');
       }
     };
 
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
+
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [cursorX, cursorY]);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
 
-  // Determine animation properties based on hover state
-  let scale = 1;
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+    };
+  }, [dotX, dotY, haloX, haloY, isVisible]);
 
-  if (hoverState === 'normal') {
-    scale = 2.5;
-  } else if (hoverState === 'nav') {
-    scale = 0.5; // Reduce size by half
-  }
+  if (!isVisible) return null;
 
   return (
-    <motion.div
-      className={`fixed top-0 left-0 w-4 h-4 rounded-full border border-action pointer-events-none z-[9999] hidden md:block will-change-transform ${
-        hoverState === 'normal' ? 'bg-action/10' : hoverState === 'nav' ? 'bg-action' : 'bg-transparent'
-      }`}
-      style={{ x, y }}
-      animate={{ scale }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-    />
+    <div className="pointer-events-none hidden md:block">
+      {/* Precision Instant Center Dot (Zero-lag, 100% click accuracy) */}
+      <motion.div
+        className="fixed top-0 left-0 w-1 h-1 rounded-full bg-action z-[99999] pointer-events-none"
+        style={{ x: dotX, y: dotY }}
+        animate={{
+          scale: hoverState === 'normal' ? 1.5 : hoverState === 'nav' ? 2 : 1,
+        }}
+        transition={{ duration: 0.15 }}
+      />
+
+      {/* Trailing Fluid Halo Ring */}
+      <motion.div
+        className={`fixed top-0 left-0 w-7 h-7 rounded-full border pointer-events-none z-[99998] transition-colors duration-200 ${
+          hoverState === 'normal'
+            ? 'border-action bg-action/15'
+            : hoverState === 'nav'
+            ? 'border-action/80 bg-action/20'
+            : 'border-action/40 bg-transparent'
+        }`}
+        style={{ x: smoothHaloX, y: smoothHaloY }}
+        animate={{
+          scale: hoverState === 'normal' ? 1.4 : hoverState === 'nav' ? 0.75 : 1,
+          opacity: 1,
+        }}
+        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+      />
+    </div>
   );
 }

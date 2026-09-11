@@ -40,31 +40,98 @@ const COMMANDS = [
   'exit'
 ];
 
-function playMechanicalClick() {
-  if (typeof window === 'undefined') return;
+let sharedAudioCtx: AudioContext | null = null;
+
+function getSharedAudioContext(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
   try {
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    if (!sharedAudioCtx) {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
+        sharedAudioCtx = new AudioCtx();
+      }
+    }
+    if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume().catch(() => {});
+    }
+    return sharedAudioCtx;
+  } catch {
+    return null;
+  }
+}
 
-    osc.type = 'triangle';
+function playMechanicalClick(variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke') {
+  const ctx = getSharedAudioContext();
+  if (!ctx) return;
+
+  try {
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
     const now = ctx.currentTime;
-    osc.frequency.setValueAtTime(140, now);
-    osc.frequency.exponentialRampToValueAtTime(35, now + 0.035);
 
-    gain.gain.setValueAtTime(0.04, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+    if (variant === 'toggle_on') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.setValueAtTime(880, now + 0.05);
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+      return;
+    }
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    if (variant === 'toggle_off') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.setValueAtTime(300, now + 0.05);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.1);
+      return;
+    }
 
-    osc.start(now);
-    osc.stop(now + 0.035);
-    setTimeout(() => {
-      ctx.close().catch(() => {});
-    }, 50);
+    // High-frequency tactile mechanical click transient (crisp and clear on laptop speakers)
+    const clickOsc = ctx.createOscillator();
+    const clickGain = ctx.createGain();
+    clickOsc.type = 'triangle';
+    clickOsc.frequency.setValueAtTime(1400, now);
+    clickOsc.frequency.exponentialRampToValueAtTime(450, now + 0.025);
+
+    clickGain.gain.setValueAtTime(0.2, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+    clickOsc.connect(clickGain);
+    clickGain.connect(ctx.destination);
+
+    clickOsc.start(now);
+    clickOsc.stop(now + 0.025);
+
+    // Subtle low body key clack
+    const thockOsc = ctx.createOscillator();
+    const thockGain = ctx.createGain();
+    thockOsc.type = 'sine';
+    thockOsc.frequency.setValueAtTime(260, now + 0.003);
+    thockOsc.frequency.exponentialRampToValueAtTime(90, now + 0.035);
+
+    thockGain.gain.setValueAtTime(0.14, now + 0.003);
+    thockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+    thockOsc.connect(thockGain);
+    thockGain.connect(ctx.destination);
+
+    thockOsc.start(now + 0.003);
+    thockOsc.stop(now + 0.035);
   } catch {
     // AudioContext blocked or unsupported
   }
@@ -111,9 +178,7 @@ export default function TerminalHUD() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('fx_terminal_audio', nextState ? 'true' : 'false');
     }
-    if (nextState) {
-      playMechanicalClick();
-    }
+    playMechanicalClick(nextState ? 'toggle_on' : 'toggle_off');
   };
 
   // Listen for Cmd+K, Ctrl+K, or Backtick
@@ -274,13 +339,7 @@ export default function TerminalHUD() {
         else if (subCmd === 'off') targetState = false;
         else targetState = !audioEnabled;
 
-        setAudioEnabled(targetState);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('fx_terminal_audio', targetState ? 'true' : 'false');
-        }
-        if (targetState) {
-          playMechanicalClick();
-        }
+        toggleAudio(targetState);
 
         outputNode = (
           <div className="text-[10px] text-action flex items-center gap-1.5">

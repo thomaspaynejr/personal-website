@@ -76,4 +76,15 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Cause:** Supabase SDK queries on untyped table selections default to `any[]` or `unknown[]` without explicit schema typing.
 - **Fix:** Declared a strict `SitemapArticle` interface (`slug`, `updated_at`, `published_at`) and cast the result array before array transformation.
 
+## 16. Web Audio Frequency Selection & Browser Autoplay Suspended State
+- **Issue:** Keystroke audio in `TerminalHUD.tsx` was inaudible on laptop speakers, and refreshing the page left the `AudioContext` in a suspended state.
+- **Cause:** 35Hz sub-bass frequencies fall below the physical frequency response curve of laptop/MacBook speakers. In addition, browser autoplay security policies default freshly created contexts to `suspended` until resumed by a user gesture.
+- **Fix:** Switched to dual-layer mechanical switch acoustics (1400Hz -> 450Hz tactile snap + 260Hz -> 90Hz bottom-out thock) managed via a singleton `getSharedAudioContext()` that automatically calls `.resume()` and plays audible toggle tones.
+
+## 17. Custom Cursor Lag Offset vs. Real Click Coordinates
+- **Issue:** With `cursor-none` enabled on `<body>`, clicking small buttons and links (such as "Live Demo" and "View Source" in case studies) felt inconsistent or missed.
+- **Cause:** Framer Motion spring physics on a single cursor element introduce an intentional ~100-200ms trailing lag. The visual circle lagged behind the true physical mouse coordinates where the browser dispatches click events.
+- **Fix:** Refactored `CustomCursor.tsx` to a dual-layer architecture: a zero-latency center pinpoint dot tracking true client coordinates immediately without spring lag, paired with a fluid outer spring halo that floats and expands around it on interactive hover.
+
+
 

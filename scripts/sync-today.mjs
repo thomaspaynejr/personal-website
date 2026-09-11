@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Phase 1: Foundation Hardening, SEO & Asset Pipeline (OpenGraph, Sitemap, Robots, Next/Image, CI Workflow)',
-    description: 'Configured images.remotePatterns in next.config.ts and migrated all raw img tags to next/image across About, MediaDropzone, and TimelineDashboard, achieving 0 ESLint warnings. Upgraded root metadata with full OpenGraph, Twitter Cards, robots directives, and canonical URL alternates in app/layout.tsx. Implemented dynamic generateMetadata for /writing/[slug] and /portfolio/[slug]. Created dynamic app/sitemap.ts and app/robots.ts. Configured GitHub Actions CI workflow in .github/workflows/ci.yml.',
+    title: 'QA Hardening: Dual-Layer Audio Synthesizer, Precision Center Dot Cursor, TechIcon Clamp & Studio Shortcuts',
+    description: 'Resolved user checklist feedback: Upgraded Web Audio synthesizer with dual-layer authentic mechanical switch acoustics (1400Hz -> 450Hz click + 260Hz -> 90Hz thock) and singleton context management with auto-resume, making keystroke audio crystal clear on laptop speakers. Re-engineered CustomCursor.tsx to a zero-lag pinpoint center dot paired with a fluid outer spring halo, eliminating click-miss offset on small buttons ("Live Demo", "View Source"). Hardened TechIcon.tsx against Framer Motion Infinity distance errors. Enhanced AdminMarkdownStudio.tsx with Tab indentation, Cmd+B/I/K shortcuts, and synchronized editor-preview scrolling.',
     isDone: true
   }
 ];

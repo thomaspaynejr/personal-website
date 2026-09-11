@@ -39,6 +39,7 @@ export default function AdminMarkdownStudio({
   const [content, setContent] = useState(initialValue);
   const [viewMode, setViewMode] = useState<ViewMode>('split');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const stats = useMemo(() => {
     const trimmed = content.trim();
@@ -51,6 +52,42 @@ export default function AdminMarkdownStudio({
   const handleChange = (newVal: string) => {
     setContent(newVal);
     if (onChange) onChange(newVal);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 2-space tab indent
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      insertSnippet('  ', '', '');
+      return;
+    }
+
+    // Markdown shortcut helpers
+    if (e.metaKey || e.ctrlKey) {
+      if (e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        insertSnippet('**', '**', 'bold text');
+      } else if (e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        insertSnippet('*', '*', 'italic text');
+      } else if (e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        insertSnippet('[', '](https://...)', 'link text');
+      }
+    }
+  };
+
+  const handleEditorScroll = () => {
+    const textarea = textareaRef.current;
+    const preview = previewRef.current;
+    if (!textarea || !preview || viewMode !== 'split') return;
+
+    const maxTextareaScroll = textarea.scrollHeight - textarea.clientHeight;
+    if (maxTextareaScroll > 0) {
+      const scrollRatio = textarea.scrollTop / maxTextareaScroll;
+      const maxPreviewScroll = preview.scrollHeight - preview.clientHeight;
+      preview.scrollTop = scrollRatio * maxPreviewScroll;
+    }
   };
 
   const insertSnippet = (before: string, after: string = '', defaultText: string = '') => {
@@ -81,7 +118,7 @@ export default function AdminMarkdownStudio({
   };
 
   return (
-    <div className="rounded-xl border border-border-custom/40 bg-card/40 backdrop-blur-md overflow-hidden font-mono shadow-sm">
+    <div className="rounded-xl border border-border-custom/40 bg-card/40 backdrop-blur-md overflow-hidden font-mono shadow-sm transition-all">
       {/* Studio Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between p-2.5 bg-background/50 border-b border-border-custom/30 gap-2 select-none text-xs">
         {/* Quick Format Tools */}
@@ -229,16 +266,21 @@ export default function AdminMarkdownStudio({
               name={name}
               value={content}
               onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onScroll={handleEditorScroll}
               placeholder={placeholder}
               rows={rows}
-              className="w-full h-full min-h-[260px] bg-transparent border-0 outline-none text-xs text-foreground/90 font-mono resize-y leading-relaxed"
+              className="w-full h-full min-h-[280px] bg-transparent border-0 outline-none text-xs text-foreground/90 font-mono resize-y leading-relaxed"
             />
           </div>
         )}
 
         {/* Live Preview Pane */}
         {(viewMode === 'preview' || viewMode === 'split') && (
-          <div className="p-5 bg-card/20 overflow-y-auto max-h-[500px]">
+          <div 
+            ref={previewRef}
+            className="p-5 bg-card/20 overflow-y-auto max-h-[500px] min-h-[280px] transition-all scroll-smooth"
+          >
             <div className="text-[9px] font-bold uppercase tracking-widest text-accent/60 mb-3 border-b border-border-custom/20 pb-1">
               Live Preview
             </div>

@@ -39,12 +39,13 @@ function TechIconItem({ name, mouseX }: IconProps) {
   const iconData = iconMap[name];
 
   const distance = useTransform(mouseX, (val) => {
+    if (!Number.isFinite(val)) return 1000;
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
     return val - bounds.x - bounds.width / 2;
   });
 
   // Base size is 24px (w-6), magnified to 48px (w-12)
-  const widthSync = useTransform(distance, [-100, 0, 100], [24, 48, 24]);
+  const widthSync = useTransform(distance, [-100, 0, 100], [24, 48, 24], { clamp: true });
   const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
 
   if (!iconData) {
@@ -54,7 +55,7 @@ function TechIconItem({ name, mouseX }: IconProps) {
         style={{ width }}
         className="aspect-square rounded-md bg-card/50 border border-border-custom/50 flex items-center justify-center"
       >
-        <span className="text-[7px] font-bold text-accent">{name.substring(0, 2).toUpperCase()}</span>
+        <span className="text-[7px] font-bold text-accent">{(name || '').substring(0, 2).toUpperCase()}</span>
       </motion.div>
     );
   }
@@ -89,7 +90,7 @@ export default function TechIcon({ items, name }: { items?: string[], name?: str
   if (items && Array.isArray(items)) {
     return (
       <motion.div
-        onMouseMove={(e) => mouseX.set(e.pageX)}
+        onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className="flex items-end gap-1.5 h-12 px-2"
       >
@@ -104,7 +105,7 @@ export default function TechIcon({ items, name }: { items?: string[], name?: str
   if (name) {
     return (
       <motion.div
-        onMouseMove={(e) => mouseX.set(e.pageX)}
+        onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className="flex items-end h-12 px-2"
       >
