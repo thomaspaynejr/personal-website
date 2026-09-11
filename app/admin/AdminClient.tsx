@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen, Send, Users, CheckCircle } from 'lucide-react';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen, Send, Users } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience, upsertArticle, deleteArticle, deleteContactMessage } from '@/app/actions/admin';
 import { createClient } from '@/lib/supabase/client';
 

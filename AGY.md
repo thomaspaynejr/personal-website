@@ -1,4 +1,4 @@
-y# AGY AGENT RULES // THOMAS PAYNE WEBSITE
+# AGY AGENT RULES // THOMAS PAYNE WEBSITE
 
 This codebase uses an experimental/future version of **Next.js 16**. Standard training data for Next.js 13/14/15 **WILL NOT** always apply.
 
@@ -86,6 +86,39 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Admin Analytics Hub & Quick Reply Manager]**: Added real-time telemetry analytics metrics cards (timeline events, active projects, articles, unread messages, registered users) and 1-click email reply links with direct message deletion in `AdminClient.tsx` (`deleteContactMessage` server action). Synced Linear issue `PW-12`.
 - **[Rich Journey Feed Attachments]**: Added optional code snippet rendering with 1-click clipboard copy button and image attachment thumbnails with animated Framer Motion Lightbox modal preview to timeline events on home feed (`TimelineDashboard.tsx`), database schema (`DATABASE.sql`), and admin manager (`AdminClient.tsx`). Synced Linear issue `PW-13`.
 - **[Supabase Auto-Seeding Utility]**: Created `scripts/seed-supabase.mjs` script to automatically seed initial records for `about_content`, `timeline_events`, `portfolio_projects`, `tracker_projects`, `experiences`, and `articles` directly into Supabase tables. Synced Linear issue `PW-14`.
+- **[ESLint & Build Hardening]**: Resolved React 19 / ESLint 9 `react-hooks/set-state-in-effect` rule warnings in `LightStrike.tsx`, `MatrixRain.tsx`, and `ProjectDashboard.tsx` via deferred effects and render-time state synchronization. Converted raw anchor tags to Next.js `<Link>` components in `TerminalHUD.tsx` to maintain SPA client-side routing. Removed unused imports in `AdminClient.tsx` and converted hardcoded footer year to dynamic. Achieved 0 ESLint errors and 0 build errors across the entire codebase.
+
+## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
+
+This structured plan outlines the development milestones for Thomas Payne's personal website platform:
+
+### Phase 1: Foundation Hardening, SEO & Asset Pipeline (P0 — In Progress)
+- [x] **Zero-Error Codebase**: Satisfy strict ESLint 9 and React 19 compiler rules with 0 errors.
+- [x] **Hiccups & Architectural Log**: Document all 11 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
+- [ ] **SEO & Social Graph Metadata**: Implement dynamic OpenGraph, Twitter Cards, and canonical URLs in `app/layout.tsx` and `app/writing/[slug]/page.tsx`.
+- [ ] **Dynamic Sitemap & Robots**: Add `app/sitemap.ts` and `app/robots.ts` for automated search engine indexing.
+- [ ] **Next/Image Optimization**: Configure `images.remotePatterns` in `next.config.ts` (for Unsplash & Supabase Storage) and migrate `<img>` tags to `<Image />`.
+- [ ] **Continuous Integration**: Set up `.github/workflows/ci.yml` running lint and build checks on pull requests.
+
+### Phase 2: Technical Writing & Knowledge Engine (P1)
+- [ ] **Syntax Highlighting**: Integrate Shiki or Prism with copy-to-clipboard buttons for code blocks in technical write-ups.
+- [ ] **Reading Progress & TOC**: Add a scroll-linked reading progress indicator and dynamic Table of Contents for deep-dive essays.
+- [ ] **RSS / Atom Feed**: Generate `app/feed.xml/route.ts` to allow readers to subscribe to technical publications via RSS readers.
+- [ ] **Article Engagement**: Implement like reactions or view counter metrics persisted in Supabase.
+
+### Phase 3: Interactive Portfolio Deep Dives & Case Studies (P1)
+- [ ] **Case Study Pages (`/portfolio/[slug]`)**: Expand selected portfolio projects with architectural diagrams, problem/solution breakdowns, and engineering trade-offs.
+- [ ] **Tech Stack Filter Pills**: Allow filtering portfolio projects by tags (Next.js, TypeScript, Supabase, Agentic AI).
+- [ ] **Interactive Sandboxes / Live Demos**: Embed interactive mini-previews or animated walkthroughs for highlighted tools.
+
+### Phase 4: Admin CMS Studio & Media Asset Pipeline (P2)
+- [ ] **Split-Pane Markdown Editor**: Add a live split-pane Markdown editor with real-time preview inside the Admin Dashboard for writing essays and journey events.
+- [ ] **Direct Storage Upload Pipeline**: Drag-and-drop file uploader directly to Supabase Storage buckets (`hero-images`, `journey-attachments`) with instant thumbnail preview.
+- [ ] **Visitor Telemetry Dashboard**: Add privacy-first metrics tracking (daily unique visits, top accessed CLI commands, popular articles).
+
+### Phase 5: Agentic AI Integration & Terminal HUD 2.0 (P2)
+- [ ] **Terminal AI Assistant (`ask <query>`)**: Integrate a streaming agentic AI endpoint into `TerminalHUD.tsx` to answer questions regarding Thomas's engineering philosophy, military background, and portfolio.
+- [ ] **Tactile Audio Feedback**: Add optional, subtle mechanical switch audio feedback using Web Audio API synthesis for CLI keystrokes.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

@@ -43,7 +43,7 @@ export default async function Footer() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-center md:items-start gap-2">
-            <span className="text-xs font-bold text-action tracking-tighter uppercase">Thomas Payne // 2024</span>
+            <span className="text-xs font-bold text-action tracking-tighter uppercase">Thomas Payne // {new Date().getFullYear()}</span>
             <p className="text-accent text-[10px] font-medium">Built with Next.js, TypeScript & Tailwind CSS</p>
           </div>
 

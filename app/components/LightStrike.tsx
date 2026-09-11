@@ -24,7 +24,9 @@ export default function LightStrike() {
 
   useEffect(() => {
     const saved = localStorage.getItem('fx_lightning');
-    if (saved === 'false') setEnabled(false);
+    if (saved === 'false') {
+      setTimeout(() => setEnabled(false), 0);
+    }
 
     const handleFxToggle = (e: Event) => {
       const customEvt = e as CustomEvent;

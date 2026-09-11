@@ -29,6 +29,13 @@ export default function ProjectDashboard({
   initialProjects: Project[];
 }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [prevInitialProjects, setPrevInitialProjects] = useState<Project[]>(initialProjects);
+
+  if (initialProjects !== prevInitialProjects) {
+    setPrevInitialProjects(initialProjects);
+    setProjects(initialProjects);
+  }
+
   const [showForm, setShowForm] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDescription, setNewProjectDescription] = useState('');
@@ -40,7 +47,6 @@ export default function ProjectDashboard({
   const isAdmin = user?.user_metadata?.role === 'admin';
 
   useEffect(() => {
-    setProjects(initialProjects);
     // Measure lightweight client ping
     const start = performance.now();
     fetch('/favicon.ico', { method: 'HEAD', cache: 'no-store' })
@@ -48,7 +54,7 @@ export default function ProjectDashboard({
         setPingLatency(Math.round(performance.now() - start));
       })
       .catch(() => setPingLatency(14));
-  }, [initialProjects]);
+  }, []);
 
   const activeCount = projects.filter((p) => p.status === 'ACTIVE').length;
   const completedCount = projects.filter((p) => p.status === 'COMPLETED').length;

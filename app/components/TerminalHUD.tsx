@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, X, CornerDownLeft, CheckCircle, Zap } from 'lucide-react';
 import { useTheme } from '@/app/providers';
@@ -159,7 +160,7 @@ export default function TerminalHUD() {
             <div className="space-y-1.5 text-[10px]">
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1">
                 <span className="text-foreground font-bold">Latest Technical Essays & Notes</span>
-                <a href="/writing" className="text-action hover:underline">View All Essays &rarr;</a>
+                <Link href="/writing" onClick={() => setIsOpen(false)} className="text-action hover:underline">View All Essays &rarr;</Link>
               </div>
               <p className="text-accent text-[9px]">Explore write-ups on software architecture, discipline, military transition, and Next.js 16.</p>
             </div>
@@ -174,12 +175,12 @@ export default function TerminalHUD() {
             <div className="space-y-1.5 text-[10px]">
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1">
                 <span className="text-foreground font-bold">1. Personal Website & Platform</span>
-                <a href="/portfolio" className="text-action hover:underline">View Portfolio &rarr;</a>
+                <Link href="/portfolio" onClick={() => setIsOpen(false)} className="text-action hover:underline">View Portfolio &rarr;</Link>
               </div>
               <p className="text-accent text-[9px]">Monochromatic Yeezy-inspired portfolio & admin hub with Next.js 16, Supabase SSR, and Framer Motion.</p>
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1 pt-2">
                 <span className="text-foreground font-bold">2. Journey Activity Tracker</span>
-                <a href="/dashboard" className="text-action hover:underline">View Tracker &rarr;</a>
+                <Link href="/dashboard" onClick={() => setIsOpen(false)} className="text-action hover:underline">View Tracker &rarr;</Link>
               </div>
               <p className="text-accent text-[9px]">Real-time engagement timeline and project tracking dashboard.</p>
             </div>
@@ -218,7 +219,7 @@ export default function TerminalHUD() {
           <div className="space-y-2 text-xs">
             <div className="text-action font-bold uppercase tracking-widest">CONTACT DETAILS:</div>
             <div className="space-y-1 text-[10px] text-accent">
-              <div><span className="text-foreground font-bold w-20 inline-block">Form:</span> <a href="/contact" className="text-action hover:underline">/contact</a></div>
+              <div><span className="text-foreground font-bold w-20 inline-block">Form:</span> <Link href="/contact" onClick={() => setIsOpen(false)} className="text-action hover:underline">/contact</Link></div>
               <div><span className="text-foreground font-bold w-20 inline-block">CLI Transmit:</span> Type &apos;<span className="text-foreground font-bold">message &lt;text&gt;</span>&apos; right here</div>
               <div><span className="text-foreground font-bold w-20 inline-block">GitHub:</span> github.com/thomaspaynejr</div>
               <div><span className="text-foreground font-bold w-20 inline-block">LinkedIn:</span> linkedin.com</div>
