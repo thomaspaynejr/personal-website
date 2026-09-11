@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Phase 3: Interactive Portfolio Deep Dives & System Case Studies (/portfolio/[slug], tech filters, live demo links)',
-    description: 'Built interactive PortfolioClient with real-time search and tech stack filter pills, and created dedicated /portfolio/[slug] system case study routes featuring architectural diagrams, challenge/solution breakdowns, reading progress, and live demo links.',
+    title: 'Phase 4: Admin CMS Studio & Media Asset Pipeline (Split-pane Markdown Studio & Supabase Storage MediaDropzone)',
+    description: 'Developed AdminMarkdownStudio.tsx featuring a split-pane live Markdown editor with syntax formatting toolbar, real-time preview, word/character metrics, and reading time estimation. Engineered MediaDropzone.tsx providing drag-and-drop client uploads to Supabase Storage with instant thumbnail previews and manual URL fallback.',
     isDone: true
   }
 ];

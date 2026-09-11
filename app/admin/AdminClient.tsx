@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Camera, Mail, BookOpen, Send, Users } from 'lucide-react';
+import { Shield, Edit, Trash2, UserMinus, UserCheck, AlertTriangle, Briefcase, Activity, Clock, Plus, X, Info, Mail, BookOpen, Send, Users } from 'lucide-react';
 import { upsertPortfolioProject, deletePortfolioProject, upsertTrackerProject, deleteTrackerProject, upsertTimelineEvent, deleteTimelineEvent, setUserBlockStatus, updateAboutContent, upsertExperience, deleteExperience, upsertArticle, deleteArticle, deleteContactMessage } from '@/app/actions/admin';
-import { createClient } from '@/lib/supabase/client';
+import AdminMarkdownStudio from '@/app/components/AdminMarkdownStudio';
+import MediaDropzone from '@/app/components/MediaDropzone';
 
 export interface SocialLink {
   name: string;
@@ -236,39 +237,6 @@ function AboutManager({ about }: { about: AboutContent | null }) {
     social_links: [],
     experience_json: []
   });
-  const [isUploading, setIsUploading] = useState(false);
-  const supabase = createClient();
-
-  const current_image = formData.hero_image_url || formData.profile_image_url;
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !supabase) return;
-
-    try {
-      setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`;
-
-      const { error } = await supabase.storage
-        .from('hero-images')
-        .upload(fileName, file);
-
-      if (error) throw error;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('hero-images')
-        .getPublicUrl(fileName);
-
-      setFormData((prev) => ({ ...prev, hero_image_url: publicUrl }));
-      alert('Photo uploaded! Link: ' + publicUrl);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      alert('Upload failed: ' + msg);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   return (
     <section className="space-y-6 animate-in fade-in duration-500">
@@ -287,43 +255,13 @@ function AboutManager({ about }: { about: AboutContent | null }) {
         else alert('Error: ' + res.error);
       }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border border-border-custom/30 space-y-6 shadow-sm">
         <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Hero Image</label>
-            <div className="flex flex-col md:flex-row gap-4 items-start">
-              <div className="flex-1 space-y-3 w-full order-2 md:order-1">
-                <div className="space-y-1">
-                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">
-                    {isUploading ? 'Uploading...' : 'Upload New Image'}
-                  </p>
-                  <input 
-                    type="file" 
-                    onChange={handleUpload}
-                    accept="image/*"
-                    disabled={isUploading}
-                    className="w-full text-[10px] text-accent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-border-custom file:text-[9px] file:font-bold file:bg-action/10 file:text-action hover:file:bg-action/20 cursor-pointer disabled:opacity-50"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[8px] text-accent uppercase font-bold opacity-60 ml-1">Or Paste Image URL</p>
-                  <div className="relative">
-                    <Camera size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent" />
-                    <input 
-                      name="hero_image_url_dummy" 
-                      value={formData.hero_image_url || ''} 
-                      onChange={(e) => setFormData({...formData, hero_image_url: e.target.value})}
-                      className="w-full bg-background border border-border-custom rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-action transition-all" 
-                      placeholder="https://..." 
-                    />
-                  </div>
-                </div>
-              </div>
-              {current_image && (
-                <div className="w-full md:w-32 aspect-[4/5] rounded-xl border border-border-custom overflow-hidden bg-background/50 order-1 md:order-2">
-                  <img src={current_image} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
-          </div>
+          <MediaDropzone
+            bucketName="hero-images"
+            name="hero_image_url"
+            label="Hero Portrait Media (Supabase Storage)"
+            currentUrl={formData.hero_image_url || formData.profile_image_url || ''}
+            onUploadComplete={(url) => setFormData((prev) => ({ ...prev, hero_image_url: url }))}
+          />
 
           <div className="space-y-1">
             <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Short Bio (Intro Paragraph)</label>
@@ -758,11 +696,15 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Optional Code Snippet</label>
-              <textarea name="code_snippet" defaultValue={events.find((e) => e.id === editingId)?.code_snippet || ''} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action font-mono min-h-[70px] resize-none" placeholder="const example = () => true;" />
+              <textarea name="code_snippet" defaultValue={events.find((e) => e.id === editingId)?.code_snippet || ''} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action font-mono min-h-[120px] resize-none" placeholder="const example = () => true;" />
             </div>
-            <div className="space-y-1">
-              <label className="text-[9px] font-bold text-accent uppercase tracking-widest ml-1">Optional Image URL</label>
-              <input name="image_url" defaultValue={events.find((e) => e.id === editingId)?.image_url || ''} className="w-full bg-background border border-border-custom rounded-lg px-3 py-2 text-xs outline-none focus:border-action" placeholder="https://..." />
+            <div>
+              <MediaDropzone
+                bucketName="hero-images"
+                name="image_url"
+                label="Event Image Attachment (Dropzone)"
+                currentUrl={events.find((e) => e.id === editingId)?.image_url || ''}
+              />
             </div>
           </div>
 
@@ -1031,15 +973,14 @@ function ArticlesManager({
                 />
               </div>
 
-              <div>
-                <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">Content (Markdown Supported)</label>
-                <textarea
+              <div className="space-y-1">
+                <label className="block text-[9px] font-bold uppercase tracking-widest text-accent mb-1">
+                  Content // Split-Pane Markdown Studio
+                </label>
+                <AdminMarkdownStudio
                   name="content"
-                  required
-                  rows={8}
-                  defaultValue={currentEditing?.content || ''}
-                  placeholder="Full article content in markdown format..."
-                  className="w-full bg-background border border-border-custom rounded-lg p-3 text-xs outline-none focus:border-action text-foreground font-mono"
+                  initialValue={currentEditing?.content || ''}
+                  placeholder="Write full technical essay with headings (##), code blocks (```lang), quotes (>), etc..."
                 />
               </div>
 

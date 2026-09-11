@@ -89,6 +89,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[ESLint & Build Hardening]**: Resolved React 19 / ESLint 9 `react-hooks/set-state-in-effect` rule warnings in `LightStrike.tsx`, `MatrixRain.tsx`, and `ProjectDashboard.tsx` via deferred effects and render-time state synchronization. Converted raw anchor tags to Next.js `<Link>` components in `TerminalHUD.tsx` to maintain SPA client-side routing. Removed unused imports in `AdminClient.tsx` and converted hardcoded footer year to dynamic. Achieved 0 ESLint errors and 0 build errors across the entire codebase.
 - **[Phase 2: Writing & Knowledge Engine Complete]**: Engineered custom monochromatic syntax highlighter (`CodeBlock.tsx`) with tokenization, line numbering, and 1-click clipboard copy with animated feedback. Built dynamic Table of Contents (`TableOfContents.tsx`) with automated heading extraction and real-time `IntersectionObserver` scroll-spy. Added animated reading progress bar (`ArticleReadingProgress.tsx`). Developed comprehensive `MarkdownRenderer.tsx` handling headings, code fences, blockquotes, lists, bold/italics, and links. Created standard RSS 2.0 XML endpoint (`app/feed.xml/route.ts`) with RSS feed button on `/writing`. Synced Linear issue.
 - **[Phase 3: Interactive Portfolio Deep Dives & Case Studies Complete]**: Built interactive `PortfolioClient.tsx` featuring real-time project search, dynamic tech stack tag filter pills, and 1-click case study links. Created dedicated dynamic system case study route (`app/portfolio/[slug]/page.tsx`) with Next.js 16 async params, system architecture topology diagrams, challenge/solution breakdowns, measurable impact metrics, reading progress indicator, and live demo / repository links. Synced Linear issue.
+- **[Phase 4: Admin CMS Studio & Media Asset Pipeline Complete]**: Built `AdminMarkdownStudio.tsx` offering a split-pane live Markdown authoring studio with syntax quick-formatting tools, real-time preview, word/character counts, and reading time estimation. Engineered `MediaDropzone.tsx` drag-and-drop client uploader for direct Supabase Storage transmission with thumbnail previews, remove controls, and URL fallback inputs across `AboutManager`, `ArticlesManager`, and `TimelineManager`. Synced Linear issue.
 
 ## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
 
@@ -114,9 +115,9 @@ This structured plan outlines the development milestones for Thomas Payne's pers
 - [x] **Tech Stack Filter Pills**: Live search and tech stack filter buttons in `PortfolioClient.tsx` with monochromatic active badges.
 - [x] **Interactive Demos & Repos**: 1-click links to live demos and GitHub sources directly on cards and case study hero headers.
 
-### Phase 4: Admin CMS Studio & Media Asset Pipeline (P2)
-- [ ] **Split-Pane Markdown Editor**: Add a live split-pane Markdown editor with real-time preview inside the Admin Dashboard for writing essays and journey events.
-- [ ] **Direct Storage Upload Pipeline**: Drag-and-drop file uploader directly to Supabase Storage buckets (`hero-images`, `journey-attachments`) with instant thumbnail preview.
+### Phase 4: Admin CMS Studio & Media Asset Pipeline (P2 — Core Completed)
+- [x] **Split-Pane Markdown Editor**: `AdminMarkdownStudio.tsx` live split-pane editor with syntax formatting toolbar, real-time preview, word/character metrics, and reading time estimation.
+- [x] **Direct Storage Upload Pipeline**: `MediaDropzone.tsx` drag-and-drop file uploader directly to Supabase Storage with instant thumbnail previews and manual URL fallback.
 - [ ] **Visitor Telemetry Dashboard**: Add privacy-first metrics tracking (daily unique visits, top accessed CLI commands, popular articles).
 
 ### Phase 5: Agentic AI Integration & Terminal HUD 2.0 (P2)
