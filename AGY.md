@@ -87,6 +87,7 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Rich Journey Feed Attachments]**: Added optional code snippet rendering with 1-click clipboard copy button and image attachment thumbnails with animated Framer Motion Lightbox modal preview to timeline events on home feed (`TimelineDashboard.tsx`), database schema (`DATABASE.sql`), and admin manager (`AdminClient.tsx`). Synced Linear issue `PW-13`.
 - **[Supabase Auto-Seeding Utility]**: Created `scripts/seed-supabase.mjs` script to automatically seed initial records for `about_content`, `timeline_events`, `portfolio_projects`, `tracker_projects`, `experiences`, and `articles` directly into Supabase tables. Synced Linear issue `PW-14`.
 - **[ESLint & Build Hardening]**: Resolved React 19 / ESLint 9 `react-hooks/set-state-in-effect` rule warnings in `LightStrike.tsx`, `MatrixRain.tsx`, and `ProjectDashboard.tsx` via deferred effects and render-time state synchronization. Converted raw anchor tags to Next.js `<Link>` components in `TerminalHUD.tsx` to maintain SPA client-side routing. Removed unused imports in `AdminClient.tsx` and converted hardcoded footer year to dynamic. Achieved 0 ESLint errors and 0 build errors across the entire codebase.
+- **[Phase 2: Writing & Knowledge Engine Complete]**: Engineered custom monochromatic syntax highlighter (`CodeBlock.tsx`) with tokenization, line numbering, and 1-click clipboard copy with animated feedback. Built dynamic Table of Contents (`TableOfContents.tsx`) with automated heading extraction and real-time `IntersectionObserver` scroll-spy. Added animated reading progress bar (`ArticleReadingProgress.tsx`). Developed comprehensive `MarkdownRenderer.tsx` handling headings, code fences, blockquotes, lists, bold/italics, and links. Created standard RSS 2.0 XML endpoint (`app/feed.xml/route.ts`) with RSS feed button on `/writing`. Synced Linear issue.
 
 ## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
 
@@ -100,10 +101,11 @@ This structured plan outlines the development milestones for Thomas Payne's pers
 - [ ] **Next/Image Optimization**: Configure `images.remotePatterns` in `next.config.ts` (for Unsplash & Supabase Storage) and migrate `<img>` tags to `<Image />`.
 - [ ] **Continuous Integration**: Set up `.github/workflows/ci.yml` running lint and build checks on pull requests.
 
-### Phase 2: Technical Writing & Knowledge Engine (P1)
-- [ ] **Syntax Highlighting**: Integrate Shiki or Prism with copy-to-clipboard buttons for code blocks in technical write-ups.
-- [ ] **Reading Progress & TOC**: Add a scroll-linked reading progress indicator and dynamic Table of Contents for deep-dive essays.
-- [ ] **RSS / Atom Feed**: Generate `app/feed.xml/route.ts` to allow readers to subscribe to technical publications via RSS readers.
+### Phase 2: Technical Writing & Knowledge Engine (P1 — Core Completed)
+- [x] **Syntax Highlighting & Code Blocks**: Custom monochromatic tokenizer (`CodeBlock.tsx`) with line numbering, language pill, and 1-click copy-to-clipboard.
+- [x] **Reading Progress & TOC**: Scroll-linked spring reading progress indicator (`ArticleReadingProgress.tsx`) and dynamic `TableOfContents.tsx` with smooth scroll and active section scroll-spy.
+- [x] **Rich Markdown Parser**: `MarkdownRenderer.tsx` parsing headings with matching TOC anchor IDs, blockquotes, code blocks, lists, and inline links.
+- [x] **RSS / Atom Feed**: Generated `app/feed.xml/route.ts` with RFC 822 pubDate validation and linked RSS subscription button in `WritingClient.tsx`.
 - [ ] **Article Engagement**: Implement like reactions or view counter metrics persisted in Supabase.
 
 ### Phase 3: Interactive Portfolio Deep Dives & Case Studies (P1)

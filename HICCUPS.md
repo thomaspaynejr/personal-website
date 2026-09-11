@@ -56,3 +56,8 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Issue:** In dynamic routes such as `app/writing/[slug]/page.tsx`, accessing `params.slug` directly resulted in TypeScript and runtime errors.
 - **Cause:** Next.js 16 marks `params` and `searchParams` as asynchronous `Promise` objects.
 - **Fix:** Typed page props as `{ params: Promise<{ slug: string }> }` and unwrapped parameters via `const { slug } = await params;` prior to data fetching.
+
+## 12. Monochromatic Markdown & Heading Slug Synchronization
+- **Issue:** Anchor links in the Table of Contents failed to scroll to headings or missed elements when headings contained punctuation or inline formatting (e.g., `Next.js 16`, `###`, backticks).
+- **Cause:** Discrepancies between the TOC extraction regex and the markdown heading renderer's ID generator.
+- **Fix:** Unified the slug generator across `TableOfContents.tsx` and `MarkdownRenderer.tsx` by stripping inline markdown delimiters (`**`, `*`, `` ` ``), sanitizing special characters, normalizing whitespace to hyphens, and tracking collision counts (`seenSlugs`) to guarantee matching anchor IDs.

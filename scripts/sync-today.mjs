@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Supabase Auto-Seeding Utility Script (scripts/seed-supabase.mjs)',
-    description: 'Built a 1-click Node.js seeding utility script (scripts/seed-supabase.mjs) that populates Supabase database tables (about_content, timeline_events, portfolio_projects, tracker_projects, experiences, articles) with initial content.',
+    title: 'Phase 2: Technical Writing & Knowledge Engine (Markdown, Syntax Highlighter, TOC, Reading Progress, RSS Feed)',
+    description: 'Built custom monochromatic syntax highlighter (CodeBlock.tsx) with 1-click copy, automated TableOfContents extraction with scroll-spy, ArticleReadingProgress spring bar, MarkdownRenderer supporting rich formatting, and RSS 2.0 XML feed endpoint (/feed.xml).',
     isDone: true
   }
 ];

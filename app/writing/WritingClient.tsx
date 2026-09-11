@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Clock, Tag, BookOpen, ArrowUpRight } from 'lucide-react';
+import { Search, Clock, Tag, BookOpen, ArrowUpRight, Rss } from 'lucide-react';
 import { FadeIn, StaggerContainer, StaggerItem } from '../components/Animations';
 import { Article } from './page';
 
@@ -62,18 +62,31 @@ export default function WritingClient({ initialArticles }: { initialArticles: Ar
               />
             </div>
 
-            {/* Clear Filters Indicator */}
-            {(selectedTag || searchQuery) && (
-              <button
-                onClick={() => {
-                  setSelectedTag(null);
-                  setSearchQuery('');
-                }}
-                className="text-[9px] font-bold text-action uppercase tracking-widest hover:underline self-start sm:self-auto"
+            {/* Action Buttons: RSS & Clear Filters */}
+            <div className="flex items-center gap-3 self-start sm:self-auto">
+              <a
+                href="/feed.xml"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="RSS Feed"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background/50 border border-border-custom hover:border-action text-[10px] font-bold uppercase tracking-wider text-action transition-all cursor-none"
               >
-                Clear Filters _
-              </button>
-            )}
+                <Rss size={11} />
+                <span>RSS FEED</span>
+              </a>
+
+              {(selectedTag || searchQuery) && (
+                <button
+                  onClick={() => {
+                    setSelectedTag(null);
+                    setSearchQuery('');
+                  }}
+                  className="text-[9px] font-bold text-action uppercase tracking-widest hover:underline"
+                >
+                  Clear Filters _
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Tag Pills */}

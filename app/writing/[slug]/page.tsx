@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { ArrowLeft, Clock, Calendar, Tag, Share2, BookOpen } from 'lucide-react';
 import { FadeIn } from '@/app/components/Animations';
+import MarkdownRenderer from '@/app/components/MarkdownRenderer';
+import TableOfContents from '@/app/components/TableOfContents';
+import ArticleReadingProgress from '@/app/components/ArticleReadingProgress';
 import { Article } from '../page';
 
 // Sample fallback articles if Supabase is unseeded
@@ -125,6 +128,8 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-10 space-y-8 font-sans">
+      <ArticleReadingProgress />
+
       {/* Back Button */}
       <FadeIn>
         <Link
@@ -183,10 +188,15 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         </article>
       </FadeIn>
 
-      {/* Article Content */}
+      {/* Table of Contents */}
+      <FadeIn delay={0.15}>
+        <TableOfContents content={article.content} />
+      </FadeIn>
+
+      {/* Article Content with Rich Markdown & Syntax Highlighting */}
       <FadeIn delay={0.2}>
-        <div className="bg-card/40 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-border-custom/30 shadow-sm text-xs text-foreground/90 leading-relaxed whitespace-pre-wrap space-y-4 font-mono">
-          {article.content}
+        <div className="bg-card/40 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-border-custom/30 shadow-sm">
+          <MarkdownRenderer content={article.content} />
         </div>
       </FadeIn>
 
