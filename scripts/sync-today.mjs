@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'Phase 5: Agentic AI Assistant & Tactile Audio Keystroke Synthesis in Terminal HUD',
-    description: 'Engineered POST /api/assistant knowledge endpoint answering queries regarding military background, technical stack, Next.js 16 architecture, obsidian design philosophy, and portfolio projects. Built Web Audio API mechanical switch oscillator synthesizer (playMechanicalClick) providing tactile keystroke audio in TerminalHUD.tsx, complete with ask <query>, audio [on|off], header volume toggle button, and persistent localStorage state.',
+    title: 'Phase 1: Foundation Hardening, SEO & Asset Pipeline (OpenGraph, Sitemap, Robots, Next/Image, CI Workflow)',
+    description: 'Configured images.remotePatterns in next.config.ts and migrated all raw img tags to next/image across About, MediaDropzone, and TimelineDashboard, achieving 0 ESLint warnings. Upgraded root metadata with full OpenGraph, Twitter Cards, robots directives, and canonical URL alternates in app/layout.tsx. Implemented dynamic generateMetadata for /writing/[slug] and /portfolio/[slug]. Created dynamic app/sitemap.ts and app/robots.ts. Configured GitHub Actions CI workflow in .github/workflows/ci.yml.',
     isDone: true
   }
 ];

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink, Layers, Calendar, User, Share2 } from 'lucide-react';
@@ -170,6 +171,61 @@ const mutation = \`
 Every code change must pass two independent verification gates (\`npm run lint\` and \`npm run build\`) before automatic staging, commit, and remote push.`
   }
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  let project: PortfolioProject | null = null;
+  if (supabase) {
+    try {
+      const { data } = await supabase.from('portfolio_projects').select('*');
+      if (data) {
+        const match = data.find((p: PortfolioProject) => {
+          const generated = p.slug || slugifyTitle(p.title);
+          return generated === slug || p.id === slug;
+        });
+        if (match) project = match as PortfolioProject;
+      }
+    } catch {
+      // Offline fallback
+    }
+  }
+
+  const caseStudy = DEFAULT_CASE_STUDIES[slug] || (project ? {
+    title: project.title,
+    tagline: project.description,
+    tech: project.tech || ['TypeScript', 'Next.js'],
+  } : null);
+
+  if (!caseStudy) {
+    return {
+      title: 'Case Study Not Found',
+    };
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://thomaspayne.dev';
+
+  return {
+    title: `${caseStudy.title} // Case Study`,
+    description: caseStudy.tagline,
+    openGraph: {
+      title: `${caseStudy.title} // Case Study`,
+      description: caseStudy.tagline,
+      type: 'article',
+      url: `${siteUrl}/portfolio/${slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${caseStudy.title} // Case Study`,
+      description: caseStudy.tagline,
+      creator: '@thomaspaynejr',
+    },
+    alternates: {
+      canonical: `${siteUrl}/portfolio/${slug}`,
+    },
+  };
+}
 
 export default async function ProjectCaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

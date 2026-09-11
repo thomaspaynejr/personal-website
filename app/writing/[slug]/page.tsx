@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
@@ -93,6 +94,63 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     is_published: true
   }
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  let article: Article | null = null;
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_published', true)
+        .single();
+      if (data) {
+        article = data as Article;
+      }
+    } catch {
+      // Supabase offline or unseeded
+    }
+  }
+
+  if (!article && DEFAULT_ARTICLES[slug]) {
+    article = DEFAULT_ARTICLES[slug];
+  }
+
+  if (!article) {
+    return {
+      title: 'Article Not Found',
+    };
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://thomaspayne.dev';
+
+  return {
+    title: article.title,
+    description: article.excerpt || article.title,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || article.title,
+      type: 'article',
+      publishedTime: article.published_at,
+      authors: ['Thomas Payne'],
+      tags: article.tags,
+      url: `${siteUrl}/writing/${slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt || article.title,
+      creator: '@thomaspaynejr',
+    },
+    alternates: {
+      canonical: `${siteUrl}/writing/${slug}`,
+    },
+  };
+}
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

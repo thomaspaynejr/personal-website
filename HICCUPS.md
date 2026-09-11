@@ -71,3 +71,9 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Issue:** Calling Web Audio API oscillators on every keystroke without proper lifecycle management can lead to browser console warnings regarding `AudioContext` limits, resource exhaustion, or blocked autoplay when initialized outside user interaction.
 - **Fix:** Instantiated short-lived, self-closing `AudioContext` instances with ramp-down exponential decays (140Hz -> 35Hz in 35ms) and wrapped them in `try-catch` blocks. Closed contexts via `ctx.close()` post-playback to prevent memory leaks and ensure cross-browser compatibility.
 
+## 15. Next.js 16 Dynamic Sitemap Typing with Supabase Clients
+- **Issue:** `npm run build` failed during TypeScript verification with `Type error: Parameter 'a' implicitly has an 'any' type` when mapping Supabase query results in `app/sitemap.ts`.
+- **Cause:** Supabase SDK queries on untyped table selections default to `any[]` or `unknown[]` without explicit schema typing.
+- **Fix:** Declared a strict `SitemapArticle` interface (`slug`, `updated_at`, `published_at`) and cast the result array before array transformation.
+
+

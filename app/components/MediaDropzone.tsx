@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { UploadCloud, Check, Copy, X, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -148,9 +149,12 @@ export default function MediaDropzone({
           <div className="space-y-3 flex flex-col items-center w-full">
             <div className="relative max-h-40 rounded-lg overflow-hidden border border-border-custom/60 group">
               {/* Image thumbnail */}
-              <img
+              <Image
                 src={imageUrl}
                 alt="Asset preview"
+                width={200}
+                height={160}
+                unoptimized
                 className="max-h-40 w-auto object-cover rounded"
               />
               <button

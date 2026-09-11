@@ -91,18 +91,19 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 - **[Phase 3: Interactive Portfolio Deep Dives & Case Studies Complete]**: Built interactive `PortfolioClient.tsx` featuring real-time project search, dynamic tech stack tag filter pills, and 1-click case study links. Created dedicated dynamic system case study route (`app/portfolio/[slug]/page.tsx`) with Next.js 16 async params, system architecture topology diagrams, challenge/solution breakdowns, measurable impact metrics, reading progress indicator, and live demo / repository links. Synced Linear issue.
 - **[Phase 4: Admin CMS Studio & Media Asset Pipeline Complete]**: Built `AdminMarkdownStudio.tsx` offering a split-pane live Markdown authoring studio with syntax quick-formatting tools, real-time preview, word/character counts, and reading time estimation. Engineered `MediaDropzone.tsx` drag-and-drop client uploader for direct Supabase Storage transmission with thumbnail previews, remove controls, and URL fallback inputs across `AboutManager`, `ArticlesManager`, and `TimelineManager`. Synced Linear issue.
 - **[Phase 5: Agentic AI Assistant & Tactile Audio Synthesis Complete]**: Engineered intelligent assistant endpoint (`app/api/assistant/route.ts`) answering visitor queries on military background, full tech stack, Next.js 16 architecture, obsidian design philosophy, and portfolio projects. Built Web Audio API mechanical switch click synthesizer (`playMechanicalClick`) for tactile keystroke sound feedback in `TerminalHUD.tsx`, complete with `ask <query>` command execution, `audio [on|off]` control, terminal header volume toggle button, and persistent `localStorage` state. Synced Linear issue.
+- **[Phase 1: Foundation Hardening, SEO & Asset Pipeline Complete]**: Configured `images.remotePatterns` in `next.config.ts` and migrated all `<img>` elements across `About`, `MediaDropzone`, and `TimelineDashboard` to `next/image` with unoptimized preview flags, achieving 0 ESLint warnings. Upgraded root metadata with full OpenGraph, Twitter Cards, robots directives, and canonical URL alternates in `app/layout.tsx`. Implemented dynamic `generateMetadata` for `/writing/[slug]` and `/portfolio/[slug]`. Created automated `app/sitemap.ts` (indexing static pages, dynamic articles, and case studies) and `app/robots.ts`. Set up GitHub Actions CI workflow in `.github/workflows/ci.yml` for automated lint and production build verification. Synced Linear issue.
 
 ## // STRATEGIC ROADMAP & NEXT-PHASE PLAN
 
 This structured plan outlines the development milestones for Thomas Payne's personal website platform:
 
-### Phase 1: Foundation Hardening, SEO & Asset Pipeline (P0 — In Progress)
-- [x] **Zero-Error Codebase**: Satisfy strict ESLint 9 and React 19 compiler rules with 0 errors.
-- [x] **Hiccups & Architectural Log**: Document all 14 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
-- [ ] **SEO & Social Graph Metadata**: Implement dynamic OpenGraph, Twitter Cards, and canonical URLs in `app/layout.tsx` and `app/writing/[slug]/page.tsx`.
-- [ ] **Dynamic Sitemap & Robots**: Add `app/sitemap.ts` and `app/robots.ts` for automated search engine indexing.
-- [ ] **Next/Image Optimization**: Configure `images.remotePatterns` in `next.config.ts` (for Unsplash & Supabase Storage) and migrate `<img>` tags to `<Image />`.
-- [ ] **Continuous Integration**: Set up `.github/workflows/ci.yml` running lint and build checks on pull requests.
+### Phase 1: Foundation Hardening, SEO & Asset Pipeline (P0 — Complete)
+- [x] **Zero-Error Codebase**: Satisfy strict ESLint 9 and React 19 compiler rules with 0 errors and 0 warnings.
+- [x] **Hiccups & Architectural Log**: Document all 15 technical gotchas and fixes in `HICCUPS.md` and `AGY.md`.
+- [x] **SEO & Social Graph Metadata**: Implement dynamic OpenGraph, Twitter Cards, and canonical URLs in `app/layout.tsx`, `app/writing/[slug]/page.tsx`, and `app/portfolio/[slug]/page.tsx`.
+- [x] **Dynamic Sitemap & Robots**: Added `app/sitemap.ts` and `app/robots.ts` for automated search engine indexing.
+- [x] **Next/Image Optimization**: Configured `images.remotePatterns` in `next.config.ts` (for Unsplash, Supabase Storage, and GitHub) and migrated `<img>` tags to `<Image />`.
+- [x] **Continuous Integration**: Set up `.github/workflows/ci.yml` running lint and build checks on push and pull requests.
 
 ### Phase 2: Technical Writing & Knowledge Engine (P1 — Core Completed)
 - [x] **Syntax Highlighting & Code Blocks**: Custom monochromatic tokenizer (`CodeBlock.tsx`) with line numbering, language pill, and 1-click copy-to-clipboard.

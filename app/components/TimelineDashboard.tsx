@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Heart, MessageSquare, Plus, X, LogIn, Activity, Edit, Trash2, Search, Filter, Code, Copy, Check, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -113,9 +114,12 @@ const TimelineItem = ({
                 onClick={() => setShowLightbox(true)}
                 className="group/img relative rounded-xl border border-border-custom/30 overflow-hidden block max-w-md hover:border-action transition-all"
               >
-                <img 
+                <Image 
                   src={event.image_url} 
                   alt={event.title} 
+                  width={600}
+                  height={160}
+                  unoptimized
                   className="w-full h-40 object-cover group-hover/img:scale-105 transition-transform duration-500" 
                 />
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-[9px] text-white font-bold uppercase tracking-widest gap-1">
@@ -142,11 +146,18 @@ const TimelineItem = ({
                     >
                       <button
                         onClick={() => setShowLightbox(false)}
-                        className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full hover:bg-black"
+                        className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full hover:bg-black z-10"
                       >
                         <X size={16} />
                       </button>
-                      <img src={event.image_url} alt={event.title} className="w-full h-full object-contain max-h-[85vh]" />
+                      <Image 
+                        src={event.image_url} 
+                        alt={event.title} 
+                        width={1200}
+                        height={800}
+                        unoptimized
+                        className="w-full h-full object-contain max-h-[85vh]" 
+                      />
                     </motion.div>
                   </motion.div>
                 )}

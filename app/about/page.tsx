@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import TechIcon from '../components/TechIcon';
 import { createClient } from '@/lib/supabase/server';
@@ -53,11 +54,14 @@ export default async function About() {
                 </div>
               </div>
               {hero_image && (
-                <div className="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50 order-1 md:order-2">
-                  <img 
+                <div className="relative w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden border border-border-custom/50 aspect-[4/5] bg-background/50 order-1 md:order-2">
+                  <Image 
                     src={hero_image} 
                     alt="Thomas Payne" 
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover"
+                    priority
                   />
                 </div>
               )}
