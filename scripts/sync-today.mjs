@@ -2,8 +2,8 @@ import { createPWLinearIssue } from './sync-linear.mjs';
 
 const newTasks = [
   {
-    title: 'QA Hardening: Dual-Layer Audio Synthesizer, Precision Center Dot Cursor, TechIcon Clamp & Studio Shortcuts',
-    description: 'Resolved user checklist feedback: Upgraded Web Audio synthesizer with dual-layer authentic mechanical switch acoustics (1400Hz -> 450Hz click + 260Hz -> 90Hz thock) and singleton context management with auto-resume, making keystroke audio crystal clear on laptop speakers. Re-engineered CustomCursor.tsx to a zero-lag pinpoint center dot paired with a fluid outer spring halo, eliminating click-miss offset on small buttons ("Live Demo", "View Source"). Hardened TechIcon.tsx against Framer Motion Infinity distance errors. Enhanced AdminMarkdownStudio.tsx with Tab indentation, Cmd+B/I/K shortcuts, and synchronized editor-preview scrolling.',
+    title: 'Sensory & Authoring Upgrade: Pure/Carbon/Graphite Colorways, Reactive Bracket Cursor, Soft Tactile Audio & Notion-Style Block Editor',
+    description: 'Completed full repo audit (restored node_modules to root, configured turbopack.root, created dynamic /og-image.png route, fixed Admin Studio preview submit & form keys). Locked in the 3 monochromatic colorways (Obsidian Pure, Stealth Carbon, Yeezy Graphite) with Navbar Sensory Studio popover. Set reactive Tactical Bracket cursor as default alongside illuminated-core Minimal mode. Locked in cushioned Soft low-pass tactile audio profile. Built Notion-style Visual Block Composer (Blocks mode) in AdminMarkdownStudio.tsx with slash commands and reordering.',
     isDone: true
   }
 ];
