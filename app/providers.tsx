@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export type Theme = 'light' | 'dark'
-export type Colorway = 'obsidian' | 'titanium' | 'monokai' | 'carbon' | 'yeezy'
+export type Colorway = 'obsidian' | 'carbon' | 'yeezy'
 export type ColorPalette = Colorway
 
 export interface ColorwayOption {
@@ -21,20 +21,6 @@ export const COLORWAYS: ColorwayOption[] = [
     subtitle: 'True #000000 & stark white contrast',
     bgHex: '#000000',
     accentHex: '#FFFFFF',
-  },
-  {
-    id: 'titanium',
-    name: 'Titanium & Slate',
-    subtitle: 'Deep navy slate (#0B0E14) & ice-blue accents',
-    bgHex: '#0B0E14',
-    accentHex: '#79C0FF',
-  },
-  {
-    id: 'monokai',
-    name: 'Monokai Obsidian',
-    subtitle: 'Warm charcoal (#121114) & electric emerald',
-    bgHex: '#121114',
-    accentHex: '#A9DC76',
   },
   {
     id: 'carbon',

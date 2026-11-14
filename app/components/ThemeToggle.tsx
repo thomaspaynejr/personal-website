@@ -10,7 +10,7 @@ import type { AudioProfile } from './TerminalHUD';
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [cursorMode, setCursorMode] = useState<CursorMode>('minimal');
+  const [cursorMode, setCursorMode] = useState<CursorMode>('bracket');
   const [audioProfile, setAudioProfile] = useState<AudioProfile>('haptic');
   const [audioEnabled, setAudioEnabled] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -211,7 +211,7 @@ export default function ThemeToggle() {
                 <span>Cursor Mode</span>
               </div>
               <div className="grid grid-cols-3 gap-1.5">
-                {(['minimal', 'bracket', 'dual'] as CursorMode[]).map((mode) => (
+                {(['bracket', 'minimal', 'dual'] as CursorMode[]).map((mode) => (
                   <button
                     key={mode}
                     type="button"

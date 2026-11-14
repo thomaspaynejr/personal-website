@@ -72,21 +72,24 @@ function triggerHapticPulse(
   startFreq: number,
   endFreq: number,
   durationSec: number,
-  peakGain: number
+  peakGain: number,
+  noiseGain: number = 0.06,
+  filterCutoff: number = 650
 ) {
+  // 1. Warm low-mid tactile actuator impulse (audible on laptop speakers, zero tonal pitch)
   const osc = ctx.createOscillator();
   const filter = ctx.createBiquadFilter();
   const gain = ctx.createGain();
 
-  osc.type = 'sine';
+  osc.type = 'triangle';
   osc.frequency.setValueAtTime(startFreq, startTime);
   osc.frequency.exponentialRampToValueAtTime(endFreq, startTime + durationSec);
 
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(startFreq * 1.8, startTime);
+  filter.frequency.setValueAtTime(filterCutoff, startTime);
 
   gain.gain.setValueAtTime(0.0001, startTime);
-  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.0012);
+  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.0015);
   gain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec);
 
   osc.connect(filter);
@@ -94,10 +97,38 @@ function triggerHapticPulse(
   gain.connect(ctx.destination);
 
   osc.start(startTime);
-  osc.stop(startTime + durationSec + 0.001);
+  osc.stop(startTime + durationSec + 0.002);
+
+  // 2. Subtle matte-surface micro-transient (trackpad surface feel)
+  if (noiseGain > 0) {
+    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * 0.006));
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.35));
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.setValueAtTime(filterCutoff, startTime);
+    noiseFilter.Q.setValueAtTime(1.4, startTime);
+
+    const nGain = ctx.createGain();
+    nGain.gain.setValueAtTime(noiseGain, startTime);
+    nGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.006);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(nGain);
+    nGain.connect(ctx.destination);
+
+    noise.start(startTime);
+  }
 }
 
-function playMechanicalClick(
+export function playMechanicalClick(
   variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke',
   profile: AudioProfile = 'haptic'
 ) {
@@ -112,38 +143,38 @@ function playMechanicalClick(
     const now = ctx.currentTime;
 
     if (variant === 'toggle_on') {
-      // Subtle Apple Taptic double-tap actuator confirmation (zero tonal beep)
-      triggerHapticPulse(ctx, now, 115, 48, 0.008, 0.045);
-      triggerHapticPulse(ctx, now + 0.038, 155, 62, 0.009, 0.055);
+      // Apple Taptic double-tap actuator confirmation (warm low-mid double tap)
+      triggerHapticPulse(ctx, now, 220, 75, 0.014, 0.24, 0.05, 580);
+      triggerHapticPulse(ctx, now + 0.055, 290, 95, 0.016, 0.3, 0.07, 720);
       return;
     }
 
     if (variant === 'toggle_off') {
       // Soft descending Taptic micro-release tap
-      triggerHapticPulse(ctx, now, 140, 55, 0.008, 0.04);
-      triggerHapticPulse(ctx, now + 0.036, 95, 40, 0.008, 0.03);
+      triggerHapticPulse(ctx, now, 260, 85, 0.014, 0.24, 0.05, 620);
+      triggerHapticPulse(ctx, now + 0.055, 180, 62, 0.015, 0.18, 0.03, 460);
       return;
     }
 
-    // Keystroke Haptic & Soft Sound Family
+    // Keystroke & UI Haptic & Soft Sound Family
     if (profile === 'haptic') {
-      // Apple Magic Trackpad Taptic micro-tap (tight low-frequency physical surface impulse)
-      triggerHapticPulse(ctx, now, 145, 50, 0.0075, 0.045);
+      // Apple Magic Trackpad Force Touch micro-tap (crisp, solid low-mid surface thump)
+      triggerHapticPulse(ctx, now, 265, 82, 0.013, 0.28, 0.07, 680);
     } else if (profile === 'soft') {
-      // Whisper-quiet cushioned membrane micro-pop
-      triggerHapticPulse(ctx, now, 168, 62, 0.009, 0.032);
+      // Warm cushioned membrane micro-pop (velvety, rounded lowpass envelope)
+      triggerHapticPulse(ctx, now, 225, 72, 0.016, 0.24, 0.03, 480);
     } else if (profile === 'taptic') {
       // Crisp iOS picker wheel / Linear UI sub-millisecond micro-tick
-      triggerHapticPulse(ctx, now, 195, 68, 0.006, 0.04);
+      triggerHapticPulse(ctx, now, 340, 105, 0.01, 0.25, 0.09, 880);
     } else if (profile === 'whisper') {
-      // Ultra-muted sub-surface air tap
-      triggerHapticPulse(ctx, now, 120, 44, 0.0085, 0.022);
+      // Ultra-muted sub-surface air tap (gentle, low-register pulse)
+      triggerHapticPulse(ctx, now, 195, 65, 0.014, 0.18, 0.02, 420);
     } else if (profile === 'thock') {
-      // Deep dampened mechanical switch
-      triggerHapticPulse(ctx, now, 210, 65, 0.013, 0.048);
+      // Deep dampened mechanical switch bottom-out
+      triggerHapticPulse(ctx, now, 295, 88, 0.018, 0.3, 0.08, 740);
     } else {
       // 'click' - Tactile micro-snap
-      triggerHapticPulse(ctx, now, 280, 85, 0.009, 0.038);
+      triggerHapticPulse(ctx, now, 380, 115, 0.012, 0.26, 0.1, 950);
     }
   } catch {
     // AudioContext blocked or unsupported
@@ -172,7 +203,7 @@ export default function TerminalHUD() {
   const [history, setHistory] = useState<HistoryItem[]>([DEFAULT_WELCOME_ITEM]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const [audioProfile, setAudioProfile] = useState<AudioProfile>('haptic');
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -181,8 +212,8 @@ export default function TerminalHUD() {
   // Initialize audio preference safely without React 19 setState-in-effect warning
   useEffect(() => {
     const saved = localStorage.getItem('fx_terminal_audio');
-    if (saved === 'true') {
-      setTimeout(() => setAudioEnabled(true), 0);
+    if (saved === 'false') {
+      setTimeout(() => setAudioEnabled(false), 0);
     }
     const savedProfile = localStorage.getItem('fx_terminal_audio_profile') as AudioProfile;
     if (savedProfile && VALID_AUDIO_PROFILES.includes(savedProfile)) {
@@ -195,6 +226,7 @@ export default function TerminalHUD() {
         setAudioProfile(detail.profile);
         if (detail.enabled) {
           playMechanicalClick('keystroke', detail.profile);
+          setTimeout(() => playMechanicalClick('keystroke', detail.profile), 70);
         } else {
           playMechanicalClick('toggle_off', detail.profile);
         }
@@ -203,6 +235,38 @@ export default function TerminalHUD() {
     window.addEventListener('audio_profile_change', handleAudioSync);
     return () => window.removeEventListener('audio_profile_change', handleAudioSync);
   }, []);
+
+  // Global tactile haptic feedback on interactive UI clicks & typing
+  useEffect(() => {
+    if (!audioEnabled) return;
+
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('a, button, [role="button"], select')) {
+        playMechanicalClick('keystroke', audioProfile);
+      }
+    };
+
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      if (active === inputRef.current) return; // Handled directly by Terminal input
+      if (
+        active &&
+        (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') &&
+        !e.metaKey &&
+        !e.ctrlKey
+      ) {
+        playMechanicalClick('keystroke', audioProfile);
+      }
+    };
+
+    window.addEventListener('mousedown', handleGlobalClick);
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => {
+      window.removeEventListener('mousedown', handleGlobalClick);
+      window.removeEventListener('keydown', handleGlobalKey);
+    };
+  }, [audioEnabled, audioProfile]);
 
   const toggleAudio = (explicit?: boolean) => {
     const nextState = explicit !== undefined ? explicit : !audioEnabled;
@@ -214,7 +278,7 @@ export default function TerminalHUD() {
   };
 
   const cyclePalette = () => {
-    const order: ColorPalette[] = ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'];
+    const order: ColorPalette[] = ['obsidian', 'carbon', 'yeezy'];
     const next = order[(order.indexOf(palette) + 1) % order.length];
     setPalette(next);
     if (audioEnabled) playMechanicalClick('keystroke', audioProfile);
@@ -377,7 +441,7 @@ export default function TerminalHUD() {
       case 'palette':
       case 'colorway': {
         const subCmd = args[0]?.toLowerCase() as ColorPalette;
-        if (subCmd && ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'].includes(subCmd)) {
+        if (subCmd && ['obsidian', 'carbon', 'yeezy'].includes(subCmd)) {
           setPalette(subCmd);
           outputNode = (
             <div className="text-[10px] text-action flex items-center gap-1.5">
@@ -389,10 +453,8 @@ export default function TerminalHUD() {
           outputNode = (
             <div className="text-[10px] text-accent space-y-1">
               <div>Active Colorway: <span className="text-action font-bold uppercase">[{palette}]</span></div>
-              <div>Usage: <span className="text-foreground font-bold font-mono">palette [obsidian|titanium|monokai|carbon|yeezy]</span></div>
+              <div>Usage: <span className="text-foreground font-bold font-mono">palette [obsidian|carbon|yeezy]</span></div>
               <div className="text-[9px] text-accent/80">• <span className="text-action">obsidian</span>: Pure #000000 &amp; stark white contrast (default)</div>
-              <div className="text-[9px] text-accent/80">• <span className="text-action">titanium</span>: Deep Navy/Slate (`#0B0E14`) with Ice-Blue (`#79C0FF`) accents</div>
-              <div className="text-[9px] text-accent/80">• <span className="text-action">monokai</span>: Deep Charcoal (`#121114`) with Electric Emerald (`#A9DC76`) accents</div>
               <div className="text-[9px] text-accent/80">• <span className="text-action">carbon</span>: Stealth Matte Carbon (`#0C0C0C`) with Bone-White (`#E6E6E6`) type</div>
               <div className="text-[9px] text-accent/80">• <span className="text-action">yeezy</span>: Warm Stone Graphite (`#141312`) with Earth (`#D8D0C5`) tokens</div>
             </div>
@@ -697,7 +759,7 @@ export default function TerminalHUD() {
         } else if (arg === 'dark') {
           setTheme('dark');
           outputNode = <div className="text-action text-[10px]">Theme set to DARK mode.</div>;
-        } else if (arg && ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'].includes(arg)) {
+        } else if (arg && ['obsidian', 'carbon', 'yeezy'].includes(arg)) {
           setPalette(arg as ColorPalette);
           outputNode = <div className="text-action text-[10px]">Colorway set to <span className="font-bold uppercase text-foreground">[{arg}]</span>.</div>;
         } else {

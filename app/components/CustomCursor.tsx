@@ -11,7 +11,7 @@ export default function CustomCursor() {
   const [hoverState, setHoverState] = useState<HoverState>('none');
   const [isVisible, setIsVisible] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [cursorMode, setCursorMode] = useState<CursorMode>('minimal');
+  const [cursorMode, setCursorMode] = useState<CursorMode>('bracket');
 
   // Exact clientX, clientY without spring lag for zero-latency click feedback
   const dotX = useMotionValue(-100);
