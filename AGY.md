@@ -121,5 +121,12 @@ Based on user testing notes and strategic direction, the upcoming session will f
 5. **Resume Checklist Verification**:
    - Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
 
+- **[Next-Session Priorities Executed (2026-11-14)]**:
+  - **Repository Audit & Hardening**: Restored `public/node_modules` back to `./node_modules`, hardened `.gitignore` (`node_modules/`), configured `turbopack.root` in `next.config.ts`, fixed unused catch binding in `scripts/sync-obsidian-mobile.mjs`, and added a dynamic OpenGraph card route (`app/og-image.png/route.tsx`).
+  - **Multi-Palette Colorway System**: Implemented 5 switchable colorways (`obsidian`, `titanium`, `monokai`, `carbon`, `yeezy`) in `app/globals.css` and `app/providers.tsx`, accessible via the new Navbar Sensory Studio popover (`ThemeToggle.tsx`) and Terminal HUD (`palette <name>` / `theme <name>`).
+  - **Haptic & Soft Audio Engine**: Replaced tonal confirmation chimes with low-pass filtered Apple Taptic double-tap impulses (`triggerHapticPulse`) and expanded the Haptic & Soft family (`haptic`, `soft`, `taptic`, `whisper`).
+  - **Cursor Styling Evolution**: Upgraded `minimal` mode in `CustomCursor.tsx` with a bright illuminated white core inside a bold dark outline (`border-[2.5px] border-[#0A0A0A] ring-[1.5px] ring-action/80`), and enhanced `bracket` mode with dynamic emerald/sky-blue/amber color shifts, target-lock rotation, and crosshair axis ticks.
+  - **Notion-Style Visual Block Composer**: Upgraded `AdminMarkdownStudio.tsx` with a default **Visual Block Editor (`Blocks` mode)** supporting `/` slash commands (`/h1`, `/h2`, `/h3`, `/code`, `/quote`, `/list`, `/divider`), 1-click block type pills, Up/Down block reordering, and persistent hidden input serialization alongside `Split`, `Raw`, and `Preview` modes.
+
 ---
 *Maintained by Antigravity for Thomas Payne.*

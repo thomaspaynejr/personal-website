@@ -2,12 +2,12 @@
 ## Production Verification Checklist v3.0 (Session Checkpoint)
 
 > [!NOTE]
-> **Session Status (2026-09-11 Wrap-Up)**: Testing checkpoint paused at Item 3. Notes have been recorded below.
-> **Immediate Focus for Next Session**:
-> 1. **Colorways & Themes**: Explore and test alternative visual themes (Titanium & Slate, Monokai Pro Obsidian, Stealth Carbon, Refined Yeezy Grayscale gradients).
-> 2. **Audio Refinement**: Focus specifically on the **haptic** and **soft** sound family (Apple trackpad / subtle UI micro-taps). 
-> 3. **Cursor Styling**: Evolve the `minimal` and `bracket` modes (e.g. illuminated center with bold outline).
-> 4. **CMS Editor Alternatives**: Explore WYSIWYG / Block-based alternatives (TipTap / Notion-style) to replace the split markdown preview.
+> **Session Status (2026-11-14 Upgrade Complete)**: All 4 sensory & authoring subsystems (Colorways, Haptic/Soft Audio, Illuminated Minimal & Reactive Bracket Cursors, and Notion-Style Visual Block Editor) have been built and verified.
+> **Ready for Live Walkthrough**:
+> 1. **5 Colorways & Navbar Sensory Studio**: Click the Palette pill in the top Navbar (or type `palette [obsidian|titanium|monokai|carbon|yeezy]` in `Cmd+K`) to switch colorways, cursors, and haptic audio in 1 click.
+> 2. **Haptic & Soft Sound Family**: Upgraded with low-pass BiquadFilter Taptic impulses (`haptic`, `soft`, `taptic`, `whisper`) and non-tonal Taptic double-tap toggle confirmations.
+> 3. **Illuminated Minimal & Tactical Bracket Cursors**: `minimal` mode now keeps a bright illuminated inner core inside a bold contrasting outline; `bracket` mode shifts colors (emerald on buttons/links, cyan on nav, amber on click) with target-lock rotation.
+> 4. **Notion-Style Visual Block Editor**: `/admin` -> **Articles** now defaults to the **Blocks** composer (with `/h2 `, `/code `, `/quote `, `/list ` slash commands, block type pills, and reordering) alongside `Split`, `Raw`, and `Preview` modes.
 > 5. **Resume Verification**: Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
 
 ---

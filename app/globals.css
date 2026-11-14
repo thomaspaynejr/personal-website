@@ -1,25 +1,102 @@
 @import "tailwindcss";
 
-:root {
-  /* Light Mode - Pure White */
+:root,
+html[data-colorway="obsidian"] {
+  /* Light Mode - Pure White Obsidian */
   --background: #FFFFFF;
   --foreground: #000000;
   --card: #F9F9F9;
-  --action: #000000;     /* Pure Black Action */
+  --action: #000000;
   --accent: #777777;
   --border: #DDDDDD;
 }
 
-.dark {
-  /* Dark Mode - Pure Black */
+.dark,
+html.dark[data-colorway="obsidian"] {
+  /* Dark Mode - Pure Black Obsidian */
   --background: #000000;
   --foreground: #FFFFFF;
   --card: #111111;
-  --action: #FFFFFF;     /* Pure White Action */
+  --action: #FFFFFF;
   --accent: #888888;
   --border: #222222;
 }
 
+/* Option A: Titanium & Slate (Deep Navy/Slate with Ice-Blue Accents) */
+html[data-colorway="titanium"] {
+  --background: #F4F7FB;
+  --foreground: #0D1117;
+  --card: #FFFFFF;
+  --action: #0969DA;
+  --accent: #57606A;
+  --border: #D0D7DE;
+}
+
+html.dark[data-colorway="titanium"] {
+  --background: #0B0E14;
+  --foreground: #F0F6FC;
+  --card: #151B26;
+  --action: #79C0FF;
+  --accent: #8B949E;
+  --border: #21262D;
+}
+
+/* Option B: Monokai Pro Obsidian (Deep Charcoal with Electric Emerald Accents) */
+html[data-colorway="monokai"] {
+  --background: #FAF9F5;
+  --foreground: #1D1B20;
+  --card: #F1EFEA;
+  --action: #059669;
+  --accent: #727072;
+  --border: #E0DDD5;
+}
+
+html.dark[data-colorway="monokai"] {
+  --background: #121114;
+  --foreground: #FCFCFA;
+  --card: #1D1B22;
+  --action: #A9DC76;
+  --accent: #939293;
+  --border: #2D2A2E;
+}
+
+/* Option C: Stealth Carbon (Pure Matte Carbon Weave & Bone-White Typography) */
+html[data-colorway="carbon"] {
+  --background: #EFECE6;
+  --foreground: #141414;
+  --card: #E5E1D8;
+  --action: #141414;
+  --accent: #66635B;
+  --border: #D1CDC2;
+}
+
+html.dark[data-colorway="carbon"] {
+  --background: #0C0C0C;
+  --foreground: #E6E6E6;
+  --card: #161616;
+  --action: #E6E6E6;
+  --accent: #808080;
+  --border: #262626;
+}
+
+/* Option D: Refined Yeezy Grayscale (Warm Graphite & Stone Monochromatic Tokens) */
+html[data-colorway="yeezy"] {
+  --background: #E8E4DC;
+  --foreground: #181715;
+  --card: #DFDBD2;
+  --action: #181715;
+  --accent: #6E6A63;
+  --border: #C9C4B9;
+}
+
+html.dark[data-colorway="yeezy"] {
+  --background: #141312;
+  --foreground: #EAE6DF;
+  --card: #1F1D1B;
+  --action: #D8D0C5;
+  --accent: #8C857B;
+  --border: #2E2B28;
+}
 
 @theme inline {
   --color-background: var(--background);

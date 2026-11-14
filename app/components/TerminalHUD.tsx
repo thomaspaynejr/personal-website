@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, X, CornerDownLeft, CheckCircle, Zap, Bot, Volume2, VolumeX } from 'lucide-react';
-import { useTheme } from '@/app/providers';
+import { Terminal, X, CornerDownLeft, CheckCircle, Zap, Bot, Volume2, VolumeX, Palette } from 'lucide-react';
+import { useTheme, ColorPalette } from '@/app/providers';
 import { sendContactMessage } from '@/app/actions/engagement';
 
 interface HistoryItem {
@@ -19,6 +19,7 @@ const COMMANDS = [
   'ask',
   'audio',
   'cursor',
+  'palette',
   'bio',
   'writing',
   'projects',
@@ -61,11 +62,44 @@ function getSharedAudioContext(): AudioContext | null {
   }
 }
 
-export type AudioProfile = 'thock' | 'haptic' | 'click' | 'soft';
+export type AudioProfile = 'haptic' | 'soft' | 'taptic' | 'whisper' | 'thock' | 'click';
+
+const VALID_AUDIO_PROFILES: AudioProfile[] = ['haptic', 'soft', 'taptic', 'whisper', 'thock', 'click'];
+
+function triggerHapticPulse(
+  ctx: AudioContext,
+  startTime: number,
+  startFreq: number,
+  endFreq: number,
+  durationSec: number,
+  peakGain: number
+) {
+  const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(startFreq, startTime);
+  osc.frequency.exponentialRampToValueAtTime(endFreq, startTime + durationSec);
+
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(startFreq * 1.8, startTime);
+
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.0012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + durationSec + 0.001);
+}
 
 function playMechanicalClick(
   variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke',
-  profile: AudioProfile = 'thock'
+  profile: AudioProfile = 'haptic'
 ) {
   const ctx = getSharedAudioContext();
   if (!ctx) return;
@@ -78,118 +112,38 @@ function playMechanicalClick(
     const now = ctx.currentTime;
 
     if (variant === 'toggle_on') {
-      // Warm, mellow musical confirmation (A3 -> C#4, 220Hz -> 277Hz)
-      const osc1 = ctx.createOscillator();
-      const gain1 = ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(220, now);
-      gain1.gain.setValueAtTime(0.04, now);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start(now);
-      osc1.stop(now + 0.04);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(277.18, now + 0.04);
-      gain2.gain.setValueAtTime(0.045, now + 0.04);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(now + 0.04);
-      osc2.stop(now + 0.09);
+      // Subtle Apple Taptic double-tap actuator confirmation (zero tonal beep)
+      triggerHapticPulse(ctx, now, 115, 48, 0.008, 0.045);
+      triggerHapticPulse(ctx, now + 0.038, 155, 62, 0.009, 0.055);
       return;
     }
 
     if (variant === 'toggle_off') {
-      // Soft descending tap (C#4 -> A3, 277Hz -> 220Hz)
-      const osc1 = ctx.createOscillator();
-      const gain1 = ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(277.18, now);
-      gain1.gain.setValueAtTime(0.035, now);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start(now);
-      osc1.stop(now + 0.035);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(220, now + 0.035);
-      gain2.gain.setValueAtTime(0.03, now + 0.035);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(now + 0.035);
-      osc2.stop(now + 0.08);
+      // Soft descending Taptic micro-release tap
+      triggerHapticPulse(ctx, now, 140, 55, 0.008, 0.04);
+      triggerHapticPulse(ctx, now + 0.036, 95, 40, 0.008, 0.03);
       return;
     }
 
-    // Keystroke sound profiles
-    if (profile === 'thock') {
-      // Deep dampened mechanical switch (lubed linear / Topre keyboard feel)
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.exponentialRampToValueAtTime(65, now + 0.014);
-
-      gain.gain.setValueAtTime(0.045, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.014);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.014);
-    } else if (profile === 'haptic') {
-      // Ultra-subtle Apple/Linear trackpad tap
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(140, now);
-      osc.frequency.exponentialRampToValueAtTime(50, now + 0.009);
-
-      gain.gain.setValueAtTime(0.035, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.009);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.009);
-    } else if (profile === 'click') {
-      // Crisp mechanical switch click with brief high tick
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(420, now);
-      osc.frequency.exponentialRampToValueAtTime(110, now + 0.012);
-
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.012);
+    // Keystroke Haptic & Soft Sound Family
+    if (profile === 'haptic') {
+      // Apple Magic Trackpad Taptic micro-tap (tight low-frequency physical surface impulse)
+      triggerHapticPulse(ctx, now, 145, 50, 0.0075, 0.045);
+    } else if (profile === 'soft') {
+      // Whisper-quiet cushioned membrane micro-pop
+      triggerHapticPulse(ctx, now, 168, 62, 0.009, 0.032);
+    } else if (profile === 'taptic') {
+      // Crisp iOS picker wheel / Linear UI sub-millisecond micro-tick
+      triggerHapticPulse(ctx, now, 195, 68, 0.006, 0.04);
+    } else if (profile === 'whisper') {
+      // Ultra-muted sub-surface air tap
+      triggerHapticPulse(ctx, now, 120, 44, 0.0085, 0.022);
+    } else if (profile === 'thock') {
+      // Deep dampened mechanical switch
+      triggerHapticPulse(ctx, now, 210, 65, 0.013, 0.048);
     } else {
-      // 'soft' - Whisper quiet muted pop
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(180, now);
-      osc.frequency.exponentialRampToValueAtTime(70, now + 0.01);
-
-      gain.gain.setValueAtTime(0.025, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.01);
+      // 'click' - Tactile micro-snap
+      triggerHapticPulse(ctx, now, 280, 85, 0.009, 0.038);
     }
   } catch {
     // AudioContext blocked or unsupported
@@ -203,10 +157,10 @@ const DEFAULT_WELCOME_ITEM: HistoryItem = {
   output: (
     <div className="space-y-2 text-accent">
       <div className="text-action font-bold tracking-widest uppercase">
-        THOMAS PAYNE // INTERACTIVE CLI HUD v1.0.0
+        THOMAS PAYNE // INTERACTIVE CLI HUD v1.2.0
       </div>
       <p className="text-[10px] leading-relaxed">
-        Welcome to the command line interface. Type <span className="text-foreground font-bold">&apos;help&apos;</span> to see available commands, <span className="text-foreground font-bold">&apos;ask &lt;query&gt;&apos;</span> to query the AI assistant, or press <span className="text-foreground font-bold">&apos;Tab&apos;</span> for autocomplete.
+        Welcome to the command line interface. Type <span className="text-foreground font-bold">&apos;help&apos;</span> to see commands, <span className="text-foreground font-bold">&apos;palette [obsidian|titanium|monokai|carbon]&apos;</span> to switch colorways, or <span className="text-foreground font-bold">&apos;ask &lt;query&gt;&apos;</span> to query the AI assistant.
       </p>
     </div>
   )
@@ -219,10 +173,10 @@ export default function TerminalHUD() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [audioProfile, setAudioProfile] = useState<AudioProfile>('thock');
+  const [audioProfile, setAudioProfile] = useState<AudioProfile>('haptic');
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, palette, setPalette } = useTheme();
 
   // Initialize audio preference safely without React 19 setState-in-effect warning
   useEffect(() => {
@@ -231,9 +185,23 @@ export default function TerminalHUD() {
       setTimeout(() => setAudioEnabled(true), 0);
     }
     const savedProfile = localStorage.getItem('fx_terminal_audio_profile') as AudioProfile;
-    if (savedProfile && ['thock', 'haptic', 'click', 'soft'].includes(savedProfile)) {
+    if (savedProfile && VALID_AUDIO_PROFILES.includes(savedProfile)) {
       setTimeout(() => setAudioProfile(savedProfile), 0);
     }
+    const handleAudioSync = (e: Event) => {
+      const detail = (e as CustomEvent<{ enabled: boolean; profile: AudioProfile }>).detail;
+      if (detail) {
+        setAudioEnabled(detail.enabled);
+        setAudioProfile(detail.profile);
+        if (detail.enabled) {
+          playMechanicalClick('keystroke', detail.profile);
+        } else {
+          playMechanicalClick('toggle_off', detail.profile);
+        }
+      }
+    };
+    window.addEventListener('audio_profile_change', handleAudioSync);
+    return () => window.removeEventListener('audio_profile_change', handleAudioSync);
   }, []);
 
   const toggleAudio = (explicit?: boolean) => {
@@ -243,6 +211,13 @@ export default function TerminalHUD() {
       localStorage.setItem('fx_terminal_audio', nextState ? 'true' : 'false');
     }
     playMechanicalClick(nextState ? 'toggle_on' : 'toggle_off', audioProfile);
+  };
+
+  const cyclePalette = () => {
+    const order: ColorPalette[] = ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'];
+    const next = order[(order.indexOf(palette) + 1) % order.length];
+    setPalette(next);
+    if (audioEnabled) playMechanicalClick('keystroke', audioProfile);
   };
 
   // Listen for Cmd+K, Ctrl+K, or Backtick
@@ -301,8 +276,9 @@ export default function TerminalHUD() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-[10px]">
               <div><span className="text-foreground font-bold w-28 inline-block">help</span> <span className="text-accent">- List all available commands</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">ask &lt;query&gt;</span> <span className="text-accent">- Query AI agent on background & stack</span></div>
-              <div><span className="text-foreground font-bold w-28 inline-block">audio [mode]</span> <span className="text-accent">- Audio [on|off|thock|haptic|click|soft]</span></div>
-              <div><span className="text-foreground font-bold w-28 inline-block">cursor [style]</span> <span className="text-accent">- Cursor [dual|minimal|bracket]</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">palette [name]</span> <span className="text-accent">- Colorway [obsidian|titanium|monokai|carbon]</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">audio [mode]</span> <span className="text-accent">- Haptic audio [haptic|soft|taptic|whisper]</span></div>
+              <div><span className="text-foreground font-bold w-28 inline-block">cursor [style]</span> <span className="text-accent">- Cursor [minimal|bracket|dual]</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">bio</span> <span className="text-accent">- View background & discipline</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">writing</span> <span className="text-accent">- View articles & essays</span></div>
               <div><span className="text-foreground font-bold w-28 inline-block">projects</span> <span className="text-accent">- View active portfolio projects</span></div>
@@ -323,6 +299,8 @@ export default function TerminalHUD() {
             </div>
           </div>
         );
+        break;
+
       case 'ask':
       case 'ai':
       case 'agent': {
@@ -396,6 +374,33 @@ export default function TerminalHUD() {
         break;
       }
 
+      case 'palette':
+      case 'colorway': {
+        const subCmd = args[0]?.toLowerCase() as ColorPalette;
+        if (subCmd && ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'].includes(subCmd)) {
+          setPalette(subCmd);
+          outputNode = (
+            <div className="text-[10px] text-action flex items-center gap-1.5">
+              <Palette size={12} />
+              Colorway switched to <span className="font-bold text-foreground uppercase">[{subCmd}]</span>.
+            </div>
+          );
+        } else {
+          outputNode = (
+            <div className="text-[10px] text-accent space-y-1">
+              <div>Active Colorway: <span className="text-action font-bold uppercase">[{palette}]</span></div>
+              <div>Usage: <span className="text-foreground font-bold font-mono">palette [obsidian|titanium|monokai|carbon|yeezy]</span></div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">obsidian</span>: Pure #000000 &amp; stark white contrast (default)</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">titanium</span>: Deep Navy/Slate (`#0B0E14`) with Ice-Blue (`#79C0FF`) accents</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">monokai</span>: Deep Charcoal (`#121114`) with Electric Emerald (`#A9DC76`) accents</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">carbon</span>: Stealth Matte Carbon (`#0C0C0C`) with Bone-White (`#E6E6E6`) type</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">yeezy</span>: Warm Stone Graphite (`#141312`) with Earth (`#D8D0C5`) tokens</div>
+            </div>
+          );
+        }
+        break;
+      }
+
       case 'audio':
       case 'sound': {
         const subCmd = args[0]?.toLowerCase();
@@ -404,7 +409,7 @@ export default function TerminalHUD() {
           targetState = true;
         } else if (subCmd === 'off') {
           targetState = false;
-        } else if (['thock', 'haptic', 'click', 'soft'].includes(subCmd)) {
+        } else if (subCmd && VALID_AUDIO_PROFILES.includes(subCmd as AudioProfile)) {
           const profile = subCmd as AudioProfile;
           setAudioProfile(profile);
           if (typeof window !== 'undefined') {
@@ -415,7 +420,7 @@ export default function TerminalHUD() {
           outputNode = (
             <div className="text-[10px] text-action flex items-center gap-1.5">
               <Volume2 size={12} />
-              Audio profile switched to <span className="font-bold text-foreground uppercase">[{profile}]</span>. Keystroke audio enabled.
+              Audio profile switched to <span className="font-bold text-foreground uppercase">[{profile}]</span> (Haptic &amp; Soft Acoustic Engine).
             </div>
           );
           break;
@@ -426,9 +431,14 @@ export default function TerminalHUD() {
         toggleAudio(targetState);
 
         outputNode = (
-          <div className="text-[10px] text-action flex items-center gap-1.5">
-            {targetState ? <Volume2 size={12} /> : <VolumeX size={12} />}
-            Keystroke audio turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [MUTED]'}</span>. Profile: <span className="font-bold text-foreground uppercase">[{audioProfile}]</span>.
+          <div className="text-[10px] text-action space-y-1">
+            <div className="flex items-center gap-1.5">
+              {targetState ? <Volume2 size={12} /> : <VolumeX size={12} />}
+              Keystroke audio turned <span className="font-bold text-foreground">{targetState ? 'ON [ENABLED]' : 'OFF [MUTED]'}</span>. Profile: <span className="font-bold text-foreground uppercase">[{audioProfile}]</span>.
+            </div>
+            <div className="text-[9px] text-accent">
+              Profiles: <span className="text-foreground">audio haptic</span> (Apple trackpad), <span className="text-foreground">audio soft</span> (cushioned pop), <span className="text-foreground">audio taptic</span> (crisp micro-tick), <span className="text-foreground">audio whisper</span> (muted air tap)
+            </div>
           </div>
         );
         break;
@@ -449,10 +459,10 @@ export default function TerminalHUD() {
         } else {
           outputNode = (
             <div className="text-[10px] text-accent space-y-1">
-              <div>Usage: <span className="text-foreground font-bold font-mono">cursor [dual|minimal|bracket]</span></div>
-              <div className="text-[9px] text-accent/80">• <span className="text-action">dual</span>: Pinpoint center dot with fluid spring trailing halo (default)</div>
-              <div className="text-[9px] text-accent/80">• <span className="text-action">minimal</span>: Single precision dot, ultra-clean Yeezy aesthetic</div>
-              <div className="text-[9px] text-accent/80">• <span className="text-action">bracket</span>: Tactical corner crosshairs for HUD interface</div>
+              <div>Usage: <span className="text-foreground font-bold font-mono">cursor [minimal|bracket|dual]</span></div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">minimal</span>: Illuminated light core inside a crisp bold contrasting outline</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">bracket</span>: Tactical HUD reticle with emerald/cyan target lock rotation</div>
+              <div className="text-[9px] text-accent/80">• <span className="text-action">dual</span>: Pinpoint center dot with fluid spring trailing halo</div>
             </div>
           );
         }
@@ -464,7 +474,7 @@ export default function TerminalHUD() {
           <div className="space-y-2 text-xs text-accent">
             <div className="text-action font-bold uppercase tracking-widest">THOMAS PAYNE // BIO</div>
             <p className="text-[10px] leading-relaxed">
-              Software Engineer & Former Military Service Member. Built on a foundation of discipline, service, and continuous learning. Specializing in high-performance web applications with Next.js, TypeScript, React, and Supabase.
+              Software Engineer &amp; Former Military Service Member. Built on a foundation of discipline, service, and continuous learning. Specializing in high-performance web applications with Next.js, TypeScript, React, and Supabase.
             </p>
           </div>
         );
@@ -474,10 +484,10 @@ export default function TerminalHUD() {
       case 'articles':
         outputNode = (
           <div className="space-y-2 text-xs text-accent">
-            <div className="text-action font-bold uppercase tracking-widest">WRITING & ARTICLES:</div>
+            <div className="text-action font-bold uppercase tracking-widest">WRITING &amp; ARTICLES:</div>
             <div className="space-y-1.5 text-[10px]">
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1">
-                <span className="text-foreground font-bold">Latest Technical Essays & Notes</span>
+                <span className="text-foreground font-bold">Latest Technical Essays &amp; Notes</span>
                 <Link href="/writing" onClick={() => setIsOpen(false)} className="text-action hover:underline">View All Essays &rarr;</Link>
               </div>
               <p className="text-accent text-[9px]">Explore write-ups on software architecture, discipline, military transition, and Next.js 16.</p>
@@ -492,10 +502,10 @@ export default function TerminalHUD() {
             <div className="text-action font-bold uppercase tracking-widest">FEATURED PROJECTS:</div>
             <div className="space-y-1.5 text-[10px]">
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1">
-                <span className="text-foreground font-bold">1. Personal Website & Platform</span>
+                <span className="text-foreground font-bold">1. Personal Website &amp; Platform</span>
                 <Link href="/portfolio" onClick={() => setIsOpen(false)} className="text-action hover:underline">View Portfolio &rarr;</Link>
               </div>
-              <p className="text-accent text-[9px]">Monochromatic Yeezy-inspired portfolio & admin hub with Next.js 16, Supabase SSR, and Framer Motion.</p>
+              <p className="text-accent text-[9px]">Monochromatic Yeezy-inspired portfolio &amp; admin hub with Next.js 16, Supabase SSR, and Framer Motion.</p>
               <div className="flex justify-between items-center border-b border-border-custom/30 pb-1 pt-2">
                 <span className="text-foreground font-bold">2. Journey Activity Tracker</span>
                 <Link href="/dashboard" onClick={() => setIsOpen(false)} className="text-action hover:underline">View Tracker &rarr;</Link>
@@ -516,11 +526,11 @@ export default function TerminalHUD() {
                 <div className="text-accent text-[9px]">Next.js 16, React 19, TypeScript, Tailwind CSS 4, Framer Motion</div>
               </div>
               <div className="bg-card/40 p-2.5 rounded-lg border border-border-custom/30">
-                <div className="text-foreground font-bold mb-1">Backend & DB</div>
+                <div className="text-foreground font-bold mb-1">Backend &amp; DB</div>
                 <div className="text-accent text-[9px]">Node.js, Supabase, PostgreSQL, Server Actions, REST APIs</div>
               </div>
               <div className="bg-card/40 p-2.5 rounded-lg border border-border-custom/30">
-                <div className="text-foreground font-bold mb-1">DevOps & Tooling</div>
+                <div className="text-foreground font-bold mb-1">DevOps &amp; Tooling</div>
                 <div className="text-accent text-[9px]">Git, Vercel, Turbopack, ESLint, Antigravity CLI</div>
               </div>
               <div className="bg-card/40 p-2.5 rounded-lg border border-border-custom/30">
@@ -632,14 +642,14 @@ export default function TerminalHUD() {
           <div className="space-y-1 text-[10px] font-mono">
             <div className="text-action font-bold uppercase tracking-widest flex items-center gap-1">
               <Zap size={10} />
-              SYSTEM BENCHMARK & TELEMETRY:
+              SYSTEM BENCHMARK &amp; TELEMETRY:
             </div>
             <div className="grid grid-cols-2 gap-2 text-accent bg-card/40 p-2.5 rounded-lg border border-border-custom/30">
               <div><span className="text-foreground font-bold">DOM Nodes:</span> {domCount}</div>
               <div><span className="text-foreground font-bold">Viewport:</span> {resWidth}x{resHeight}</div>
               <div><span className="text-foreground font-bold">Network Type:</span> {navConn.toUpperCase()}</div>
               <div><span className="text-foreground font-bold">JS Heap:</span> {usedMB ? `${usedMB} MB` : 'Optimal'}</div>
-              <div><span className="text-foreground font-bold">Theme:</span> {(theme || 'dark').toUpperCase()}</div>
+              <div><span className="text-foreground font-bold">Theme / Palette:</span> {(theme || 'dark').toUpperCase()} {'//'} {palette.toUpperCase()}</div>
               <div><span className="text-foreground font-bold">Engine:</span> Turbopack</div>
             </div>
           </div>
@@ -679,19 +689,24 @@ export default function TerminalHUD() {
         break;
       }
 
-      case 'theme':
-        if (args[0] === 'light') {
+      case 'theme': {
+        const arg = args[0]?.toLowerCase();
+        if (arg === 'light') {
           setTheme('light');
           outputNode = <div className="text-action text-[10px]">Theme set to LIGHT mode.</div>;
-        } else if (args[0] === 'dark') {
+        } else if (arg === 'dark') {
           setTheme('dark');
           outputNode = <div className="text-action text-[10px]">Theme set to DARK mode.</div>;
+        } else if (arg && ['obsidian', 'titanium', 'monokai', 'carbon', 'yeezy'].includes(arg)) {
+          setPalette(arg as ColorPalette);
+          outputNode = <div className="text-action text-[10px]">Colorway set to <span className="font-bold uppercase text-foreground">[{arg}]</span>.</div>;
         } else {
           const nextTheme = theme === 'dark' ? 'light' : 'dark';
           setTheme(nextTheme);
           outputNode = <div className="text-action text-[10px]">Theme toggled to {nextTheme.toUpperCase()} mode.</div>;
         }
         break;
+      }
 
       case 'whoami':
         outputNode = (
@@ -819,17 +834,22 @@ export default function TerminalHUD() {
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-action animate-pulse" />
                   <span className="text-[10px] font-bold tracking-widest uppercase text-foreground">
-                    THOMAS PAYNE // DEVELOPER HUD v1.0.0
+                    THOMAS PAYNE // DEVELOPER HUD v1.2.0
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[8px] text-accent uppercase tracking-widest hidden sm:inline">
-                    PRESS ESC OR TYPE EXIT
-                  </span>
+                  <button
+                    onClick={cyclePalette}
+                    className="px-2 py-0.5 rounded bg-background/60 border border-border-custom hover:border-action text-[8px] font-bold uppercase tracking-widest text-accent hover:text-action transition-colors flex items-center gap-1 cursor-none"
+                    title="Cycle Colorway Palette (obsidian / titanium / monokai / carbon)"
+                  >
+                    <Palette size={10} className="text-action" />
+                    <span>{palette}</span>
+                  </button>
                   <button
                     onClick={() => toggleAudio()}
                     className="p-1 text-accent hover:text-foreground transition-colors cursor-none flex items-center gap-1"
-                    title={audioEnabled ? 'Mute Keystroke Audio' : 'Enable Keystroke Audio'}
+                    title={audioEnabled ? `Mute Keystroke Audio (${audioProfile})` : 'Enable Keystroke Audio'}
                   >
                     {audioEnabled ? <Volume2 size={13} className="text-action" /> : <VolumeX size={13} />}
                   </button>
@@ -865,7 +885,7 @@ export default function TerminalHUD() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDownInput}
-                  placeholder="Type a command (e.g. 'help', 'projects', 'theme')..."
+                  placeholder="Type a command (e.g. 'help', 'palette titanium', 'audio haptic', 'cursor bracket')..."
                   className="flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-accent/40 font-mono"
                   spellCheck={false}
                   autoComplete="off"

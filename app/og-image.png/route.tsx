@@ -12,7 +12,7 @@ export async function GET() {
           justifyContent: 'space-between',
           backgroundColor: '#000000',
           color: '#FFFFFF',
-          padding: '80px',
+          padding: '72px 80px',
           fontFamily: 'monospace',
           border: '2px solid #222222',
         }}
@@ -23,90 +23,82 @@ export async function GET() {
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            borderBottom: '1px solid #222222',
-            paddingBottom: '24px',
           }}
         >
           <div
             style={{
-              fontSize: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              fontSize: 20,
               letterSpacing: '0.25em',
-              color: '#888888',
+              color: '#8E8E93',
               textTransform: 'uppercase',
             }}
           >
-            THOMAS PAYNE // DEVELOPER HUD v2.0
+            <div
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: 9999,
+                backgroundColor: '#FFFFFF',
+              }}
+            />
+            <span>THOMAS PAYNE // DEVELOPER HUD v1.2</span>
           </div>
           <div
             style={{
-              fontSize: '16px',
+              fontSize: 16,
               letterSpacing: '0.2em',
-              color: '#FFFFFF',
+              color: '#8E8E93',
               border: '1px solid #333333',
-              padding: '6px 14px',
-              borderRadius: '6px',
+              padding: '8px 16px',
+              borderRadius: 8,
             }}
           >
-            SYSTEMS ONLINE
+            NEXT.JS 16 // REACT 19 // SUPABASE
           </div>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div
             style={{
-              fontSize: '64px',
+              fontSize: 64,
               fontWeight: 800,
               letterSpacing: '-0.03em',
-              lineHeight: 1.1,
-              color: '#FFFFFF',
               textTransform: 'uppercase',
+              lineHeight: 1.05,
             }}
           >
             THOMAS PAYNE
           </div>
           <div
             style={{
-              fontSize: '28px',
-              color: '#AAAAAA',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
+              fontSize: 28,
+              color: '#A1A1AA',
+              maxWidth: '900px',
+              lineHeight: 1.4,
             }}
           >
-            Software Engineer &amp; Systems Architect
-          </div>
-          <div
-            style={{
-              fontSize: '18px',
-              color: '#666666',
-              maxWidth: '820px',
-              lineHeight: 1.5,
-            }}
-          >
-            Next.js 16 • React 19 • TypeScript • Supabase SSR • Monochromatic Obsidian Minimalism
+            Software Engineer &amp; Systems Architect. Built on military discipline, deterministic engineering, and obsidian minimalism.
           </div>
         </div>
 
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'space-between',
-            width: '100%',
+            alignItems: 'center',
             borderTop: '1px solid #222222',
-            paddingTop: '24px',
-            fontSize: '16px',
-            color: '#777777',
-            letterSpacing: '0.15em',
+            paddingTop: '28px',
+            fontSize: 18,
+            letterSpacing: '0.18em',
+            color: '#8E8E93',
+            textTransform: 'uppercase',
           }}
         >
-          <div>THOMASPAYNE.DEV</div>
-          <div>DISCIPLINE OVER MOTIVATION _</div>
+          <span>PORTFOLIO // WRITING // TELEMETRY // CLI HUD</span>
+          <span style={{ color: '#FFFFFF' }}>THOMASPAYNE.DEV _</span>
         </div>
       </div>
     ),

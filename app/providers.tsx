@@ -2,28 +2,86 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+export type Theme = 'light' | 'dark'
+export type Colorway = 'obsidian' | 'titanium' | 'monokai' | 'carbon' | 'yeezy'
+export type ColorPalette = Colorway
+
+export interface ColorwayOption {
+  id: Colorway
+  name: string
+  subtitle: string
+  bgHex: string
+  accentHex: string
+}
+
+export const COLORWAYS: ColorwayOption[] = [
+  {
+    id: 'obsidian',
+    name: 'Obsidian Pure',
+    subtitle: 'True #000000 & stark white contrast',
+    bgHex: '#000000',
+    accentHex: '#FFFFFF',
+  },
+  {
+    id: 'titanium',
+    name: 'Titanium & Slate',
+    subtitle: 'Deep navy slate (#0B0E14) & ice-blue accents',
+    bgHex: '#0B0E14',
+    accentHex: '#79C0FF',
+  },
+  {
+    id: 'monokai',
+    name: 'Monokai Obsidian',
+    subtitle: 'Warm charcoal (#121114) & electric emerald',
+    bgHex: '#121114',
+    accentHex: '#A9DC76',
+  },
+  {
+    id: 'carbon',
+    name: 'Stealth Carbon',
+    subtitle: 'Matte carbon weave (#0C0C0C) & bone-white',
+    bgHex: '#0C0C0C',
+    accentHex: '#E6E6E6',
+  },
+  {
+    id: 'yeezy',
+    name: 'Yeezy Graphite',
+    subtitle: 'Warm stone graphite (#141312) & earth tokens',
+    bgHex: '#141312',
+    accentHex: '#D8D0C5',
+  },
+]
 
 interface ThemeContextType {
   theme: Theme | undefined
   setTheme: (theme: Theme) => void
+  colorway: Colorway
+  setColorway: (colorway: Colorway) => void
+  palette: Colorway
+  setPalette: (colorway: Colorway) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark')
+  const [colorway, setColorwayState] = useState<Colorway>('obsidian')
 
   useEffect(() => {
-    // Load theme from localStorage on mount
     const savedTheme = localStorage.getItem('theme') as Theme | null
-    if (savedTheme) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTheme(savedTheme)
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTimeout(() => setTheme(savedTheme), 0)
       document.documentElement.classList.toggle('dark', savedTheme === 'dark')
     } else {
-      // Default to dark if no preference
       document.documentElement.classList.add('dark')
+    }
+
+    const savedColorway = localStorage.getItem('colorway') as Colorway | null
+    if (savedColorway && COLORWAYS.some((c) => c.id === savedColorway)) {
+      setTimeout(() => setColorwayState(savedColorway), 0)
+      document.documentElement.setAttribute('data-colorway', savedColorway)
+    } else {
+      document.documentElement.setAttribute('data-colorway', 'obsidian')
     }
   }, [])
 
@@ -33,8 +91,23 @@ export function Providers({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
+  const handleSetColorway = (newColorway: Colorway) => {
+    setColorwayState(newColorway)
+    localStorage.setItem('colorway', newColorway)
+    document.documentElement.setAttribute('data-colorway', newColorway)
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        setTheme: handleSetTheme,
+        colorway,
+        setColorway: handleSetColorway,
+        palette: colorway,
+        setPalette: handleSetColorway,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   )

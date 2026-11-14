@@ -106,5 +106,14 @@ This document tracks the technical challenges encountered during the Supabase an
 - **Cause:** `app/page.tsx` returned `timeline: []` when database rows were absent without providing structured fallback events.
 - **Fix:** Seeded a deterministic `DEFAULT_TIMELINE` fallback in `app/page.tsx` featuring 4 categorized events (`#BUILD`, `#MILESTONE`, `#MILITARY`, `#LEARNING`), an expandable Web Audio code block with copy button, and a photographic thumbnail linked to the Framer Motion lightbox modal.
 
+## 22. Misplaced `public/node_modules` Directory & Turbopack Root Resolution
+- **Issue:** `node_modules` was accidentally moved inside `public/node_modules`, breaking CLI binaries (`next`, `eslint`), exposing packages as untracked static assets, and triggering a Next.js 16 multiple-lockfiles root warning.
+- **Fix:** Restored `node_modules` to the project root, updated `.gitignore` from `/node_modules` to `node_modules/`, and configured `turbopack.root` in `next.config.ts`.
+
+## 23. Admin Studio Form Submission in Preview/Block Mode & Item Switching State
+- **Issue:** Switching `AdminMarkdownStudio` to `Preview` mode unmounted the `<textarea name="content">`, causing form submissions in preview mode to send empty content. Switching directly between two items in `AdminClient.tsx` also retained stale `defaultValue` inputs.
+- **Fix:** Added a persistent `<input type="hidden" name={name} value={content} />` in `AdminMarkdownStudio.tsx` and keyed all Admin manager forms (`key={editingId || 'new-...'}`) so state resets deterministically when switching items.
+
+
 
 
