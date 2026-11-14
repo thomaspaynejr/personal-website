@@ -257,6 +257,9 @@ export default function AdminMarkdownStudio({
       </div>
 
       {/* Editor / Preview Content Area */}
+      {viewMode === 'preview' && (
+        <input type="hidden" name={name} value={content} />
+      )}
       <div className={`grid ${viewMode === 'split' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'} divide-y lg:divide-y-0 lg:divide-x divide-border-custom/30 min-h-[280px]`}>
         {/* Editor Pane */}
         {(viewMode === 'edit' || viewMode === 'split') && (

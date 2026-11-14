@@ -390,7 +390,7 @@ function ExperienceManager({ experiences, editingId, setEditingId, isAdding, set
       </div>
 
       {(isAdding || editingId) && (
-        <form action={async (formData) => {
+        <form key={editingId || 'new-exp'} action={async (formData) => {
           const res = await upsertExperience(formData);
           if (res.success) { setIsAdding(false); setEditingId(null); }
         }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border-2 border-action space-y-4 shadow-xl animate-in slide-in-from-top-4 duration-500">
@@ -467,7 +467,7 @@ function PortfolioManager({ projects, editingId, setEditingId, isAdding, setIsAd
       </div>
 
       {(isAdding || editingId) && (
-        <form action={async (formData) => {
+        <form key={editingId || 'new-portfolio'} action={async (formData) => {
           const res = await upsertPortfolioProject(formData);
           if (res.success) { setIsAdding(false); setEditingId(null); }
         }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border-2 border-action space-y-4 shadow-xl animate-in slide-in-from-top-4 duration-500">
@@ -558,7 +558,7 @@ function TrackerManager({ projects, editingId, setEditingId, isAdding, setIsAddi
       </div>
 
       {(isAdding || editingId) && (
-        <form action={async (formData) => {
+        <form key={editingId || 'new-tracker'} action={async (formData) => {
           const res = await upsertTrackerProject(formData);
           if (res.success) { setIsAdding(false); setEditingId(null); }
         }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border-2 border-action space-y-4 shadow-xl animate-in slide-in-from-top-4 duration-500">
@@ -657,7 +657,7 @@ function TimelineManager({ events, editingId, setEditingId, isAdding, setIsAddin
       </div>
 
       {(isAdding || editingId) && (
-        <form action={async (formData) => {
+        <form key={editingId || 'new-timeline'} action={async (formData) => {
           const res = await upsertTimelineEvent(formData);
           if (res.success) { setIsAdding(false); setEditingId(null); }
         }} className="bg-card/40 backdrop-blur-md p-6 rounded-2xl border-2 border-action space-y-4 shadow-xl animate-in slide-in-from-top-4 duration-500">
@@ -901,6 +901,7 @@ function ArticlesManager({
             className="overflow-hidden"
           >
             <form
+              key={editingId || 'new-article'}
               action={async (formData) => {
                 await upsertArticle(formData);
                 setIsAdding(false);
@@ -978,6 +979,7 @@ function ArticlesManager({
                   Content // Split-Pane Markdown Studio
                 </label>
                 <AdminMarkdownStudio
+                  key={editingId || 'new-article-studio'}
                   name="content"
                   initialValue={currentEditing?.content || ''}
                   placeholder="Write full technical essay with headings (##), code blocks (```lang), quotes (>), etc..."

@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
-console.log("NEXT_CONFIG_LOADED: applying 20MB limit");
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '20mb',
