@@ -104,29 +104,26 @@ This codebase uses an experimental/future version of **Next.js 16**. Standard tr
 
 ## // STRATEGIC ROADMAP & NEXT-SESSION PRIORITY
 
-### IMMEDIATE PRIORITY FOR NEXT SESSION: Themes, Colorways & Sensory Design
-Based on user testing notes and strategic direction, the upcoming session will focus on:
-1. **Palette & Colorways Exploration**:
-   - **Option A (Titanium & Slate)**: Subtle deep navy/slate undertones (`#0B0E14`, `#151B26`) with ice-blue accents.
-   - **Option B (Monokai Pro Obsidian)**: Deep charcoal with selective minimalist neon accents (electric emerald or amber).
-   - **Option C (Stealth Carbon)**: Pure matte carbon weaves (`#0C0C0C`) with bone-white typography (`#E6E6E6`).
-   - **Option D (Refined Yeezy Grayscale)**: Pure monochrome with softened warm graphite gradients and high-contrast tokens.
-2. **Audio Refinement (Haptic & Soft Family)**:
-   - Deepen the `haptic` and `soft` sound design paths (Apple trackpad micro-taps, whisper-quiet UI clicks, subtle acoustic confirmations).
-3. **Cursor Styling Evolution**:
-   - Refine `minimal` cursor mode with an illuminated inner core and crisp bold outline.
-   - Expand `bracket` cursor mode with interactive rotation and tactical HUD animations.
-4. **CMS Authoring Experience Exploration**:
-   - Evaluate WYSIWYG / Block-based alternatives (TipTap / Notion-style block editor) to replace or enhance the split markdown preview.
-5. **Resume Checklist Verification**:
-   - Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
+### SESSION WRAP-UP (2026-11-14): Locked-In Sensory & Monochromatic Design
+- **Repository Audit & Hardening**:
+  - Restored misplaced `public/node_modules` back to `./node_modules`, hardened `.gitignore` (`node_modules/`), configured `turbopack.root` in `next.config.ts`, fixed unused catch binding in `scripts/sync-obsidian-mobile.mjs`, and added a dynamic OpenGraph card route (`app/og-image.png/route.tsx`).
+- **Monochromatic Colorways (Locked In)**:
+  - Streamlined the palette switcher (`app/providers.tsx`, `app/globals.css`, `ThemeToggle.tsx`, `TerminalHUD.tsx`) to the 3 approved monochromatic palettes: **Obsidian Pure** (`obsidian`), **Stealth Carbon** (`carbon`), and **Yeezy Graphite** (`yeezy`).
+- **Default Cursor Mode (Locked In)**:
+  - Set **`bracket`** mode (`CustomCursor.tsx`) as the default cursor—featuring reactive HUD emerald/cyan hover locks, 45°/90° target rotation, crosshair axis ticks, and amber click compression—alongside the upgraded illuminated-core + bold-outline `minimal` mode and `dual` mode.
+- **Signature `soft` Tactile Audio (Locked In)**:
+  - Locked in **`soft`** as the default cushioned low-pass tactile audio profile (`TerminalHUD.tsx`) with global interactive button/input feedback and a simplified 2-button **`Soft (On)` / `Mute (Off)`** toggle in the Navbar Sensory Studio (`ThemeToggle.tsx`).
+- **Notion-Style Visual Block Composer**:
+  - Upgraded `AdminMarkdownStudio.tsx` with a default **Visual Block Editor (`Blocks` mode)** supporting `/` slash commands (`/h1 `, `/h2 `, `/h3 `, `/code `, `/quote `, `/list `, `/divider`), 1-click block type pills, Up/Down block reordering, and persistent hidden input serialization alongside `Split`, `Raw`, and `Preview` modes.
 
-- **[Next-Session Priorities Executed (2026-11-14)]**:
-  - **Repository Audit & Hardening**: Restored `public/node_modules` back to `./node_modules`, hardened `.gitignore` (`node_modules/`), configured `turbopack.root` in `next.config.ts`, fixed unused catch binding in `scripts/sync-obsidian-mobile.mjs`, and added a dynamic OpenGraph card route (`app/og-image.png/route.tsx`).
-  - **Multi-Palette Colorway System**: Implemented 5 switchable colorways (`obsidian`, `titanium`, `monokai`, `carbon`, `yeezy`) in `app/globals.css` and `app/providers.tsx`, accessible via the new Navbar Sensory Studio popover (`ThemeToggle.tsx`) and Terminal HUD (`palette <name>` / `theme <name>`).
-  - **Haptic & Soft Audio Engine**: Replaced tonal confirmation chimes with low-pass filtered Apple Taptic double-tap impulses (`triggerHapticPulse`) and expanded the Haptic & Soft family (`haptic`, `soft`, `taptic`, `whisper`).
-  - **Cursor Styling Evolution**: Upgraded `minimal` mode in `CustomCursor.tsx` with a bright illuminated white core inside a bold dark outline (`border-[2.5px] border-[#0A0A0A] ring-[1.5px] ring-action/80`), and enhanced `bracket` mode with dynamic emerald/sky-blue/amber color shifts, target-lock rotation, and crosshair axis ticks.
-  - **Notion-Style Visual Block Composer**: Upgraded `AdminMarkdownStudio.tsx` with a default **Visual Block Editor (`Blocks` mode)** supporting `/` slash commands (`/h1`, `/h2`, `/h3`, `/code`, `/quote`, `/list`, `/divider`), 1-click block type pills, Up/Down block reordering, and persistent hidden input serialization alongside `Split`, `Raw`, and `Preview` modes.
+### IMMEDIATE PRIORITY FOR NEXT SESSION
+1. **Verify Notion-Style Visual Block Composer (`/admin` -> Articles)**:
+   - Test creating and editing articles using the new **Blocks** composer, `/` slash commands, and block reordering.
+2. **Resume Checklist Verification (Items 4–9)**:
+   - **Item 4 (`/`)**: Journey Feed expandable code snippet (`COPY` button), image attachment Framer Motion Lightbox, and `#BUILD` / `#MILESTONE` / `#MILITARY` / `#LEARNING` tag filters.
+   - **Item 5 (`/writing/[slug]`)**: Article resolution, Table of Contents scroll-spy, and syntax highlighting.
+   - **Item 6 (`/portfolio`)**: Clickable project titles and all 4 system architecture case studies.
+   - **Items 7–9**: OpenGraph/Twitter meta tags (`/og-image.png`), GitHub Actions CI green status, and `MediaDropzone` Supabase Storage uploads.
 
 ---
 *Maintained by Antigravity for Thomas Payne.*

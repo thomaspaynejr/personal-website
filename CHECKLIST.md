@@ -1,48 +1,41 @@
 # // THOMAS PAYNE PORTFOLIO & PLATFORM
-## Production Verification Checklist v3.0 (Session Checkpoint)
+## Production Verification Checklist v3.1 (Session Checkpoint)
 
 > [!NOTE]
-> **Session Status (2026-11-14 Upgrade Complete)**: All 4 sensory & authoring subsystems (Colorways, Haptic/Soft Audio, Illuminated Minimal & Reactive Bracket Cursors, and Notion-Style Visual Block Editor) have been built and verified.
-> **Ready for Live Walkthrough**:
-> 1. **5 Colorways & Navbar Sensory Studio**: Click the Palette pill in the top Navbar (or type `palette [obsidian|titanium|monokai|carbon|yeezy]` in `Cmd+K`) to switch colorways, cursors, and haptic audio in 1 click.
-> 2. **Haptic & Soft Sound Family**: Upgraded with low-pass BiquadFilter Taptic impulses (`haptic`, `soft`, `taptic`, `whisper`) and non-tonal Taptic double-tap toggle confirmations.
-> 3. **Illuminated Minimal & Tactical Bracket Cursors**: `minimal` mode now keeps a bright illuminated inner core inside a bold contrasting outline; `bracket` mode shifts colors (emerald on buttons/links, cyan on nav, amber on click) with target-lock rotation.
-> 4. **Notion-Style Visual Block Editor**: `/admin` -> **Articles** now defaults to the **Blocks** composer (with `/h2 `, `/code `, `/quote `, `/list ` slash commands, block type pills, and reordering) alongside `Split`, `Raw`, and `Preview` modes.
-> 5. **Resume Verification**: Continue testing from Item 4 (Journey Feed Attachments & Lightbox) onward.
+> **Session Status (2026-11-14 Wrap-Up)**:
+> - **Locked In**:
+>   1. **Colorways**: **Obsidian Pure** (`obsidian`), **Stealth Carbon** (`carbon`), and **Yeezy Graphite** (`yeezy`) via the Navbar Sensory Studio & CLI HUD (`palette [obsidian|carbon|yeezy]`).
+>   2. **Default Cursor**: **`bracket`** mode (reactive HUD reticle with emerald/cyan target locks and amber click compression), plus illuminated-core + bold-outline **`minimal`** mode.
+>   3. **Default Audio**: **`soft`** cushioned tactile audio profile with a clean **`Soft (On)` / `Mute (Off)`** switch in the Navbar popover.
+> - **Resume Here Next Session**:
+>   - Start at **Item 3 (Notion-Style Visual Block Editor in `/admin`)** and **Item 4 (Home Page Journey Feed & Lightbox on `/`)**.
 
 ---
 
-### Part I: Freshly Updated Subsystems (Ready for Retest)
+### Part I: Completed & Locked-In Subsystems
 
-#### 1. Warm Organic Tactile Audio (`TerminalHUD.tsx`)
-*Replaced harsh 1400Hz arcade beeps with authentic dampened mechanical keyboard "thock" and added selectable sound profiles.*
-- [x] **Mellow Confirmation Chimes**:
-  - Press `Cmd+K` or backtick (`` ` ``) to open the HUD.
-  - Click the **Volume** icon in the HUD header or type `audio on`: Confirm a warm, soft musical chime plays (`220Hz` $\rightarrow$ `277Hz`, zero high-pitched ringing).
-  - Click again or type `audio off`: Confirm a soft downward tap plays. (working both sounds are not the best let's continue to experiment with different sounds)
-- [x] **Dampened Mechanical Keystroke Sound ("Thock")**:
-  - Turn `audio on` and type commands in the HUD. Notice the deep, low-frequency acoustic keycap tap (modeled after lubed mechanical switches). (working both sounds are not the best let's continue to experiment with different sounds)
-- [x] **Selectable Audio Profiles**:
-  - Test the alternate sound profiles in the HUD:
-    - Type `audio thock`: Deep, dampened mechanical switch bottom-out (default).
-    - Type `audio haptic`: Ultra-subtle Apple/Linear trackpad micro-tap.
-    - Type `audio click`: Crisp tactile switch with a subtle transient tick.
-    - Type `audio soft`: Whisper-quiet muted pop.
- (i like haptic and soft sounds let's go down that sound path or family) 
-#### 2. Alternate Cursor Modes (`CustomCursor.tsx`)
-*Added 3 switchable cursor styles to match your aesthetic preference.*
-- [x] **Test Cursor Styles via Terminal HUD (`Cmd+K`)**:
-  - **Dual Mode (Default)**: Type `cursor dual`. Pinpoint center dot with zero latency plus a fluid spring trailing halo ring.
-  - **Minimal Mode**: Type `cursor minimal`. Single precision dot with spring hover expansion—ultra-clean Yeezy minimalist aesthetic without the outer ring.
-  - **Tactical Bracket Mode**: Type `cursor bracket`. Corner crosshair HUD brackets that rotate on button hover—cyber/military tactical aesthetic.
-  (i like minimal and bracket i like how the color changes in bracket we can get create in that mode for minimal are able to keep light inside with the bold outline)
-#### 3. Markdown Studio Header Freeze Resolution (`MarkdownRenderer.tsx`)
-*Fixed the infinite loop bug where typing `#` or empty headers froze browser CPU.*
-- [x] **Heading Typing Stability**:
-  - Navigate to `/admin` -> **Articles**.
-  - In the Markdown editor, type `#`, `##`, `###`, and press `Enter`.
-  - Type full titles (e.g. `# New Architectural Benchmark`). Confirm the right-hand preview updates instantly in real time **with 0% CPU freeze**.
-(still not filling the Markdown editor preview are their alternates)
+#### 1. Soft Cushioned Tactile Audio (`TerminalHUD.tsx` & `ThemeToggle.tsx`)
+- [x] **Locked In `soft` Default Profile**:
+  - Defaulted to the warm, cushioned low-pass `soft` micro-pop (`310Hz -> 92Hz`) on interactive clicks and keystrokes.
+  - Simplified the Navbar Sensory Studio audio control to a clean **`Soft (On)` / `Mute (Off)`** toggle.
+
+#### 2. Default Bracket Cursor & Illuminated Minimal Mode (`CustomCursor.tsx`)
+- [x] **Locked In `bracket` as Default Cursor**:
+  - **Tactical Bracket Mode (Default)**: Rotates 45° with electric emerald lock on buttons/links, 90° with sky-cyan on navbar/footer links, and compresses with an amber flash on click.
+  - **Minimal Mode**: Bright illuminated white center core inside a bold dark contrasting outline (`border-[2.5px]`).
+  - **Dual Mode**: Center pinpoint dot with fluid spring trailing halo.
+
+---
+
+### Part II: Next Session Verification Queue (Resume Here)
+
+#### 3. Notion-Style Visual Block Editor (`AdminMarkdownStudio.tsx` in `/admin`)
+*Upgraded the CMS editor with a default Visual Block Composer (`Blocks` mode) alongside `Split`, `Raw`, and `Preview` modes.*
+- [ ] **Test Visual Block Authoring**:
+  - Navigate to `/admin` -> **Articles / Writing** -> **New Article** (or click Edit on an existing article).
+  - Confirm the editor opens in **Blocks** mode by default.
+  - Test switching block types via the top pills (`H1`, `H2`, `H3`, `Text`, `Code`, `Quote`, `List`, `Divider`) or typing `/h2 `, `/code `, `/quote `, `/list ` inside a text block.
+  - Test reordering blocks with the Up/Down arrows and switching between `Blocks`, `Split`, `Raw`, and `Preview`.
 #### 4. Home Page Timeline Events & Attachments (`/`)
 *Added rich fallback events with code snippets and image attachments so the feed is never empty.*
 - [ ] **Expandable Code Snippet**:
@@ -135,17 +128,8 @@
 
 ---
 
-### Part IV: Design Direction Choices
+### Part IV: Locked-In Design Direction Decisions (2026-11-14)
 
-1. **Audio Sound Preference**:
-   - Which sound profile do you prefer for typing in the HUD?
-     - `thock` (dampened mechanical switch - current default)
-     - `haptic` (Apple/Linear trackpad tap)
-     - `click` (tactile Cherry MX feel)
-     - `soft` (whisper pop)
-
-2. **Cursor Style Preference**:
-   - Which cursor style feels best in daily use?
-     - `dual` (center dot + trailing spring halo)
-     - `minimal` (clean single dot without ring)
-     - `bracket` (tactical HUD crosshairs)
+1. **Colorways**: **Obsidian Pure** (`obsidian`), **Stealth Carbon** (`carbon`), and **Yeezy Graphite** (`yeezy`).
+2. **Audio Sound Profile**: **`soft`** (cushioned low-pass tactile pop) as default with a 2-button **`Soft (On)` / `Mute (Off)`** toggle.
+3. **Cursor Style**: **`bracket`** (reactive tactical HUD crosshairs with emerald/cyan target locks and amber click compression) as default, alongside illuminated-core **`minimal`** and **`dual`**.

@@ -8,7 +8,9 @@ An ultra-minimalist, high-contrast developer hub built with **Next.js 16**, **Su
 - **[DASHBOARD]** Live project tracker monitoring build progress with animated status indicators.
 - **[TIMELINE]** Interactive "Journey Feed" with persistent likes and threaded comments for authenticated users.
 - **[ANIMATION]** Premium staggered reveals and section transitions powered by Framer Motion.
-- **[UX]** Global atmospheric effects (Matrix Rain & Dynamic Lightning), custom minimalist ring cursor, and horizontal scroll progress bar.
+- **[UX]** Global atmospheric effects (Matrix Rain & Dynamic Lightning), Navbar Sensory Studio with 3 monochromatic colorways (**Obsidian Pure**, **Stealth Carbon**, **Yeezy Graphite**), reactive tactical **Bracket** HUD cursor, cushioned **Soft** Web Audio tactile feedback, and horizontal scroll progress bar.
+- **[CMS]** Admin control center with Notion-style **Visual Block Composer** (`Blocks` / `Split` / `Raw` / `Preview`), Supabase Storage media dropzone, and real-time telemetry metrics.
+- **[CLI HUD]** Global interactive terminal (`Cmd+K` or `` ` ``) with AI knowledge assistant (`ask <query>`), telemetry benchmarks, colorway/cursor/audio controls, and direct admin messaging.
 
 ## // TECH STACK
 
