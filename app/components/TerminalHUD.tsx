@@ -130,7 +130,7 @@ function triggerHapticPulse(
 
 export function playMechanicalClick(
   variant: 'keystroke' | 'toggle_on' | 'toggle_off' = 'keystroke',
-  profile: AudioProfile = 'haptic'
+  profile: AudioProfile = 'soft'
 ) {
   const ctx = getSharedAudioContext();
   if (!ctx) return;
@@ -143,38 +143,52 @@ export function playMechanicalClick(
     const now = ctx.currentTime;
 
     if (variant === 'toggle_on') {
-      // Apple Taptic double-tap actuator confirmation (warm low-mid double tap)
-      triggerHapticPulse(ctx, now, 220, 75, 0.014, 0.24, 0.05, 580);
-      triggerHapticPulse(ctx, now + 0.055, 290, 95, 0.016, 0.3, 0.07, 720);
+      // Warm soft double-cushion confirmation
+      triggerHapticPulse(ctx, now, 240, 85, 0.022, 0.32, 0.02, 480);
+      triggerHapticPulse(ctx, now + 0.065, 310, 110, 0.024, 0.38, 0.02, 540);
       return;
     }
 
     if (variant === 'toggle_off') {
-      // Soft descending Taptic micro-release tap
-      triggerHapticPulse(ctx, now, 260, 85, 0.014, 0.24, 0.05, 620);
-      triggerHapticPulse(ctx, now + 0.055, 180, 62, 0.015, 0.18, 0.03, 460);
+      // Soft descending cushion release
+      triggerHapticPulse(ctx, now, 280, 95, 0.02, 0.3, 0.02, 500);
+      triggerHapticPulse(ctx, now + 0.065, 190, 68, 0.022, 0.22, 0.01, 400);
       return;
     }
 
-    // Keystroke & UI Haptic & Soft Sound Family
-    if (profile === 'haptic') {
-      // Apple Magic Trackpad Force Touch micro-tap (crisp, solid low-mid surface thump)
-      triggerHapticPulse(ctx, now, 265, 82, 0.013, 0.28, 0.07, 680);
-    } else if (profile === 'soft') {
-      // Warm cushioned membrane micro-pop (velvety, rounded lowpass envelope)
-      triggerHapticPulse(ctx, now, 225, 72, 0.016, 0.24, 0.03, 480);
+    // Signature 'soft' profile: warm, rounded, cushioned micro-pop (clearly audible on MacBook speakers)
+    if (profile === 'soft') {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(310, now);
+      osc.frequency.exponentialRampToValueAtTime(92, now + 0.024);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(520, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.36, now + 0.003);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.024);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.026);
+    } else if (profile === 'haptic') {
+      triggerHapticPulse(ctx, now, 265, 82, 0.015, 0.32, 0.06, 680);
     } else if (profile === 'taptic') {
-      // Crisp iOS picker wheel / Linear UI sub-millisecond micro-tick
-      triggerHapticPulse(ctx, now, 340, 105, 0.01, 0.25, 0.09, 880);
+      triggerHapticPulse(ctx, now, 420, 130, 0.011, 0.3, 0.1, 980);
     } else if (profile === 'whisper') {
-      // Ultra-muted sub-surface air tap (gentle, low-register pulse)
-      triggerHapticPulse(ctx, now, 195, 65, 0.014, 0.18, 0.02, 420);
+      triggerHapticPulse(ctx, now, 210, 70, 0.018, 0.2, 0.01, 380);
     } else if (profile === 'thock') {
-      // Deep dampened mechanical switch bottom-out
-      triggerHapticPulse(ctx, now, 295, 88, 0.018, 0.3, 0.08, 740);
+      triggerHapticPulse(ctx, now, 295, 88, 0.02, 0.34, 0.08, 740);
     } else {
-      // 'click' - Tactile micro-snap
-      triggerHapticPulse(ctx, now, 380, 115, 0.012, 0.26, 0.1, 950);
+      triggerHapticPulse(ctx, now, 460, 140, 0.012, 0.3, 0.12, 1100);
     }
   } catch {
     // AudioContext blocked or unsupported
@@ -204,7 +218,7 @@ export default function TerminalHUD() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [audioProfile, setAudioProfile] = useState<AudioProfile>('haptic');
+  const [audioProfile, setAudioProfile] = useState<AudioProfile>('soft');
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme, palette, setPalette } = useTheme();

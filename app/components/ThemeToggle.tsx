@@ -11,7 +11,7 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [cursorMode, setCursorMode] = useState<CursorMode>('bracket');
-  const [audioProfile, setAudioProfile] = useState<AudioProfile>('haptic');
+  const [audioProfile, setAudioProfile] = useState<AudioProfile>('soft');
   const [audioEnabled, setAudioEnabled] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme, colorway, setColorway } = useTheme();
@@ -228,36 +228,40 @@ export default function ThemeToggle() {
               </div>
             </div>
 
-            {/* Section 3: Haptic & Soft Audio Family */}
+            {/* Section 3: Soft Tactile Audio */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-accent border-b border-border-custom/40 pb-1">
                 <span className="flex items-center gap-1.5">
                   <Volume2 size={11} className="text-action" />
-                  <span>Haptic Audio Family</span>
+                  <span>Soft Tactile Audio</span>
                 </span>
                 <span className="text-[8px] text-action">
-                  {audioEnabled ? audioProfile.toUpperCase() : 'MUTED'}
+                  {audioEnabled ? 'SOFT [ON]' : 'MUTED [OFF]'}
                 </span>
               </div>
-              <div className="grid grid-cols-5 gap-1">
-                {(['haptic', 'soft', 'taptic', 'whisper', 'off'] as const).map((prof) => {
-                  const isSelected =
-                    prof === 'off' ? !audioEnabled : audioEnabled && audioProfile === prof;
-                  return (
-                    <button
-                      key={prof}
-                      type="button"
-                      onClick={() => handleSelectAudio(prof)}
-                      className={`py-1.5 px-1 rounded-lg text-[8px] font-bold uppercase tracking-wider border transition-all ${
-                        isSelected
-                          ? 'bg-action text-background border-action'
-                          : 'bg-background/50 text-accent border-border-custom/40 hover:text-foreground'
-                      }`}
-                    >
-                      {prof}
-                    </button>
-                  );
-                })}
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAudio('soft')}
+                  className={`py-1.5 px-2 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all ${
+                    audioEnabled
+                      ? 'bg-action text-background border-action'
+                      : 'bg-background/50 text-accent border-border-custom/40 hover:text-foreground'
+                  }`}
+                >
+                  Soft (On)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAudio('off')}
+                  className={`py-1.5 px-2 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all ${
+                    !audioEnabled
+                      ? 'bg-action text-background border-action'
+                      : 'bg-background/50 text-accent border-border-custom/40 hover:text-foreground'
+                  }`}
+                >
+                  Mute (Off)
+                </button>
               </div>
             </div>
           </motion.div>
